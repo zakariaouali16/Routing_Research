@@ -26,8 +26,11 @@ Benchmark Dataset Definition
 A credible paper requires a rigorous evaluation benchmark. We distinguish strictly between route labels and labeled examples.
 
 Metric                    Minimum Acceptable               Paper-Quality Target
+
 Route Labels              12 (6 per domain)                16–20 (8-10 per domain)
+
 Examples per Label             30                              40–50+
+
 Total Benchmark Size      360 manually labeled prompts     500–800 prompts
 
 The final dataset must deliberately include "hard cases": ambiguous wording, missing context, mixed intents, and high-risk language requiring immediate escalation.
