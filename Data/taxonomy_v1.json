@@ -1,6 +1,6 @@
 {
   "project": "Reliable LLM Agents for Routing and Triage",
-  "version": "1.0",
+  "version": "1.1",
   "domains": {
     "education": {
       "domain_description": "Computing/programming-related student support",
@@ -28,6 +28,10 @@
         {
           "name": "Instructor/TA Escalation",
           "definition": "Complex, sensitive, or highly specific queries (e.g., grade disputes, personal accommodations, suspected plagiarism) that require direct human faculty intervention."
+        },
+        {
+          "name": "Clarification Needed",
+          "definition": "The request is too vague or underspecified to be accurately routed."
         }
       ]
     },
@@ -57,6 +61,10 @@
         {
           "name": "Urgent Escalation (Emergency Services)",
           "definition": "Queries containing cues of acute physical distress or potential medical emergencies, triggering an immediate recommendation to contact emergency services."
+        },
+        {
+          "name": "Clarification Needed",
+          "definition": "Administrative requests lacking critical details needed for routing."
         }
       ]
     }
