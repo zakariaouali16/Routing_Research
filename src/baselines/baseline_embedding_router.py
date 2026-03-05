@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -20,8 +21,8 @@ class EmbeddingRouter:
         if 'prompt' not in df.columns or 'label' not in df.columns:
             raise ValueError("CSV must contain 'prompt' and 'label' columns.")
         
-        self.reference_prompts = df['user_prompt'].tolist()
-        self.reference_labels = df['gold_label'].tolist()
+        self.reference_prompts = df['prompt'].tolist()
+        self.reference_labels = df['label'].tolist()
         
         print(f"Embedding {len(self.reference_prompts)} prompts. This might take a moment...")
         self.reference_embeddings = self.model.encode(self.reference_prompts)
@@ -55,7 +56,7 @@ class EmbeddingRouter:
             "matched_example": self.reference_prompts[best_match_idx],
             "needs_clarification": needs_clarification
         }
-
+    
 # ==========================================
 # How to use the router
 # ==========================================
@@ -63,25 +64,22 @@ if __name__ == "__main__":
     # Initialize the router
     router = EmbeddingRouter()
     
-    # Load your labeled spreadsheet (replace with your actual filename)
-    # router.fit("benchmark_data.csv") 
+    # Dynamically build the path to the data folder
+    # 1. Get the directory where this script is located (src/baselines/)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # --- Mocking the fit step for demonstration purposes ---
-    # Delete this block and uncomment router.fit() when using your real data
-    router.reference_prompts = [
-        "How do I fix a segmentation fault in C++?",
-        "When is the midterm exam?",
-        "I need to schedule an MRI appointment.",
-        "Will my insurance cover this prescription?"
-    ]
-    router.reference_labels = ["education_debugging", "education_logistics", "healthcare_scheduling", "healthcare_billing"]
-    router.reference_embeddings = router.model.encode(router.reference_prompts)
-    # -------------------------------------------------------
+    # 2. Go up two levels (../../) and into the data folder
+    csv_path = os.path.join(script_dir, "../../data/v0_pilot_benchmark.csv")
+    
+    # Load your REAL labeled spreadsheet using the dynamic path
+    router.fit(csv_path) 
 
     # Test it with a new, unseen request
     test_prompt = "Can you help me figure out why my python code keeps throwing an index out of bounds error?"
     
     print(f"\nIncoming Request: '{test_prompt}'")
+    
+    # Route it!
     result = router.route_request(test_prompt, threshold=0.4)
     
     print("\nRouting Decision:")
