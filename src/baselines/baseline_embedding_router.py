@@ -20,8 +20,8 @@ class EmbeddingRouter:
         if 'prompt' not in df.columns or 'label' not in df.columns:
             raise ValueError("CSV must contain 'prompt' and 'label' columns.")
         
-        self.reference_prompts = df['prompt'].tolist()
-        self.reference_labels = df['label'].tolist()
+        self.reference_prompts = df['user_prompt'].tolist()
+        self.reference_labels = df['gold_label'].tolist()
         
         print(f"Embedding {len(self.reference_prompts)} prompts. This might take a moment...")
         self.reference_embeddings = self.model.encode(self.reference_prompts)
