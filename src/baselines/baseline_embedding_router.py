@@ -24,6 +24,9 @@ class EmbeddingRouter:
         self.reference_prompts = df['prompt'].tolist()
         self.reference_labels = df['label'].tolist()
         
+        # ADD THIS LINE: Store the ambiguity flag
+        self.reference_ambiguous = df['is_ambiguous'].tolist() if 'is_ambiguous' in df.columns else [False] * len(df)
+        
         print(f"Embedding {len(self.reference_prompts)} prompts. This might take a moment...")
         self.reference_embeddings = self.model.encode(self.reference_prompts)
         print("Done! The router is ready.")
@@ -31,29 +34,43 @@ class EmbeddingRouter:
     def route_request(self, new_prompt, threshold=0.5):
         """
         Embeds a new request, finds the most similar benchmark prompt,
-        and returns the label and confidence score.
+        and returns the predicted label along with clarification flags.
         """
         if self.reference_embeddings is None:
-            raise RuntimeError("You must call .fit() with your data before routing.")
+            raise ValueError("You must call .fit() with a CSV file before routing requests.")
 
-        # 1. Embed the incoming user request
+        # 1. Embed the incoming request
         new_embedding = self.model.encode([new_prompt])
 
-        # 2. Calculate cosine similarity against all benchmark embeddings
-        similarities = cosine_similarity(new_embedding, self.reference_embeddings)[0]
+        # 2. Compare against all known benchmark prompts
+        cosine_scores = cosine_similarity(new_embedding, self.reference_embeddings)[0]
 
-        # 3. Find the index of the highest similarity score
-        best_match_idx = np.argmax(similarities)
-        best_score = similarities[best_match_idx]
+        # 3. Find the single best match
+        best_match_idx = int(np.argmax(cosine_scores))
+        best_score = cosine_scores[best_match_idx]
         predicted_label = self.reference_labels[best_match_idx]
+        matched_example = self.reference_prompts[best_match_idx]
+        
+        # 4. Check the ambiguous flag of the matched example
+        # Handle string 'TRUE'/'FALSE' or actual boolean True/False
+        ambiguous_val = self.reference_ambiguous[best_match_idx]
+        if isinstance(ambiguous_val, str):
+            matched_is_ambiguous = ambiguous_val.strip().upper() == 'TRUE'
+        else:
+            matched_is_ambiguous = bool(ambiguous_val)
 
-        # 4. Apply a basic uncertainty rule
-        needs_clarification = bool(best_score < threshold)
+        # 5. Apply the smarter uncertainty rule
+        # Flag if: score is too low OR the matched label is "Clarification Needed" OR the match is known to be ambiguous
+        needs_clarification = (
+            bool(best_score < threshold) or 
+            predicted_label == "Clarification Needed" or 
+            matched_is_ambiguous
+        )
 
         return {
-            "predicted_label": predicted_label if not needs_clarification else "needs_clarification",
+            "predicted_label": "Clarification Needed" if needs_clarification else predicted_label,
             "confidence_score": round(float(best_score), 4),
-            "matched_example": self.reference_prompts[best_match_idx],
+            "matched_example": matched_example,
             "needs_clarification": needs_clarification
         }
     
