@@ -39,32 +39,29 @@
       "domain_description": "Non-clinical, non-diagnostic patient support",
       "labels": [
         {
-          "name": "Scheduling & Appointments",
-          "definition": "Requests to book, cancel, reschedule, or check the status of an upcoming medical appointment."
+          "name": "Appointments & Care Access",
+          "definition": "Requests to schedule, cancel, reschedule, or inquire about medical appointments or how to receive care"
         },
         {
-          "name": "Insurance & Billing",
-          "definition": "Inquiries regarding accepted insurance networks, payment methods, copays, out-of-pocket estimates, or explanations of medical bills."
+          "name": "Billing & Insurance",
+          "definition": "Questions about insurance coverage, accepted plans, payments, copays, cost estimates, or medical bills."
         },
         {
-          "name": "Facility & General Information",
-          "definition": "Questions about clinic operating hours, physical location, parking availability, visitor policies, or general contact information."
+          "name": "Patient Administrative Support",
+          "definition": "Non-clinical administrative requests such as medical records, prescription logistics, visitor policies, or other operational inquiries that require staff assistance."
         },
         {
-          "name": "Pharmacy & Prescription Logistics",
-          "definition": "Administrative requests regarding prescription refill status, pharmacy hours, or how to transfer a prescription to a new location."
-        },
         {
-          "name": "Human Staff Review Needed",
+          "name": "Provider & Location Search",
           "definition": "Ambiguous, complex, or privacy-sensitive administrative requests (e.g., medical records release) that require review by a human receptionist or patient advocate."
         },
         {
-          "name": "Urgent Escalation (Emergency Services)",
-          "definition": "Queries containing cues of acute physical distress or potential medical emergencies, triggering an immediate recommendation to contact emergency services."
+          "name": "Emergency Services",
+          "definition": "Requests to find a doctor, specialist, clinic, hospital location, or contact information for a facility."
         },
         {
           "name": "Clarification Needed",
-          "definition": "Administrative requests lacking critical details needed for routing."
+          "definition": "Queries that are too vague, incomplete, or ambiguous to confidently route to a specific category."
         }
       ]
     }
