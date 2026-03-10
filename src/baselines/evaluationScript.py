@@ -72,8 +72,14 @@ print("\n--- Final Baseline Metrics ---")
 for k, v in metrics.items():
     print(f"{k}: {v:.4f}" if isinstance(v, float) else f"{k}: {v}")
 
-# 5. Export results for Phase 1 Report
-results_df.to_csv('baseline_results_final.csv', index=False)
+# Create an output directory if it doesn't exist
+output_dir = os.path.join(script_dir, '..', '..', 'results', 'phase_1')
+os.makedirs(output_dir, exist_ok=True)
+
+# 5. Export results using the explicit path
+csv_output_path = os.path.join(output_dir, 'baseline_results_final.csv')
+results_df.to_csv(csv_output_path, index=False)
+print(f"Results saved to: {csv_output_path}")
 
 # 6. Generate Confusion Matrix Visualization
 labels = sorted(list(set(results_df['label'].unique())))
@@ -86,4 +92,8 @@ plt.ylabel('Actual Label')
 plt.xlabel('Predicted Label')
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
-plt.savefig('baseline_confusion_matrix.png')
+
+# Save the plot using the explicit path
+plot_output_path = os.path.join(output_dir, 'baseline_confusion_matrix.png')
+plt.savefig(plot_output_path)
+print(f"Plot saved to: {plot_output_path}")
