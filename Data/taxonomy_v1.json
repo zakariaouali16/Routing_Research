@@ -50,7 +50,7 @@
           "name": "Patient Administrative Support",
           "definition": "Non-clinical administrative requests such as medical records, prescription logistics, visitor policies, or other operational inquiries that require staff assistance."
         },
-        {
+      
         {
           "name": "Provider & Location Search",
           "definition": "Ambiguous, complex, or privacy-sensitive administrative requests (e.g., medical records release) that require review by a human receptionist or patient advocate."
