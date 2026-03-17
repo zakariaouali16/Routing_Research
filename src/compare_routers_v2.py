@@ -46,33 +46,23 @@ def run_comparison():
         domain = row['domain']
         
         # --- Baseline Prediction ---
-        # Checking if your router uses .route() or .predict()
         try:
-            if hasattr(baseline_router, 'route'):
-                res = baseline_router.route(prompt)
-            else:
-                res = baseline_router.predict(prompt)
-            
+            # Call the correct method: route_request
+            res = baseline_router.route_request(prompt)
             b_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             baseline_preds.append(b_val)
         except Exception as e:
             baseline_preds.append(f"Err: {str(e)}")
 
         # --- LLM Prediction ---
-        # FIX: Try predict() if route() doesn't exist
         try:
-            if hasattr(llm_router, 'predict'):
-                res = llm_router.predict(prompt, domain)
-            elif hasattr(llm_router, 'route'):
-                res = llm_router.route(prompt, domain)
-            else:
-                res = "No route/predict method found"
-                
+            # Call the correct method: route_request
+            res = llm_router.route_request(prompt, domain)
             l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             llm_preds.append(l_val)
         except Exception as e:
             llm_preds.append(f"Err: {str(e)}")
-
+            
     # 5. Export results to CSV
     df['baseline_prediction'] = baseline_preds
     df['llm_prediction'] = llm_preds
