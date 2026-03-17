@@ -1,97 +1,142 @@
-import pandas as pd
 import os
+import pandas as pd
+from baselines.baseline_embedding_router import EmbeddingRouter
 
-def compare_models(baseline_csv_path, llm_csv_path, output_csv_path="router_comparison_results.csv"):
-    print(f"Loading Baseline results from: {baseline_csv_path}")
-    print(f"Loading LLM results from: {llm_csv_path}\n")
+from sklearn.metrics import accuracy_score
 
-    # 1. Load the results
-    try:
-        baseline_df = pd.read_csv(baseline_csv_path)
-        llm_df = pd.read_csv(llm_csv_path)
-    except FileNotFoundError as e:
-        print(f"Error: Could not find one of the result files. {e}")
-        return
+# Import your existing classes
 
-    # 2. Standardize column names for the merge
-    # Assuming baseline outputs 'predicted_label' and 'confidence'
-    baseline_df = baseline_df.rename(columns={
-        'predicted_label': 'baseline_prediction',
-        'confidence': 'baseline_confidence'
-    })
+from llm_router_v1 import LLMRouterV1
 
-    # Assuming LLM outputs 'predicted_label' and potentially 'confidence' (if requested in JSON)
-    llm_df = llm_df.rename(columns={
-        'predicted_label': 'llm_prediction',
-        'confidence': 'llm_confidence'
-    })
 
-    # 3. Merge the dataframes on 'prompt_id'
-    # We keep 'prompt' and the gold 'label' from the baseline df to avoid duplicates
-    comparison_df = pd.merge(
-        baseline_df[['prompt_id', 'domain', 'prompt', 'label', 'is_ambiguous', 'baseline_prediction', 'baseline_confidence']],
-        llm_df[['prompt_id', 'llm_prediction', 'llm_confidence']] if 'llm_confidence' in llm_df.columns else llm_df[['prompt_id', 'llm_prediction']],
-        on='prompt_id',
-        how='inner'
-    )
+# Define relative paths based on your folder structure
+# 1. Get the directory where THIS script is (Routing_Research/src)
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    # 4. Calculate Correctness (Accuracy Boolean)
-    comparison_df['baseline_is_correct'] = comparison_df['baseline_prediction'] == comparison_df['label']
-    comparison_df['llm_is_correct'] = comparison_df['llm_prediction'] == comparison_df['label']
+# 2. Go up one level to the Root (Routing_Research)
+BASE_DIR = os.path.dirname(CURRENT_DIR)
+DATA_PATH = os.path.join(BASE_DIR, "Data", "v0_pilot_benchmark.csv")
+TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v1.json")
+OUTPUT_PATH = os.path.join(BASE_DIR, "Results", "comparison_report.csv")
 
-    # 5. Calculate High-Level Metrics
-    total_prompts = len(comparison_df)
+def run_comparison(benchmark_csv, taxonomy_json, output_csv):
+    print("--- Initializing Routers ---")
     
-    baseline_accuracy = comparison_df['baseline_is_correct'].mean()
-    llm_accuracy = comparison_df['llm_is_correct'].mean()
-
-    baseline_error_rate = 1 - baseline_accuracy
-    llm_error_rate = 1 - llm_accuracy
-
-    baseline_avg_conf = comparison_df['baseline_confidence'].mean()
+    # 1. Initialize Baseline
+    baseline = EmbeddingRouter()
+    baseline.fit(benchmark_csv)
     
-    # Calculate LLM confidence if available
-    if 'llm_confidence' in comparison_df.columns:
-        # Convert to float just in case the LLM outputted strings
-        comparison_df['llm_confidence'] = pd.to_numeric(comparison_df['llm_confidence'], errors='coerce')
-        llm_avg_conf = comparison_df['llm_confidence'].mean()
-    else:
-        llm_avg_conf = "N/A (Not tracked by LLM)"
-
-    # 6. Print the Results
-    print("-" * 40)
-    print(f"COMPARISON RESULTS (Total Prompts: {total_prompts})")
-    print("-" * 40)
-    print(f"{'Metric':<25} | {'Baseline':<15} | {'LLM'}")
-    print("-" * 40)
-    print(f"{'Accuracy Rate':<25} | {baseline_accuracy:.2%}         | {llm_accuracy:.2%}")
-    print(f"{'Error Rate':<25} | {baseline_error_rate:.2%}         | {llm_error_rate:.2%}")
+    # 2. Initialize LLM Router (Assumes Ollama is running)
+    # We pass the local path to taxonomy
+    llm_router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_json)
     
-    if isinstance(llm_avg_conf, float):
-        print(f"{'Avg Confidence Level':<25} | {baseline_avg_conf:.4f}          | {llm_avg_conf:.4f}")
-    else:
-        print(f"{'Avg Confidence Level':<25} | {baseline_avg_conf:.4f}          | {llm_avg_conf}")
-    print("-" * 40)
+    # Load Benchmark Data
+    df = pd.read_csv(benchmark_csv)
+    results = []
 
-    # 7. Identify where LLM fixed Baseline errors (and vice versa)
-    llm_fixed = comparison_df[(~comparison_df['baseline_is_correct']) & (comparison_df['llm_is_correct'])]
-    baseline_fixed = comparison_df[(comparison_df['baseline_is_correct']) & (~comparison_df['llm_is_correct'])]
+    print(f"\n--- Running Evaluation on {len(df)} prompts ---")
     
-    print(f"\nInsights:")
-    print(f"- The LLM correctly routed {len(llm_fixed)} prompts that the Baseline got wrong.")
-    print(f"- The Baseline correctly routed {len(baseline_fixed)} prompts that the LLM got wrong.")
+    for idx, row in df.iterrows():
+        prompt = row['prompt']
+        domain = row['domain']
+        gold_label = row['label']
+        
+        print(f"[{idx+1}/{len(df)}] Processing: {prompt[:50]}...")
+        
+        # Get Baseline Prediction
+        # We use a standard threshold; adjust based on your needs
+        b_res = baseline.route_request(prompt, threshold=0.5)
+        
+        # Get LLM Prediction
+        l_res = llm_router.route_request(prompt, domain)
+        
+        # Log results
+        results.append({
+            "prompt_id": row.get('prompt_id', idx),
+            "domain": domain,
+            "prompt": prompt,
+            "gold_label": gold_label,
+            "baseline_pred": b_res['predicted_label'],
+            "llm_pred": l_res.get('predicted_label', 'Error'),
+            "baseline_score": b_res['confidence_score'],
+            "llm_conf": l_res.get('confidence_level', 'Low'),
+            "llm_reason": l_res.get('short_reason', ''),
+            "baseline_match": b_res['matched_example']
+        })
 
-    # 8. Export the side-by-side comparison
-    comparison_df.to_csv(output_csv_path, index=False)
-    print(f"\nFull side-by-side analysis saved to: {output_csv_path}")
+    # Create Comparison DataFrame
+    comp_df = pd.DataFrame(results)
+    
+    # Add Boolean correctness columns
+    comp_df['baseline_correct'] = comp_df['baseline_pred'] == comp_df['gold_label']
+    comp_df['llm_correct'] = comp_df['llm_pred'] == comp_df['gold_label']
+    comp_df['agreement'] = comp_df['baseline_pred'] == comp_df['llm_pred']
+
+    # Save to CSV
+    comp_df.to_csv(output_csv, index=False)
+    print(f"\nDetailed results saved to: {output_csv}")
+
+    # --- Summary Statistics ---
+    print("\n" + "="*30)
+    print("      PERFORMANCE SUMMARY")
+    print("="*30)
+    
+    b_acc = accuracy_score(comp_df['gold_label'], comp_df['baseline_pred'])
+    l_acc = accuracy_score(comp_df['gold_label'], comp_df['llm_pred'])
+    agreement = comp_df['agreement'].mean()
+
+    print(f"Baseline Accuracy: {b_acc:.2%}")
+    print(f"LLM Router Accuracy: {l_acc:.2%}")
+    print(f"Inter-Router Agreement: {agreement:.2%}")
+    
+    # Discordance Analysis: Where LLM wins vs where Baseline wins
+    llm_only_correct = comp_df[(comp_df['llm_correct']) & (~comp_df['baseline_correct'])]
+    baseline_only_correct = comp_df[(~comp_df['llm_correct']) & (comp_df['baseline_correct'])]
+    
+    print(f"\nLLM was correct when Baseline failed: {len(llm_only_correct)} times")
+    print(f"Baseline was correct when LLM failed: {len(baseline_only_correct)} times")
+    
+    if not llm_only_correct.empty:
+        print("\nTop LLM Wins (Semantic Reasoning):")
+        print(llm_only_correct[['prompt', 'gold_label', 'baseline_pred', 'llm_reason']].head(3))
+
+def main():
+    # 1. Load the Baseline
+    # Note: EmbeddingRouter needs to fit the data to create its vector database
+    print("Initializing Baseline...")
+    baseline = EmbeddingRouter()
+    baseline.fit(DATA_PATH)
+
+    # 2. Load the LLM Router
+    print("Initializing LLM Router...")
+    llm = LLMRouterV1(model_name='llama3', taxonomy_path=TAXONOMY_PATH)
+
+    # 3. Load Benchmark
+    df = pd.read_csv(DATA_PATH)
+    comparison_results = []
+
+    print(f"Comparing {len(df)} samples...")
+    for _, row in df.iterrows():
+        prompt = row['prompt']
+        domain = row['domain']
+        
+        # Run both
+        b_out = baseline.route_request(prompt)
+        l_out = llm.route_request(prompt, domain)
+        
+        comparison_results.append({
+            "prompt": prompt,
+            "actual": row['label'],
+            "baseline_pred": b_out['predicted_label'],
+            "llm_pred": l_out.get('predicted_label'),
+            "baseline_conf": b_out['confidence_score'],
+            "llm_reason": l_out.get('short_reason')
+        })
+
+    # 4. Export to Results folder
+    results_df = pd.DataFrame(comparison_results)
+    results_df.to_csv(OUTPUT_PATH, index=False)
+    print(f"Done! Report saved to {OUTPUT_PATH}")
 
 if __name__ == "__main__":
-    # Update these paths to point to where your generated results live
-    BASELINE_FILE = "../../results/phase_1/baseline_results_final.csv" 
-    LLM_FILE = "../../Data/v1_llm_results.csv"
-    OUTPUT_FILE = "../../results/router_head_to_head_comparison.csv"
-    
-    # Create directories if they don't exist
-    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
-    
-    compare_models(BASELINE_FILE, LLM_FILE, OUTPUT_FILE)
+    main()
