@@ -48,7 +48,11 @@ Do not include any markdown formatting, conversational text, or explanations out
             "model": self.model_name,
             "prompt": full_prompt,
             "stream": False,
-            "format": "json" 
+            "format": "json", 
+            "options": {            
+                "temperature": 0.0, 
+                "seed": 42
+            }
         }
         
         try:
