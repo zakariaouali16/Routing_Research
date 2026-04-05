@@ -241,7 +241,7 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v1.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v0_pilot_benchmark.csv"))
+    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_pilot_benchmark.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
     router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
