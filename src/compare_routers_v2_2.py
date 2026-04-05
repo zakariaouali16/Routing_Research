@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, classification_report
 
 # Import your classes
 from baselines.baseline_embedding_router import EmbeddingRouter
-from llm_router_v2 import LLMRouterV1
+from llm_router_v2_3 import LLMRouterV1
 
 def clean_label(label):
     """Standardizes labels for fair comparison."""
@@ -18,7 +18,7 @@ def run_comparison():
     BASE_DIR = os.path.dirname(CURRENT_DIR)
     
     DATA_PATH = os.path.join(BASE_DIR, "Data", "v0_pilot_benchmark.csv")
-    TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v1.json")
+    TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v2.json")
     
     RESULTS_DIR = os.path.join(BASE_DIR, "results")
     os.makedirs(RESULTS_DIR, exist_ok=True)
