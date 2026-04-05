@@ -6,7 +6,7 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class LLMRouterV1:
-    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v1.json'):
+    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v2.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
         
@@ -32,7 +32,7 @@ Your task is to classify the user's request into EXACTLY ONE of the following ro
 Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
 {{
     "needs_clarification": true or false,
-    "short_reason": "One short sentence explaining the core issue in the prompt",
+    "short_reason": "One short sentence explaining the core issue in the prompt, If you cannot find at least two specific keywords relating to a category, default to 'Clarification Needed'.",
     "predicted_label": "The exact name of the label from the list above",
     "confidence_level": "High, Medium, or Low"
 }}
