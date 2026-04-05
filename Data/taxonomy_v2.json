@@ -8,11 +8,7 @@
         {
           "name": "Clarification Needed",
           "definition": "The user request is too vague, lacks necessary context, or contains contradictory information that prevents accurate routing to a specialized domain."
-        }//,
-        //{
-          //"name": "Out of Scope",
-          //"definition": "The request is clearly understood but falls outside the supported domains of Education or Healthcare."
-        //}
+        }
       ]
     },
     "education": {
