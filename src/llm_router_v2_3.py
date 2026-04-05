@@ -29,10 +29,32 @@ Your task is to classify the user's request into EXACTLY ONE of the following ro
 
 {labels_text}
 
+CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
+1. If the user's request is one sentence, lacks a clear verb/noun, or is highly ambiguous (e.g., "I need help", "Is it done?"), you MUST classify it as 'Clarification Needed'. Do not attempt to guess the department.
+2. If you cannot find at least two specific keywords relating to a specific category, default to 'Clarification Needed'.
+3. Do not assume 'help' means 'emergency' unless words like 'pain', 'bleeding', or 'urgent' are mentioned.
+
+FEW-SHOT EXAMPLES:
+User: "Is it done yet?"
+{{
+    "needs_clarification": true, 
+    "short_reason": "Prompt is too short and lacks specific keywords regarding what 'it' is.", 
+    "predicted_label": "Clarification Needed", 
+    "confidence_level": "High"
+}}
+
+User: "I need to talk to someone about yesterday."
+{{
+    "needs_clarification": true, 
+    "short_reason": "Vague timeframe reference without specific intent or department mentioned.", 
+    "predicted_label": "Clarification Needed", 
+    "confidence_level": "High"
+}}
+
 Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
 {{
     "needs_clarification": true or false,
-    "short_reason": "One short sentence explaining the core issue in the prompt.",
+    "short_reason": "One short sentence explaining the core issue in the prompt",
     "predicted_label": "The exact name of the label from the list above",
     "confidence_level": "High, Medium, or Low"
 }}
