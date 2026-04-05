@@ -18,7 +18,7 @@ def run_comparison():
     BASE_DIR = os.path.dirname(CURRENT_DIR)
     
     DATA_PATH = os.path.join(BASE_DIR, "Data", "v0_pilot_benchmark.csv")
-    TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v1.json")
+    TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v2.json")
     
     RESULTS_DIR = os.path.join(BASE_DIR, "results")
     os.makedirs(RESULTS_DIR, exist_ok=True)
