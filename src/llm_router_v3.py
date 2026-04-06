@@ -15,35 +15,37 @@ class LLMRouterV1:
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
 
-    def build_system_prompt(self, domain):
-        """Constructs the prompt using the specific domain labels from the taxonomy."""
-        domain_key = domain.lower() 
-        if domain_key not in self.taxonomy['domains']:
-            raise ValueError(f"Domain '{domain}' not found in taxonomy.")
-            
-        labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
-        
-        system_prompt = f"""You are an expert routing agent for a {domain_key} support system.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
+    def build_system_prompt(self):
+        """Constructs a unified prompt using all domains and labels from the taxonomy."""
+        taxonomy_text = ""
+        for domain_name, domain_data in self.taxonomy['domains'].items():
+            taxonomy_text += f"\nDOMAIN: {domain_name.capitalize()}\n"
+            taxonomy_text += f"Description: {domain_data['domain_description']}\n"
+            for label in domain_data['labels']:
+                taxonomy_text += f"  - {label['name']}: {label['definition']}\n"
 
-{labels_text}
+        system_prompt = f"""You are an expert master routing agent for a multi-domain support system.
+Your task is to first determine the correct DOMAIN for the user's request, and then classify it into EXACTLY ONE of the corresponding routing categories.
+
+{taxonomy_text}
 
 Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
 {{
+    "domain": "The exact name of the domain (Education or Healthcare)",
+    "predicted_label": "The exact name of the label from the chosen domain",
     "needs_clarification": true or false,
-    "short_reason": "One short sentence explaining the core issue in the prompt",
-    "predicted_label": "The exact name of the label from the list above",
-    "confidence_level": "High, Medium, or Low" (use true if the prompt is too ambiguous, vague, or missing critical details)
+    "clarifying_question": "If needs_clarification is true, write a specific question to ask the user to resolve the ambiguity. If false, output null.",
+    "short_reason": "One short sentence explaining why you chose this domain and route",
+    "confidence_level": "High, Medium, or Low"
 }}
 
 Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
 """
         return system_prompt
 
-    def route_request(self, user_prompt, domain):
+    def route_request(self, user_prompt):
         """Sends the prompt to the local Ollama model and parses the JSON response."""
-        system_prompt = self.build_system_prompt(domain)
+        system_prompt = self.build_system_prompt()
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
         
         payload = {
@@ -65,15 +67,56 @@ Do not include any markdown formatting, conversational text, or explanations out
             return json.loads(result_text)
             
         except Exception as e:
-            # Using tqdm.write prevents the print statement from breaking the progress bar visually
-            tqdm.write(f"Error calling LLM for prompt: '{user_prompt[:30]}...' -> {e}")
             return {
+                "domain": "Error",
                 "predicted_label": "Error",
                 "confidence_level": "Low",
                 "short_reason": f"API Error: {str(e)}",
-                "needs_clarification": True
+                "needs_clarification": True,
+                "clarifying_question": "I encountered a system error. Could you try asking again?"
             }
-
+    def interactive_chat(self):
+        """Runs an interactive session where the LLM auto-detects the domain and asks for clarification."""
+        print(f"\n=== Starting Master Dispatch Router ===")
+        print("Type 'exit' or 'quit' to stop.\n")
+        
+        while True:
+            user_input = input("\nUser Request: ")
+            if user_input.lower() in ['exit', 'quit']:
+                print("Exiting interactive chat...")
+                break
+                
+            current_prompt = user_input
+            
+            while True:
+                response = self.route_request(current_prompt)
+                
+                needs_clar = response.get("needs_clarification", False)
+                pred_label = response.get("predicted_label", "")
+                
+                # If the LLM flags ambiguity, ask the user for more info
+                if needs_clar or pred_label == "Clarification Needed":
+                    question = response.get("clarifying_question") 
+                    if not question:
+                        question = "Could you please provide more context or details?"
+                        
+                    print(f"\n🤖 Agent (Needs Context): {question}")
+                    
+                    follow_up = input("User: ")
+                    if follow_up.lower() in ['exit', 'quit']:
+                        return
+                    
+                    # Append the new context to the prompt
+                    current_prompt = f"{current_prompt}\nUser Follow-up: {follow_up}"
+                else:
+                    # Successfully routed!
+                    print(f"\n✅ Agent (Successfully Routed):")
+                    print(f"   - Detected Domain: {response.get('domain', 'Unknown').upper()}")
+                    print(f"   - Routed to: {pred_label}")
+                    print(f"   - Confidence: {response.get('confidence_level')}")
+                    print(f"   - Reason: {response.get('short_reason')}")
+                    break
+    
     def evaluate_benchmark(self, input_csv, output_csv):
         """Runs the LLM over the entire pilot benchmark and saves the results."""
         print(f"Loading benchmark data from {input_csv}...")
@@ -149,14 +192,10 @@ Do not include any markdown formatting, conversational text, or explanations out
 # ==========================================
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Notice we only go up one level (..) from 'src' to get to the 'Data' folder
     taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v1.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v0_pilot_benchmark.csv"))
-    output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
-    # Initialize the router WITH the correct path
+    # Initialize the router
     router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
     
-    # Run the benchmark
-    router.evaluate_benchmark(benchmark_path, output_path)
+    # Run the interactive master dispatcher
+    router.interactive_chat()
