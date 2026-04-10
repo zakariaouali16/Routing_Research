@@ -17,13 +17,23 @@ def run_comparison():
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     BASE_DIR = os.path.dirname(CURRENT_DIR)
     
-    DATA_PATH = os.path.join(BASE_DIR, "Data", "v0_pilot_benchmark.csv")
+    DATA_PATH = os.path.join(BASE_DIR, "Data", "v1_1_pilot_benchmark.csv")
     TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v2.json")
     
     RESULTS_DIR = os.path.join(BASE_DIR, "results")
     os.makedirs(RESULTS_DIR, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = os.path.join(RESULTS_DIR, f"benchmark_results_{timestamp}.csv")
+    
+    # 1. Extract the taxonomy name
+    taxonomy_name = os.path.splitext(os.path.basename(TAXONOMY_PATH))[0]
+    
+    # 2. Get the LLM router name 
+    router_name = LLMRouterV1.__name__
+    
+    # 3. Format the new output file name specifically for the LLM router
+    # Example output: LLMRouterV1_taxonomy_v2_20260405_153153.csv
+    file_name = f"benchmark_{router_name}_{taxonomy_name}_{timestamp}.csv"
+    output_file = os.path.join(RESULTS_DIR, file_name)
 
     # 2. Load data
     df = pd.read_csv(DATA_PATH)
