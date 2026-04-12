@@ -1,0 +1,147 @@
+{
+    "project": "Reliable LLM Agents for Routing and Triage",
+    "version": "3.1",
+    "safety_overrides": {
+        "description": "Deterministic or strongly rule-based high-consequence cases that bypass normal semantic routing.",
+        "categories": [
+            {
+                "name": "Education Sensitive Escalation",
+                "definition": "Requests or disclosures involving academic misconduct, threats, harassment, or other sensitive situations that require escalation rather than ordinary routing.",
+                "triggers": [
+                    "plagiarism",
+                    "cheating",
+                    "leaked exam",
+                    "bought essay",
+                    "harassment",
+                    "threat",
+                    "impersonation"
+                ]
+            },
+            {
+                "name": "Healthcare Urgent Symptoms Disclaimer",
+                "definition": "Messages describing possible urgent symptoms or acute distress that should trigger a procedural urgent-care disclaimer and escalation guidance, not medical advice.",
+                "triggers": [
+                    "can't breathe",
+                    "chest pain",
+                    "bleeding heavily",
+                    "passed out",
+                    "overdose",
+                    "seizure",
+                    "suicidal"
+                ]
+            }
+        ]
+    },
+    "gating_outcomes": {
+        "description": "Non-routing outcomes used when the input should not be assigned to a semantic routing label.",
+        "outcomes": [
+            {
+                "name": "Clarification Needed",
+                "definition": "The request is potentially in scope, but lacks enough information to satisfy the required slots of any routing label."
+            },
+            {
+                "name": "Out-of-Scope",
+                "definition": "The request is clear enough to interpret, but does not belong to the education or non-clinical healthcare domains."
+            }
+        ]
+    },
+    "domains": {
+        "education": {
+            "domain_description": "Computing/programming-related student support.",
+            "labels": [
+                {
+                    "name": "Concept Explanation",
+                    "definition": "Requests to explain a computing, programming, or technical concept without diagnosing a specific code failure.",
+                    "required_slots": [
+                        "Clearly defined concept or topic"
+                    ]
+                },
+                {
+                    "name": "Debugging & Code Troubleshooting",
+                    "definition": "Requests to identify, explain, or fix a specific code, environment, or execution problem using concrete technical details.",
+                    "required_slots": [
+                        "Error message, code snippet, or clearly described technical issue"
+                    ]
+                },
+                {
+                    "name": "Assignment & Grading Policy",
+                    "definition": "Questions about assignment requirements, rubrics, grading rules, formatting, submission rules, or related course policy.",
+                    "required_slots": [
+                        "Assignment, course, or policy context",
+                        "Specific policy or grading question"
+                    ]
+                },
+                {
+                    "name": "Exam Logistics & Preparation",
+                    "definition": "Questions about exam format, allowed materials, study resources, coverage, or assessment preparation.",
+                    "required_slots": [
+                        "Exam, quiz, or assessment context",
+                        "Specific logistics or preparation question"
+                    ]
+                },
+                {
+                    "name": "Course Logistics & Resources",
+                    "definition": "Questions about course platforms, software setup, access to materials, lecture schedules, labs, or course resources.",
+                    "required_slots": [
+                        "Platform, tool, material, or course logistics context"
+                    ]
+                },
+                {
+                    "name": "Office Hours / Instructor Access",
+                    "definition": "Requests about how, when, or where to contact the instructor or TA, including office hours and availability.",
+                    "required_slots": [
+                        "Instructor, TA, or office-hours access context"
+                    ]
+                }
+            ]
+        },
+        "healthcare": {
+            "domain_description": "Non-clinical, non-diagnostic healthcare support.",
+            "labels": [
+                {
+                    "name": "Scheduling & Appointments",
+                    "definition": "Requests to book, cancel, reschedule, or check the status of an appointment.",
+                    "required_slots": [
+                        "Appointment-related action",
+                        "Scheduling context"
+                    ]
+                },
+                {
+                    "name": "Insurance & Billing",
+                    "definition": "Questions about insurance coverage, claims, copays, billing, payments, or charge explanations.",
+                    "required_slots": [
+                        "Insurance, claim, bill, payment, or charge context"
+                    ]
+                },
+                {
+                    "name": "Medical Records",
+                    "definition": "Requests about obtaining, sending, correcting, or locating medical records or vaccine records.",
+                    "required_slots": [
+                        "Record type or record-related request context"
+                    ]
+                },
+                {
+                    "name": "Clinic / Specialty Directory",
+                    "definition": "Requests to find the appropriate clinic type, department, or specialty for a non-urgent administrative need.",
+                    "required_slots": [
+                        "Clinic, department, specialty, or service-finding context"
+                    ]
+                },
+                {
+                    "name": "Pharmacy & Refill Process",
+                    "definition": "Administrative questions about prescription refills, transfers, pickup, or pharmacy process.",
+                    "required_slots": [
+                        "Prescription, refill, transfer, pickup, or pharmacy-process context"
+                    ]
+                },
+                {
+                    "name": "Facility & General Information",
+                    "definition": "Questions about clinic hours, location, parking, contact information, or visitor policy.",
+                    "required_slots": [
+                        "Facility, clinic, or service context"
+                    ]
+                }
+            ]
+        }
+    }
+}
