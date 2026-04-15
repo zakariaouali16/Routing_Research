@@ -4,6 +4,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 class EmbeddingRouter:
     def __init__(self, model_name='all-MiniLM-L6-v2'):
         print(f"Loading embedding model: {model_name}...")
@@ -16,18 +17,24 @@ class EmbeddingRouter:
         """Loads the spreadsheet and embeds the benchmark prompts."""
         print(f"Loading data from {csv_path}...")
         df = pd.read_csv(csv_path)
-        
-        # Ensure the columns exist
-        if 'prompt' not in df.columns or 'label' not in df.columns:
-            raise ValueError("CSV must contain 'prompt' and 'label' columns.")
-        
-        self.reference_prompts = df['prompt'].tolist()
-        self.reference_labels = df['label'].tolist()
-        
-        # ADD THIS LINE: Store the ambiguity flag
-        self.reference_ambiguous = df['is_ambiguous'].tolist() if 'is_ambiguous' in df.columns else [False] * len(df)
-        
-        print(f"Embedding {len(self.reference_prompts)} prompts. This might take a moment...")
+
+        # Updated column names for v3.3 taxonomy benchmark
+        if 'user_prompt' not in df.columns or 'gold_outcome' not in df.columns:
+            raise ValueError(
+                "CSV must contain 'user_prompt' and 'gold_outcome' columns.")
+
+        # Clean up any surrounding quotes from user_prompt
+        df['user_prompt'] = df['user_prompt'].str.strip('"')
+
+        self.reference_prompts = df['user_prompt'].tolist()
+        self.reference_labels = df['gold_outcome'].tolist()
+
+        # Store the ambiguity flag
+        self.reference_ambiguous = df['is_ambiguous'].tolist(
+        ) if 'is_ambiguous' in df.columns else [False] * len(df)
+
+        print(
+            f"Embedding {len(self.reference_prompts)} prompts. This might take a moment...")
         self.reference_embeddings = self.model.encode(self.reference_prompts)
         print("Done! The router is ready.")
 
@@ -37,20 +44,22 @@ class EmbeddingRouter:
         and returns the predicted label along with clarification flags.
         """
         if self.reference_embeddings is None:
-            raise ValueError("You must call .fit() with a CSV file before routing requests.")
+            raise ValueError(
+                "You must call .fit() with a CSV file before routing requests.")
 
         # 1. Embed the incoming request
         new_embedding = self.model.encode([new_prompt])
 
         # 2. Compare against all known benchmark prompts
-        cosine_scores = cosine_similarity(new_embedding, self.reference_embeddings)[0]
+        cosine_scores = cosine_similarity(
+            new_embedding, self.reference_embeddings)[0]
 
         # 3. Find the single best match
         best_match_idx = int(np.argmax(cosine_scores))
         best_score = cosine_scores[best_match_idx]
         predicted_label = self.reference_labels[best_match_idx]
         matched_example = self.reference_prompts[best_match_idx]
-        
+
         # 4. Check the ambiguous flag of the matched example
         # Handle string 'TRUE'/'FALSE' or actual boolean True/False
         ambiguous_val = self.reference_ambiguous[best_match_idx]
@@ -62,8 +71,8 @@ class EmbeddingRouter:
         # 5. Apply the smarter uncertainty rule
         # Flag if: score is too low OR the matched label is "Clarification Needed" OR the match is known to be ambiguous
         needs_clarification = (
-            bool(best_score < threshold) or 
-            predicted_label == "Clarification Needed" or 
+            bool(best_score < threshold) or
+            predicted_label == "Clarification Needed" or
             matched_is_ambiguous
         )
 
@@ -73,32 +82,33 @@ class EmbeddingRouter:
             "matched_example": matched_example,
             "needs_clarification": needs_clarification
         }
-    
+
+
 # ==========================================
 # How to use the router
 # ==========================================
 if __name__ == "__main__":
     # Initialize the router
     router = EmbeddingRouter()
-    
+
     # Dynamically build the path to the data folder
     # 1. Get the directory where this script is located (src/baselines/)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    
+
     # 2. Go up two levels (../../) and into the data folder
-    csv_path = os.path.join(script_dir, "../../data/v0_pilot_benchmark.csv")
-    
-    # Load your REAL labeled spreadsheet using the dynamic path
-    router.fit(csv_path) 
+    csv_path = os.path.join(script_dir, "../../data/testing_benchmark.csv")
+
+    # Load your labeled benchmark using the dynamic path
+    router.fit(csv_path)
 
     # Test it with a new, unseen request
     test_prompt = "Can you help me figure out why my python code keeps throwing an index out of bounds error?"
-    
+
     print(f"\nIncoming Request: '{test_prompt}'")
-    
+
     # Route it!
     result = router.route_request(test_prompt, threshold=0.4)
-    
+
     print("\nRouting Decision:")
     for key, value in result.items():
         print(f"- {key}: {value}")
