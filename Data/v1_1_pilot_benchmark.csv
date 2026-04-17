@@ -1,4 +1,4 @@
-prompt_id,domain,user_prompt,label,is_ambiguous,risk_level,annotator_notes
+prompt_id,domain,user_prompt,gold_outcome,is_ambiguous,risk_level,annotator_notes
 EDU-001,Education,"""Can you explain the difference between a list and a tuple in Python?""",Concept Explanation,False,Low,"Standard syntax theory question; no code provided. [cite: 1]"
 EDU-002,Education,"""What exactly does 'Big O Notation' measure in an algorithm?""",Concept Explanation,False,Low,"Theoretical request regarding complexity analysis. [cite: 2]"
 EDU-003,Education,"""What is the difference between an Interface and an Abstract Class in Java?""",Concept Explanation,False,Low,"Specific theoretical question for Java. [cite: 3]"
