@@ -2,14 +2,14 @@ import os
 import json
 import pandas as pd
 import requests
-from tqdm import tqdm
+import re
+from tqdm import tqdm  # Added tqdm for the progress bar
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from stepARouter import StepARouter
 
 class LLMRouterV1:
-    # Updated default to taxonomy_v3.json
-    def __init__(self, small_model='llama3:8b', large_model='llama3:70b', taxonomy_path='../../Data/taxonomy_v3.json', confidence_threshold=0.85):
-        self.small_model = small_model
-        self.large_model = large_model
-        self.confidence_threshold = confidence_threshold
+    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v2.json'):
+        self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
         
         # Load the taxonomy
@@ -17,11 +17,70 @@ class LLMRouterV1:
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
 
-    def _call_api(self, model_name, prompt):
-        """Helper function to handle Ollama API calls safely."""
+        # Build the Step A Router tool
+        self.step_a_router = StepARouter(model_name=model_name)
+
+    def build_system_prompt(self):
+        """Constructs a unified prompt using all domains and labels from the taxonomy."""
+        taxonomy_text = ""
+        for domain_name, domain_data in self.taxonomy['domains'].items():
+            taxonomy_text += f"\nDOMAIN: {domain_name.capitalize()}\n"
+            taxonomy_text += f"Description: {domain_data['domain_description']}\n"
+            for label in domain_data['labels']:
+                taxonomy_text += f"  - {label['name']}: {label['definition']}\n"
+
+        system_prompt = f"""You are an expert master routing agent for a multi-domain support system.
+Your task is to first determine the correct DOMAIN for the user's request, and then classify it into EXACTLY ONE of the corresponding routing categories.
+
+{taxonomy_text}
+
+Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
+{{
+    "domain": "The exact name of the domain (Education or Healthcare)",
+    "predicted_label": "The exact name of the label from the chosen domain",
+    "needs_clarification": true or false,
+    "clarifying_question": "If needs_clarification is true, write a specific question to ask the user to resolve the ambiguity. If false, output null.",
+    "short_reason": "One short sentence explaining why you chose this domain and route",
+    "confidence_level": "High, Medium, or Low"
+}}
+
+Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
+"""
+        return system_prompt
+
+    def route_request(self, user_prompt):
+        # ==========================================
+        # 1. RAPID EMERGENCY HEURISTIC CHECK
+        # ==========================================
+        emergency_keywords = [
+            r"\bheart attack\b", r"\bchest pain\b", r"\bcan'?t breathe\b",
+            r"\bsuicid(e|al)\b", r"\boverdose\b", r"\bbleeding profusely\b",
+            r"\b911\b", r"\bemergency\b", r"\bkill myself\b"
+        ]
+        
+        # Compile a fast, case-insensitive regex search
+        emergency_pattern = re.compile("|".join(emergency_keywords), re.IGNORECASE)
+        
+        # If a match is found, bypass the LLM entirely and return the route instantly
+        if emergency_pattern.search(user_prompt):
+            return {
+                "domain": "healthcare",
+                "predicted_label": "Urgent Escalation (Emergency Services)",
+                "needs_clarification": False,
+                "clarifying_question": None,
+                "short_reason": "SYSTEM OVERRIDE: High-risk emergency keywords detected.",
+                "confidence_level": "High"
+            }
+
+        # ==========================================
+        # 2. STANDARD LLM ROUTING (If no emergency)
+        # ==========================================
+        system_prompt = self.build_system_prompt()
+        full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
+        
         payload = {
-            "model": model_name,
-            "prompt": prompt,
+            "model": self.model_name,
+            "prompt": full_prompt,
             "stream": False,
             "format": "json", 
             "options": {            
@@ -29,188 +88,74 @@ class LLMRouterV1:
                 "seed": 42
             }
         }
+        
         try:
             response = requests.post(self.api_url, json=payload)
             response.raise_for_status()
-            return json.loads(response.json().get("response", "{}"))
+            
+            result_text = response.json().get("response", "{}")
+            return json.loads(result_text)
+            
         except Exception as e:
-            tqdm.write(f"API Error with {model_name} -> {e}")
-            return None
+            return {
+                "domain": "Error",
+                "predicted_label": "Error",
+                "confidence_level": "Low",
+                "short_reason": f"API Error: {str(e)}",
+                "needs_clarification": True,
+                "clarifying_question": "I encountered a system error. Could you try asking again?"
+            }
+    def interactive_chat(self):
+        """Runs an interactive session where the LLM auto-detects the domain and asks for clarification."""
+        print(f"\n=== Starting Master Dispatch Router ===")
+        print("Type 'exit' or  'quit' to stop.\n")
 
-    def _get_all_categories_text(self, domain_key):
-        """Helper to extract domain labels, safety overrides, and gating outcomes."""
-        # 1. Domain Labels
-        labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+        # Memory for follow-ups
+        context = ""
         
-        # 2. Safety Overrides
-        safety = self.taxonomy.get('safety_overrides', {}).get('categories', [])
-        safety_text = "\n".join([f"- {s['name']}: {s['definition']} (Triggers: {', '.join(s['triggers'])})" for s in safety])
-        
-        # 3. Gating Outcomes
-        gating = self.taxonomy.get('gating_outcomes', {}).get('outcomes', [])
-        gating_text = "\n".join([f"- {g['name']}: {g['definition']}" for g in gating])
-        
-        return labels_text, safety_text, gating_text
+        while True:
+            prompt_label = "Follow-up Request: " if context else "User Request: "
+            user_input = input(f"\n{prompt_label}")
 
-    def build_system_prompt(self, domain):
-        """Constructs the prompt using all aspects of taxonomy_v3."""
-        domain_key = domain.lower() 
-        if domain_key not in self.taxonomy['domains']:
-            raise ValueError(f"Domain '{domain}' not found in taxonomy.")
+            # Stop the loop
+            if user_input.lower() in ['exit', 'quit']: 
+              print("Goodbye! 👋")
+              break
+
+            # Combine new answer with previous context 
+            full_request = f"{context} {user_input}".strip()
+        
+            # --- STEP A: CLARIFY VS ROUTE ---
+            triage_result = self.step_a_router.check_request(full_request)
             
-        labels_text, safety_text, gating_text = self._get_all_categories_text(domain_key)
-        
-        system_prompt = f"""You are an expert routing agent for a {domain_key} support system.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories. 
+            if not triage_result.get("is_actionable"):
+                # If Step A fails, ask the clarifying question immediately
+                print(f"🤖 Clarification Needed: {triage_result.get('clarifying_question')}")
+                context = full_request # Save the context so we can add to it next time
+                continue # Loop back to get more input
+                
+            # --- STEP B: TAXONOMY ROUTING ---
+            # Only if Step A is successful, run your existing heavy taxonomy logic
+            response = self.route_request(full_request)
+            print(f"✅ Routed to: {response.get('predicted_label')}")
 
-SAFETY OVERRIDES (HIGHEST PRIORITY):
-{safety_text}
-
-GATING OUTCOMES:
-{gating_text}
-
-DOMAIN LABELS:
-{labels_text}
-
-CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
-1. If the user's request is one sentence, lacks a clear verb/noun, or is highly ambiguous (e.g., "I need help", "Is it done?"), you MUST classify it as 'Clarification Needed'. Do not attempt to guess the department.
-2. If you cannot find at least two specific keywords relating to a specific category, default to 'Clarification Needed'.
-3. Do not assume 'help' means 'emergency' unless words like 'pain', 'bleeding', or 'urgent' are mentioned.
-
-FEW-SHOT EXAMPLES:
-User: "Is it done yet?"
-{{
-    "needs_clarification": true, 
-    "short_reason": "Prompt is too short and lacks specific keywords regarding what 'it' is.", 
-    "predicted_label": "Clarification Needed", 
-    "confidence_level": 0.95
-}}
-
-User: "I need to talk to someone about yesterday."
-{{
-    "needs_clarification": true, 
-    "short_reason": "Vague timeframe reference without specific intent or department mentioned.", 
-    "predicted_label": "Clarification Needed", 
-    "confidence_level": 0.88
-}}
-
-Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
-{{
-    "needs_clarification": true or false,
-    "short_reason": "One short sentence explaining the core issue in the prompt",
-    "predicted_label": "The exact name of the label from the list above",
-    "confidence_level": A float between 0.0 and 1.0 representing your confidence in this prediction
-}}
-
-Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
-"""
-        return system_prompt
-
-    def verify_prediction(self, user_prompt, domain, proposed_label, active_model):
-        """A secondary lightweight verification step to act as a QA auditor."""
-        domain_key = domain.lower() 
-        labels_text, safety_text, gating_text = self._get_all_categories_text(domain_key)
-        
-        verification_prompt = f"""You are a strict QA auditor for a {domain_key} support system.
-A previous routing agent classified a user's request, and your job is to verify if it is accurate based on the taxonomy.
-
-VALID CATEGORIES:
-{safety_text}
-{gating_text}
-{labels_text}
-
-USER REQUEST: "{user_prompt}"
-PROPOSED LABEL: "{proposed_label}"
-
-Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST.
-Output your response ONLY as a valid JSON object with these exact keys:
-{{
-    "is_correct": true or false,
-    "verified_label": "If is_correct is true, output the PROPOSED LABEL. If false, output the corrected valid category name from the VALID CATEGORIES list.",
-    "qa_reason": "One short sentence explaining why you confirmed or corrected the label."
-}}
-
-Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
-"""
-        result = self._call_api(active_model, verification_prompt)
-        if not result:
-            return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
-        return result
-
-    def route_request(self, user_prompt, domain):
-        """Sends prompt to small LLM, checks confidence, escalates to large LLM if needed, then verifies."""
-        system_prompt = self.build_system_prompt(domain)
-        full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
-        
-        # --- PASS 1: Initial Generation (Small Model) ---
-        active_model = self.small_model
-        initial_output = self._call_api(active_model, full_prompt)
-        
-        if not initial_output:
-            return self._format_error("API Error during initial routing")
-
-        # Safely parse confidence level as a float
-        try:
-            confidence = float(initial_output.get("confidence_level", 0.0))
-        except ValueError:
-            confidence = 0.0
-
-        # --- ESCALATION: Check Confidence Gate ---
-        if confidence < self.confidence_threshold:
-            tqdm.write(f"Low confidence ({confidence:.2f}) from {active_model}. Escalating to {self.large_model}...")
-            active_model = self.large_model
-            escalated_output = self._call_api(active_model, full_prompt)
-            
-            if escalated_output:
-                initial_output = escalated_output
-                try:
-                    confidence = float(initial_output.get("confidence_level", 0.0))
-                except ValueError:
-                    confidence = 0.0
-
-        initial_label = initial_output.get("predicted_label", "")
-
-        # --- PASS 2: Lightweight Verification ---
-        qa_output = self.verify_prediction(user_prompt, domain, initial_label, active_model)
-        
-        final_label = qa_output.get("verified_label", initial_label)
-        
-        return {
-            "initial_label": initial_label,
-            "predicted_label": final_label,
-            "confidence_level": confidence,
-            "model_used": active_model, 
-            "needs_clarification": initial_output.get("needs_clarification", False),
-            "short_reason": initial_output.get("short_reason", ""),
-            "was_corrected": not qa_output.get("is_correct", True),
-            "qa_reason": qa_output.get("qa_reason", "")
-        }
-
-    def _format_error(self, message):
-        return {
-            "initial_label": "Error",
-            "predicted_label": "Error",
-            "confidence_level": 0.0,
-            "model_used": "None",
-            "short_reason": message,
-            "needs_clarification": True,
-            "was_corrected": False,
-            "qa_reason": "N/A"
-        }
-
+            context = ""
+    
     def evaluate_benchmark(self, input_csv, output_csv):
         """Runs the LLM over the entire pilot benchmark and saves the results."""
         print(f"Loading benchmark data from {input_csv}...")
         df = pd.read_csv(input_csv)
         results = []
         
-        print(f"Routing {len(df)} requests. Escalation threshold is {self.confidence_threshold}...\n")
+        print(f"Routing {len(df)} requests. This will take a few minutes depending on your hardware...\n")
         
+        # --- ADDED TQDM PROGRESS BAR HERE ---
+        # Wrapping df.iterrows() with tqdm automatically draws the progress bar
         for index, row in tqdm(df.iterrows(), total=len(df), desc="Processing Requests", unit="prompt"):
             prompt_text = row['prompt']
             domain = row['domain']
             
+            # Ask the LLM to route it
             llm_output = self.route_request(prompt_text, domain)
             
             result_row = {
@@ -219,65 +164,62 @@ Do not include any markdown formatting, conversational text, or explanations out
                 "user_prompt": prompt_text,
                 "gold_label": row.get('label', ''),
                 "is_ambiguous_gold": row.get('is_ambiguous', ''),
-                "initial_predicted_label": llm_output.get("initial_label", ""),
-                "final_predicted_label": llm_output.get("predicted_label", ""),
-                "confidence_level": llm_output.get("confidence_level", 0.0),
-                "model_used": llm_output.get("model_used", ""),
+                "predicted_label": llm_output.get("predicted_label", ""),
+                "confidence_level": llm_output.get("confidence_level", ""),
                 "needs_clarification_pred": llm_output.get("needs_clarification", False),
-                "short_reason": llm_output.get("short_reason", ""),
-                "was_corrected_by_qa": llm_output.get("was_corrected", False),
-                "qa_reason": llm_output.get("qa_reason", "")
+                "short_reason": llm_output.get("short_reason", "")
             }
             results.append(result_row)
             
+        # Save to the new CSV
         results_df = pd.DataFrame(results)
         results_df.to_csv(output_csv, index=False)
         print(f"\nDone! Results saved to {output_csv}\n")
         
-        # Ratings block
-        correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
+        # ==========================================
+        # ADVANCED ACCURACY RATINGS
+        # ==========================================
+        
+        # 1. Overall Accuracy
+        correct = (results_df['gold_label'] == results_df['predicted_label']).sum()
         total = len(results_df)
         print("="*50)
-        print(f"OVERALL POST-VERIFICATION ACCURACY: {correct}/{total} ({(correct/total)*100:.2f}%)")
+        print(f"OVERALL ACCURACY RATING: {correct}/{total} ({(correct/total)*100:.2f}%)")
         print("="*50)
 
-        small_uses = (results_df['model_used'] == self.small_model).sum()
-        large_uses = (results_df['model_used'] == self.large_model).sum()
-        print(f"Model Workload - {self.small_model}: {small_uses} | {self.large_model}: {large_uses}")
-
-        corrections = results_df['was_corrected_by_qa'].sum()
-        print(f"QA Interventions: {corrections} out of {total} prompts.")
-
+        # 2. Accuracy by Domain
         if 'domain' in results_df.columns:
             print("\n--- ACCURACY BY DOMAIN ---")
             for dom in results_df['domain'].unique():
                 domain_df = results_df[results_df['domain'] == dom]
-                d_correct = (domain_df['gold_label'] == domain_df['final_predicted_label']).sum()
+                d_correct = (domain_df['gold_label'] == domain_df['predicted_label']).sum()
                 d_total = len(domain_df)
                 if d_total > 0:
                     print(f"{dom}: {d_correct}/{d_total} ({(d_correct/d_total)*100:.2f}%)")
             print("-" * 26)
 
+        # 3. Detailed Classification Report Rating
         try:
             from sklearn.metrics import classification_report
             print("\n--- DETAILED ACCURACY RATING (Per Label) ---")
             report = classification_report(
                 results_df['gold_label'], 
-                results_df['final_predicted_label'], 
+                results_df['predicted_label'], 
                 zero_division=0
             )
             print(report)
         except ImportError:
             print("\n[!] Tip: Install scikit-learn (`pip install scikit-learn`) to see a detailed Accuracy Rating per category.")
 
-
+# ==========================================
+# Run the evaluation
+# ==========================================
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v2.json"))
     
-    # Updated paths to reflect v3/v2 requirements
-    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v3.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v0_pilot_benchmark.csv")) # Updated to match your CSV name from the compare script
-    output_path = os.path.abspath(os.path.join(script_dir, "../Data/v3_llm_results.csv"))
+    # Initialize the router
+    router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
     
-    router = LLMRouterV1(small_model='llama3:8b', large_model='llama3:70b', taxonomy_path=taxonomy_path, confidence_threshold=0.85)
-    router.evaluate_benchmark(benchmark_path, output_path)
+    # Run the interactive master dispatcher
+    router.interactive_chat()

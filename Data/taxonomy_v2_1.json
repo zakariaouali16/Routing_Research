@@ -1,0 +1,93 @@
+{
+  "project": "Reliable LLM Agents for Routing and Triage",
+  "version": "1.1",
+  "domains": {
+    "utility": {
+      "domain_description": "Cross-domain handling for underspecified or ambiguous input",
+      "labels": [
+        {
+          "name": "Clarification Needed",
+          "definition": "The user request is too vague, lacks necessary context, or contains contradictory information that prevents accurate routing to a specialized domain."
+        }
+      ]
+    },
+    "education": {
+      "domain_description": "Computing/programming-related student support",
+      "labels": [
+        {
+          "name": "Concept Explanation",
+          "definition": "Requests for clarifying theoretical computer science concepts, algorithms, or language syntax without involving specific code troubleshooting."
+        },
+        {
+          "name": "Debugging & Code Troubleshooting",
+          "definition": "Requests for identifying, explaining, or fixing errors within a specific piece of student-provided code or error log."
+        },
+        {
+          "name": "Assignment & Grading Policy",
+          "definition": "Questions regarding assignment requirements, grading rubrics, late submission policies, or formatting guidelines."
+        },
+        {
+          "name": "Exam & Assessment Prep",
+          "definition": "Inquiries about exam formats, permitted materials, study guides, or requests for practice questions."
+        },
+        {
+          "name": "Course Logistics & Environment Setup",
+          "definition": "Questions about IDE/software installation, accessing course platforms, lecture schedules, or office hour timings."
+        },
+        {
+          "name": "Instructor/TA Escalation",
+          "definition": "Complex, sensitive, or highly specific queries (e.g., grade disputes, personal accommodations, suspected plagiarism) that require direct human faculty intervention."
+        }
+      ]
+    },
+    "healthcare": {
+      "domain_description": "Non-clinical, non-diagnostic patient support",
+      "labels": [
+        {
+                    "name": "Scheduling & Appointments",
+                    "definition": "Requests to book, cancel, reschedule, or check the status of an appointment.",
+                    "required_slots": [
+                        "Appointment-related action",
+                        "Scheduling context"
+                    ]
+                },
+                {
+                    "name": "Insurance & Billing",
+                    "definition": "Questions about insurance coverage, claims, copays, billing, payments, or charge explanations.",
+                    "required_slots": [
+                        "Insurance, claim, bill, payment, or charge context"
+                    ]
+                },
+                {
+                    "name": "Medical Records",
+                    "definition": "Requests about obtaining, sending, correcting, or locating medical records or vaccine records.",
+                    "required_slots": [
+                        "Record type or record-related request context"
+                    ]
+                },
+                {
+                    "name": "Clinic Type / Specialty Directory",
+                    "definition": "Requests to identify the appropriate clinic, department, or specialty for a non-urgent administrative purpose. Use this label only when the request is about administrative navigation to an already-recognized service type. Do not use this label for symptom-based requests asking what care is medically appropriate; use Clinical Advice Redirect for those, or Healthcare Urgent Symptoms Disclaimer if urgent cues are present.",
+                    "required_slots": [
+                        "Need to identify the appropriate clinic, department, or specialty for a non-urgent administrative purpose"
+                    ]
+                },
+                {
+                    "name": "Pharmacy & Refill Process",
+                    "definition": "Administrative questions about prescription refills, transfers, pickup, or pharmacy process. Covers logistics and process only. If the prompt asks whether a medication is safe, appropriate, or compatible with another drug or condition, use Clinical Advice Redirect instead.",
+                    "required_slots": [
+                        "Prescription, refill, transfer, pickup, or pharmacy-process context",
+                        "No medication safety, appropriateness, or drug-interaction question present"
+                    ]
+                },
+                {
+                    "name": "Facility & General Information",
+                    "definition": "Questions about clinic hours, location, parking, contact information, or visitor policy.",
+                    "required_slots": [
+                        "Facility, clinic, or service context"
+                    ]
+                }
+      ]
+    }
+  }
+}
