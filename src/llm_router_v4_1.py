@@ -38,13 +38,23 @@ class LLMRouterV1:
             return None
 
     def build_system_prompt(self, domain):
-        """Constructs the prompt using the specific domain labels from the taxonomy."""
+        """Constructs the prompt using the specific domain labels and required slots from the taxonomy."""
         domain_key = domain.lower() 
         if domain_key not in self.taxonomy['domains']:
             raise ValueError(f"Domain '{domain}' not found in taxonomy.")
             
         labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+        
+        # Build the labels text, including required slots if they exist
+        labels_text_lines = []
+        for l in labels:
+            line = f"- {l['name']}: {l['definition']}"
+            if 'required_slots' in l and l['required_slots']:
+                slots_str = "; ".join(l['required_slots'])
+                line += f"\n  * Required Slots: {slots_str}"
+            labels_text_lines.append(line)
+            
+        labels_text = "\n".join(labels_text_lines)
         
         system_prompt = f"""You are an expert routing agent for a {domain_key} support system.
 Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
@@ -55,6 +65,7 @@ CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
 1. If the user's request is one sentence, lacks a clear verb/noun, or is highly ambiguous (e.g., "I need help", "Is it done?"), you MUST classify it as 'Clarification Needed'. Do not attempt to guess the department.
 2. If you cannot find at least two specific keywords relating to a specific category, default to 'Clarification Needed'.
 3. Do not assume 'help' means 'emergency' unless words like 'pain', 'bleeding', or 'urgent' are mentioned.
+4. If a category has 'Required Slots', ensure the user's request contextually satisfies those slots before assigning the label.
 
 FEW-SHOT EXAMPLES:
 User: "Is it done yet?"
@@ -89,7 +100,17 @@ Do not include any markdown formatting, conversational text, or explanations out
         """A secondary lightweight verification step to act as a QA auditor."""
         domain_key = domain.lower() 
         labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+        
+        # Build the labels text, including required slots if they exist
+        labels_text_lines = []
+        for l in labels:
+            line = f"- {l['name']}: {l['definition']}"
+            if 'required_slots' in l and l['required_slots']:
+                slots_str = "; ".join(l['required_slots'])
+                line += f"\n  * Required Slots: {slots_str}"
+            labels_text_lines.append(line)
+            
+        labels_text = "\n".join(labels_text_lines)
         
         verification_prompt = f"""You are a strict QA auditor for a {domain_key} support system.
 A previous routing agent classified a user's request, and your job is to verify if it is accurate based on the taxonomy.
@@ -100,7 +121,7 @@ VALID CATEGORIES:
 USER REQUEST: "{user_prompt}"
 PROPOSED LABEL: "{proposed_label}"
 
-Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST.
+Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST. Pay special attention to whether the USER REQUEST fulfills any 'Required Slots' for the proposed category.
 Output your response ONLY as a valid JSON object with these exact keys:
 {{
     "is_correct": true or false,
@@ -114,7 +135,8 @@ Do not include any markdown formatting, conversational text, or explanations out
         if not result:
             return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
         return result
-
+    
+        
     def route_request(self, user_prompt, domain):
         """Sends prompt to small LLM, checks confidence, escalates to large LLM if needed, then verifies."""
         system_prompt = self.build_system_prompt(domain)
