@@ -48,11 +48,13 @@ def run_comparison():
     # 4. Run Predictions
     baseline_preds = []
     llm_preds = []
-    gold_labels = df['label'].tolist()
+    # Original: gold_labels = df['label'].tolist()
+    gold_labels = df['gold_outcome'].tolist()
 
     print(f"\n--- Running benchmark on {len(df)} rows ---")
     for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-        prompt = row['prompt']
+        # Original: prompt = row['prompt']
+        prompt = row['user_prompt']
         domain = row['domain']
         
         # --- Baseline Prediction ---

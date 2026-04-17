@@ -16,10 +16,19 @@ class EmbeddingRouter:
     def fit(self, csv_path):
         """Loads the spreadsheet and embeds the benchmark prompts."""
         print(f"Loading data from {csv_path}...")
-        df = pd.read_csv(csv_path)
+        
+        # 1. Add 'utf-8-sig' encoding to safely ignore invisible BOM characters
+        df = pd.read_csv(csv_path, encoding='utf-8-sig')
+
+        # 2. Strip any hidden whitespaces from the column names
+        df.columns = df.columns.str.strip()
+        
+        # 3. Print the detected columns to help with debugging
+        print(f"Detected columns: {df.columns.tolist()}")
 
         if 'user_prompt' not in df.columns or 'gold_outcome' not in df.columns:
-            raise ValueError("CSV must contain 'user_prompt' and 'gold_outcome' columns.")
+            # Inject the detected columns into the error message for easy troubleshooting
+            raise ValueError(f"CSV must contain 'user_prompt' and 'gold_outcome' columns. Found: {df.columns.tolist()}")
 
         # Clean up any surrounding quotes from user_prompt
         df['user_prompt'] = df['user_prompt'].str.strip('"')
@@ -36,7 +45,7 @@ class EmbeddingRouter:
             f"Embedding {len(self.reference_prompts)} prompts. This might take a moment...")
         self.reference_embeddings = self.model.encode(self.reference_prompts)
         print("Done! The router is ready.")
-
+        
     def route_request(self, new_prompt, threshold=0.5):
         """
         Embeds a new request, finds the most similar benchmark prompt,
