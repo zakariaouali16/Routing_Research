@@ -15,52 +15,23 @@ class LLMRouterV1:
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
 
-    def build_system_prompt(self, domain):
-        """Constructs the prompt using the specific domain labels from the taxonomy."""
-        domain_key = domain.lower() 
-        if domain_key not in self.taxonomy['domains']:
-            raise ValueError(f"Domain '{domain}' not found in taxonomy.")
-            
-        labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+    def build_system_prompt(self):
+        """Constructs the prompt using all domains and labels from the taxonomy."""
         
-        system_prompt = f"""You are an expert routing agent for a {domain_key} support system.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
-
-{labels_text}
+        all_labels_text = ""
+        for domain_name, domain_data in self.taxonomy['domains'].items():
+            all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
+            for l in domain_data['labels']:
+                all_labels_text += f"- {l['name']}: {l['definition']}\n"
+        
+        system_prompt = f"""You are an expert, autonomous routing agent.
+Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains:
+{all_labels_text}
 
 CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
-1. If the user's request is one sentence, lacks a clear verb/noun, or is highly ambiguous (e.g., "I need help", "Is it done?"), you MUST classify it as 'Clarification Needed'. Do not attempt to guess the department.
-2. If you cannot find at least two specific keywords relating to a specific category, default to 'Clarification Needed'.
-3. Do not assume 'help' means 'emergency' unless words like 'pain', 'bleeding', or 'urgent' are mentioned.
-
-FEW-SHOT EXAMPLES:
-User: "Is it done yet?"
-{{
-    "needs_clarification": true, 
-    "short_reason": "Prompt is too short and lacks specific keywords regarding what 'it' is.", 
-    "predicted_label": "Clarification Needed", 
-    "confidence_level": "High"
-}}
-
-User: "I need to talk to someone about yesterday."
-{{
-    "needs_clarification": true, 
-    "short_reason": "Vague timeframe reference without specific intent or department mentioned.", 
-    "predicted_label": "Clarification Needed", 
-    "confidence_level": "High"
-}}
-
-Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
-{{
-    "needs_clarification": true or false,
-    "short_reason": "One short sentence explaining the core issue in the prompt",
-    "predicted_label": "The exact name of the label from the list above",
-    "confidence_level": "High, Medium, or Low"
-}}
-
-Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
-"""
+1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
+2. Respond with ONLY the exact name of the category you choose. No other text."""
+        
         return system_prompt
 
     def verify_prediction(self, user_prompt, domain, proposed_label):
@@ -110,7 +81,8 @@ Do not include any markdown formatting, conversational text, or explanations out
     def route_request(self, user_prompt, domain):
         """Sends the prompt to Ollama, gets a prediction, and verifies it."""
         # --- PASS 1: Initial Generation ---
-        system_prompt = self.build_system_prompt(domain)
+        # [Remove the 'domain' parameter from this method's signature]
+        system_prompt = self.build_system_prompt()
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
         
         payload = {
