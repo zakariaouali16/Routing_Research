@@ -46,12 +46,21 @@ def run_comparison():
     print("\n--- Initializing Routers ---")
     baseline_router = EmbeddingRouter()
     
-    # Pass the temporary CSV to fit() 
-    baseline_router.fit(temp_data_path) 
+    # --- FIXED: Use the new training dataset for fitting ---
+    TRAINING_PATH = os.path.join(BASE_DIR, "Data", "training_data.csv")
+    temp_train_path = TRAINING_PATH.replace('.csv', '_temp_fit.csv')
     
-    # Clean up the temporary file
-    if os.path.exists(temp_data_path):
-        os.remove(temp_data_path)
+    # Load training data and format it for the baseline router
+    df_train = pd.read_csv(TRAINING_PATH)
+    df_train = df_train.rename(columns={'gold_label': 'gold_outcome'})
+    df_train.to_csv(temp_train_path, index=False)
+    
+    # Fit the baseline on the separate training data
+    baseline_router.fit(temp_train_path) 
+    
+    # Clean up the temporary training file
+    if os.path.exists(temp_train_path):
+        os.remove(temp_train_path)
         
     llm_router = LLMRouterV1(taxonomy_path=TAXONOMY_PATH)
 
