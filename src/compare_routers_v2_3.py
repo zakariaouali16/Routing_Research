@@ -20,7 +20,7 @@ def run_comparison():
     DATA_PATH = os.path.join(BASE_DIR, "Data", "v1_1_pilot_benchmark.csv")
     TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v2.json")
     
-    RESULTS_DIR = os.path.join(BASE_DIR, "results")
+    RESULTS_DIR = os.path.join(BASE_DIR, "results","phase3")
     os.makedirs(RESULTS_DIR, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
