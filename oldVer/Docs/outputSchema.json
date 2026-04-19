@@ -1,7 +1,0 @@
-{
-  "reasoning": "A 1-2 sentence explanation of the thought process. This must be evaluated BEFORE selecting a label.",
-  "predicted_label": "Must perfectly match one of the defined taxonomy labels, or be set to 'None' if clarification is needed.",
-  "confidence_level": "High, Medium, or Low",
-  "clarification_needed": true,
-  "clarifying_question": "If clarification_needed is true, output the exact question to ask the user. If false, output null."
-}
