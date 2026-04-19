@@ -31,33 +31,46 @@ def run_comparison():
     router_name = LLMRouterV1.__name__
     
     # 3. Format the new output file name specifically for the LLM router
-    # Example output: LLMRouterV1_taxonomy_v2_20260405_153153.csv
     file_name = f"benchmark_{router_name}_{taxonomy_name}_{timestamp}.csv"
     output_file = os.path.join(RESULTS_DIR, file_name)
 
     # 2. Load data
     df = pd.read_csv(DATA_PATH)
     
+    # --- FIX 1: Create a temporary DataFrame/CSV for the Baseline Router ---
+    temp_data_path = DATA_PATH.replace('.csv', '_temp_fit.csv')
+    df_temp = df.rename(columns={'gold_label': 'gold_outcome'})
+    df_temp.to_csv(temp_data_path, index=False)
+    
     # 3. Initialize Routers
     print("\n--- Initializing Routers ---")
     baseline_router = EmbeddingRouter()
-    baseline_router.fit(DATA_PATH) 
     
+    # Pass the temporary CSV to fit() 
+    baseline_router.fit(temp_data_path) 
+    
+    # Clean up the temporary file
+    if os.path.exists(temp_data_path):
+        os.remove(temp_data_path)
+        
     llm_router = LLMRouterV1(taxonomy_path=TAXONOMY_PATH)
 
     # 4. Run Predictions
     baseline_preds = []
     llm_preds = []
-    gold_labels = df['label'].tolist()
+    
+    # --- FIX 2: Map to the correct 'gold_label' column ---
+    gold_labels = df['gold_label'].tolist()
 
     print(f"\n--- Running benchmark on {len(df)} rows ---")
     for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-        prompt = row['prompt']
+        
+        # --- FIX 3: Map to the correct 'user_prompt' column ---
+        prompt = row['user_prompt']
         domain = row['domain']
         
         # --- Baseline Prediction ---
         try:
-            # Call the correct method: route_request
             res = baseline_router.route_request(prompt)
             b_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             baseline_preds.append(b_val)
@@ -66,7 +79,6 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
-            # Call the correct method: route_request
             res = llm_router.route_request(prompt, domain)
             l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             llm_preds.append(l_val)
@@ -96,6 +108,5 @@ def run_comparison():
 
     print(f"Baseline (Embedding) Accuracy: {baseline_acc * 100:.2f}%")
     print(f"LLM (Llama3) Accuracy:         {llm_acc * 100:.2f}%")
-
 if __name__ == "__main__":
     run_comparison()
