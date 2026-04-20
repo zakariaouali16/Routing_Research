@@ -88,7 +88,7 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
-            res = llm_router.route_request(prompt) # Removed 'domain'
+            res = llm_router.route_request(prompt, domain) # <--- REMOVE DOMAIN HERE
             l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             llm_preds.append(l_val)
         except Exception as e:
