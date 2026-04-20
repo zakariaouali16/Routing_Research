@@ -141,7 +141,7 @@ Output your response ONLY as a valid JSON object with these exact keys:
         initial_slots = initial_output.get("extracted_slots", {})
 
         # --- PASS 2: Lightweight Verification ---
-        qa_output = self.verify_prediction(user_prompt, domain, initial_label, initial_slots)
+        qa_output = self.verify_prediction(user_prompt, initial_label, initial_slots)
         
         final_label = qa_output.get("verified_label", initial_label)
         final_slots = qa_output.get("verified_slots", initial_slots)
