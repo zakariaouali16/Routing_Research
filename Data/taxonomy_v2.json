@@ -20,7 +20,7 @@
         },
         {
           "name": "Debugging & Code Troubleshooting",
-          "definition": "Requests for clarifying code issues or debugging assistance."
+          "definition": "Requests for identifying, explaining, or fixing errors within a specific piece of student-provided code or error log."
         },
         {
           "name": "Assignment & Grading Policy",

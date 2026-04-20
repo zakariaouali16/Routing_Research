@@ -16,22 +16,34 @@ class LLMRouterV1:
             self.taxonomy = json.load(f)
 
     def build_system_prompt(self):
-        """Constructs the prompt using all domains and labels from the taxonomy."""
-        
         all_labels_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
             all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
             for l in domain_data['labels']:
+                slots = l.get('required_slots', [])
                 all_labels_text += f"- {l['name']}: {l['definition']}\n"
-        
-        system_prompt = f"""You are an expert, autonomous routing agent.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains:
+                if slots:
+                    all_labels_text += f"  REQUIRED INFO: {', '.join(slots)}\n"
+    
+        system_prompt = f"""You are an expert routing and information extraction agent.
+Your task:
+1. Classify the request into EXACTLY ONE category:
 {all_labels_text}
 
-CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
-1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
-2. Respond with ONLY the exact name of the category you choose. No other text."""
-        
+2. Identify "Slots":
+- Check the REQUIRED INFO for your chosen category.
+- Extract any values present in the user request.
+- List any missing values.
+
+Respond ONLY in JSON format:
+{{
+    "predicted_label": "Category Name",
+    "confidence_level": "High/Medium/Low",
+    "extracted_slots": {{ "slot_name": "extracted_value" }},
+    "missing_slots": ["slot_name"],
+    "needs_clarification": true/false,
+    "short_reason": "Reasoning"
+}}"""
         return system_prompt
 
     def verify_prediction(self, user_prompt, domain, proposed_label):
