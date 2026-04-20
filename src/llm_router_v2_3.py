@@ -16,70 +16,87 @@ class LLMRouterV1:
             self.taxonomy = json.load(f)
 
     def build_system_prompt(self):
+        """Constructs a prompt that instructs the LLM to classify and extract required slots."""
+        
         all_labels_text = ""
+        # Iterate through the taxonomy to build a detailed guide for the LLM
         for domain_name, domain_data in self.taxonomy['domains'].items():
             all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
             for l in domain_data['labels']:
-                slots = l.get('required_slots', [])
+                # Append the definition and any required slots defined in the JSON
                 all_labels_text += f"- {l['name']}: {l['definition']}\n"
+                
+                # Check if 'required_slots' exists for this label
+                slots = l.get('required_slots', [])
                 if slots:
-                    all_labels_text += f"  REQUIRED INFO: {', '.join(slots)}\n"
-    
-        system_prompt = f"""You are an expert routing and information extraction agent.
-Your task:
-1. Classify the request into EXACTLY ONE category:
-{all_labels_text}
+                    all_labels_text += f"  REQUIRED INFO TO EXTRACT: {', '.join(slots)}\n"
+        
+        system_prompt = f"""You are an expert, autonomous routing and information extraction agent.
+    Your task is to classify the user's request and identify missing information.
 
-2. Identify "Slots":
-- Check the REQUIRED INFO for your chosen category.
-- Extract any values present in the user request.
-- List any missing values.
+    CATEGORIES AND DATA REQUIREMENTS:
+    {all_labels_text}
 
-Respond ONLY in JSON format:
-{{
-    "predicted_label": "Category Name",
-    "confidence_level": "High/Medium/Low",
-    "extracted_slots": {{ "slot_name": "extracted_value" }},
-    "missing_slots": ["slot_name"],
-    "needs_clarification": true/false,
-    "short_reason": "Reasoning"
-}}"""
+    CRITICAL INSTRUCTION:
+    1. Classify the request into EXACTLY ONE category.
+    2. If the category has "REQUIRED INFO", extract those values from the user's text.
+    3. If a required value is missing, list it in 'missing_slots'.
+    4. If the request is too vague for any category, use 'Clarification Needed'.
+
+    Respond ONLY as a valid JSON object with these keys:
+    {{
+        "predicted_label": "The category name",
+        "extracted_slots": {{ "slot_name": "value_found" }},
+        "missing_slots": ["list_of_missing_required_slots"],
+        "confidence_level": "High/Medium/Low",
+        "needs_clarification": true/false,
+        "short_reason": "One sentence justification"
+    }}"""
+        
         return system_prompt
-
-    def verify_prediction(self, user_prompt, domain, proposed_label):
-        """A secondary lightweight verification step to act as a QA auditor."""
+    def verify_prediction(self, user_prompt, domain, proposed_label, extracted_slots):
+        """
+        A secondary QA auditor that verifies both the routing label 
+        and the accuracy of extracted information (slots).
+        """
         domain_key = domain.lower() 
         labels = self.taxonomy['domains'][domain_key]['labels']
+        
+        # Locate the specific label definition and its required slots from the taxonomy
+        label_info = next((l for l in labels if l['name'] == proposed_label), None)
+        required_slots = label_info.get('required_slots', []) if label_info else []
+        
         labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
         
         verification_prompt = f"""You are a strict QA auditor for a {domain_key} support system.
-A previous routing agent classified a user's request, and your job is to verify if it is accurate based on the taxonomy.
+    Your job is to verify the routing accuracy and the data extraction (slots).
 
-VALID CATEGORIES:
-{labels_text}
+    VALID CATEGORIES:
+    {labels_text}
 
-USER REQUEST: "{user_prompt}"
-PROPOSED LABEL: "{proposed_label}"
+    USER REQUEST: "{user_prompt}"
+    PROPOSED LABEL: "{proposed_label}"
+    EXTRACTED SLOTS: {json.dumps(extracted_slots)}
+    REQUIRED SLOTS FOR THIS CATEGORY: {required_slots}
 
-Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST.
-Output your response ONLY as a valid JSON object with these exact keys:
-{{
-    "is_correct": true or false,
-    "verified_label": "If is_correct is true, output the PROPOSED LABEL. If false, output the corrected valid category name from the VALID CATEGORIES list.",
-    "qa_reason": "One short sentence explaining why you confirmed or corrected the label."
-}}
+    TASK:
+    1. Label Check: Is the PROPOSED LABEL the absolute best fit?
+    2. Slot Check: Did the agent miss info present in the request? Did it hallucinate info not in the request?
 
-Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
-"""
+    Output ONLY a valid JSON object:
+    {{
+        "is_correct": true or false,
+        "verified_label": "Correct label name",
+        "verified_slots": {{ "slot_name": "corrected_value" }},
+        "qa_reason": "Brief explanation of changes or confirmation."
+    }}
+    """
         payload = {
             "model": self.model_name,
             "prompt": verification_prompt,
             "stream": False,
             "format": "json", 
-            "options": {            
-                "temperature": 0.0, # Keep at 0 for strict validation
-                "seed": 42
-            }
+            "options": { "temperature": 0.0, "seed": 42 }
         }
         
         try:
@@ -87,9 +104,12 @@ Do not include any markdown formatting, conversational text, or explanations out
             response.raise_for_status()
             return json.loads(response.json().get("response", "{}"))
         except Exception as e:
-            tqdm.write(f"Verification Error -> {e}")
-            return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
-
+            return {
+                "is_correct": True, 
+                "verified_label": proposed_label, 
+                "verified_slots": extracted_slots,
+                "qa_reason": f"Verification error: {e}"
+            }
     def route_request(self, user_prompt, domain):
         """Sends the prompt to Ollama, gets a prediction, and verifies it."""
         # --- PASS 1: Initial Generation ---
