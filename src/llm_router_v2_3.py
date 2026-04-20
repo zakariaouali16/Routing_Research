@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 from tqdm import tqdm
 
-class LLMRouterV2:
+class LLMRouterV1:
     def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v2.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
