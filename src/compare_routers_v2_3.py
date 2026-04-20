@@ -117,5 +117,11 @@ def run_comparison():
 
     print(f"Baseline (Embedding) Accuracy: {baseline_acc * 100:.2f}%")
     print(f"LLM (Llama3) Accuracy:         {llm_acc * 100:.2f}%")
+    # --- ADDED: Detailed classification reports per label ---
+    print("\n--- DETAILED ACCURACY RATING (Baseline Router) ---")
+    print(classification_report(gold_cleaned, base_cleaned, zero_division=0))
+    
+    print("\n--- DETAILED ACCURACY RATING (LLM Router) ---")
+    print(classification_report(gold_cleaned, llm_cleaned, zero_division=0))
 if __name__ == "__main__":
     run_comparison()
