@@ -36,7 +36,7 @@ If the user's request is too vague, lacks context, or does not clearly fit any o
 OUTPUT FORMAT:
 Output your response ONLY as a valid JSON object using this exact schema:
 {{
-    "predicted_label": "The exact name of the category",
+    "predicted_label": "The exact name of the category ONLY. Do NOT include the domain name, slashes, or arrows.",
     "confidence_level": "High, Medium, or Low",
     "short_reason": "One sentence explaining why",
     "needs_clarification": true or false,
