@@ -74,17 +74,15 @@ def run_comparison():
     print(f"\n--- Running benchmark on {len(df)} rows ---")
     for index, row in tqdm(df.iterrows(), total=df.shape[0]):
         
-        # --- FIX 3: Map to the correct 'user_prompt' column ---
         prompt = row['user_prompt']
-        domain = row['domain']
         
-        # --- Baseline Prediction ---
+        # --- LLM Prediction (Removed 'domain' argument) ---
         try:
-            res = baseline_router.route_request(prompt)
-            b_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
-            baseline_preds.append(b_val)
+            res = llm_router.route_request(prompt) # Removed 'domain'
+            l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
+            llm_preds.append(l_val)
         except Exception as e:
-            baseline_preds.append(f"Err: {str(e)}")
+            llm_preds.append(f"Err: {str(e)}")
 
         # --- LLM Prediction ---
         try:
