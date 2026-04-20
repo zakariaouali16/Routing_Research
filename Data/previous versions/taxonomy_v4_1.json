@@ -2,7 +2,7 @@
     "project": "Reliable LLM Agents for Routing and Triage",
     "version": "4.1",
     "precedence_rules": [
-        "Safety override outcomes (group: safety_override) always take precedence over all gating outcomes and all routing labels, regardless of how the prompt is framed.",
+        "Safety override outcomes (group: safety_override) take precedence over all gating outcomes and all routing labels only when the prompt contains a clearly identifiable safety incident — such as a specific threat, harassment, misconduct, or acute symptom for education, or any life-threatening situation for healthcare. Vague distress without a specific incident does not trigger a safety override and should be treated as Clarification Needed instead.",
         "If any safety_override trigger is present in a prompt \u2014 including prompts that also contain Mixed Intent \u2014 assign the safety_override outcome, not Mixed Intent.",
         "If multiple safety_override outcomes are triggered simultaneously, assign Healthcare Urgent Symptoms Disclaimer first if urgent symptom cues are present; otherwise assign Education Sensitive Escalation.",
         "If no safety_override applies, check Clarification Needed and Mixed Intent before attempting to assign a routing label.",
@@ -13,7 +13,7 @@
         "Use Assignment & Grading Policy when the user is asking what a stated course rule or grading criterion is. Use Course Exceptions & Disputes when the user is asking for a person-specific exception, override, appeal, regrade, deadline relief, or judgment-based review."
     ],
     "annotation_rules": [
-        "If a prompt contains two or more distinct, separable requests that could each be independently routed to different labels, annotate it as Mixed Intent. If the prompt is vague, blended, or underspecified rather than clearly separable into distinct intents, use Clarification Needed instead. Exception: if any safety_override trigger is present, assign the safety_override outcome instead.",
+        "If a prompt contains two or more distinct, separable, and unrelated requests that could each be independently routed to different labels, annotate it as Mixed Intent. If the prompt is vague, blended, or underspecified rather than clearly separable into distinct intents, use Clarification Needed instead. Exception: if any safety_override trigger is present, assign the safety_override outcome instead.",
         "Use Clarification Needed only when the prompt does not clearly contain multiple separable intents and lacks enough information for reliable routing.",
         "If a prompt contains one primary request and other details only provide context, do not use Mixed Intent.",
         "Clinical or symptom-based healthcare prompts that require diagnosis, treatment advice, medication safety judgment, or medical decision-making must not be assigned to normal non-clinical healthcare routing labels.",
@@ -26,7 +26,8 @@
         "If a prompt contains unrelated personally identifiable or highly sensitive personal information, ignore it for routing and annotate based on the underlying intent. Redact or replace the sensitive information in benchmark data before storage or sharing.",
         "If a prompt is too nonsensical or corrupted to interpret reliably, use Clarification Needed.",
         "Use Human Staff Review Needed for complex legal, HIPAA-related, complaint, grievance, guardianship, proxy, staff misconduct, or sensitive administrative requests that cannot be handled by standard non-clinical routing alone. Do not use for routine administrative questions that fit an existing healthcare routing label.",
-        "If the patient is asking which department or specialty handles a type of request for administrative navigation purposes, use Clinic Type / Specialty Directory. If the patient needs a human staff member to make a decision or take action on their specific case, use Human Staff Review Needed."
+        "If the patient is asking which department or specialty handles a type of request for administrative navigation purposes, use Clinic Type / Specialty Directory. If the patient needs a human staff member to make a decision or take action on their specific case, use Human Staff Review Needed.",
+        "A prompt presenting two options about the same topic using 'or' is not Mixed Intent \u2014 it is a single question with two possible answers and should be routed to the appropriate single label. Mixed Intent requires two intents that are unrelated enough that each could be independently routed to a different label. Example of NOT Mixed Intent: 'Is the exam open book or closed book?' is one intent (Exam Logistics & Preparation), not two. Example of Mixed Intent: 'Can I reschedule my appointment and also check my balance?' contains two unrelated intents (Scheduling & Appointments + Insurance & Billing) and qualifies as Mixed Intent."
     ],
     "non_routing_outcomes": {
         "description": "Outcomes used when the message should not be assigned to a normal semantic routing label. Safety override outcomes take full precedence over gating outcomes and routing labels. Out-of-Scope is a fallback of last resort checked only after all other outcomes and routing labels have been ruled out.",
@@ -82,9 +83,9 @@
             },
             {
                 "name": "Mixed Intent",
-                "definition": "The request contains two or more distinct, separable routable intents that could each be independently routed to different labels, so assigning a single routing label would be incomplete or unreliable. Do not use this outcome if the prompt is merely vague or blended \u2014 use Clarification Needed instead. Do not use this outcome if any safety_override trigger is present; assign the safety_override outcome instead.",
+                "definition": "The request contains two or more distinct, separable, and unrelated routable intents that could each be independently routed to different labels, so assigning a single routing label would be incomplete or unreliable. Do not use this outcome if the prompt is merely vague or blended \u2014 use Clarification Needed instead. Do not use this outcome if any safety_override trigger is present; assign the safety_override outcome instead.",
                 "required_slots": [
-                    "Two or more distinct, separable requests",
+                    "Two or more distinct, separable, and unrelated requests",
                     "Requests could each be independently routed to different labels",
                     "No safety_override trigger present"
                 ],

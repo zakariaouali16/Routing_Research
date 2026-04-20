@@ -12,7 +12,8 @@ class LLMRouterV3:
         self.api_url = "http://localhost:11434/api/generate"
 
         if taxonomy_path is None:
-            raise ValueError("Please provide taxonomy_path explicitly when running in Colab.")
+            raise ValueError(
+                "Please provide taxonomy_path explicitly when running in Colab.")
 
         print(f"Loading taxonomy from {taxonomy_path}...")
         with open(taxonomy_path, "r") as f:
@@ -94,7 +95,7 @@ Return ONLY valid JSON with these exact keys:
   "predicted_label": "exact allowed label",
   "needs_clarification": true or false,
   "short_reason": "one short sentence",
-  "confidence_level": "High" or "Medium" or "Low"
+  "confidence_level": a number between 0.0 and 1.0
 }}
 
 Consistency rules:
@@ -157,7 +158,8 @@ Rules:
             response.raise_for_status()
             parsed = json.loads(response.json().get("response", "{}"))
 
-            verified_label = parsed.get("verified_label", initial_output["predicted_label"])
+            verified_label = parsed.get(
+                "verified_label", initial_output["predicted_label"])
             if verified_label not in allowed_labels:
                 verified_label = initial_output["predicted_label"]
 
@@ -207,22 +209,25 @@ Rules:
             response.raise_for_status()
             initial_output = json.loads(response.json().get("response", "{}"))
         except Exception as e:
-            tqdm.write(f"Generation error for prompt '{user_prompt[:40]}...' -> {e}")
+            tqdm.write(
+                f"Generation error for prompt '{user_prompt[:40]}...' -> {e}")
             return {
                 "initial_label": "Error",
                 "predicted_label": "Error",
-                "confidence_level": "Low",
+                "confidence_level": 0.0,
                 "needs_clarification": True,
                 "short_reason": f"API error: {str(e)}",
                 "was_corrected": False,
                 "qa_reason": "N/A"
             }
 
-        initial_label = initial_output.get("predicted_label", "Clarification Needed")
+        initial_label = initial_output.get(
+            "predicted_label", "Clarification Needed")
         if initial_label not in allowed_labels:
             initial_label = "Clarification Needed"
 
-        initial_needs_clarification = initial_output.get("needs_clarification", False)
+        initial_needs_clarification = initial_output.get(
+            "needs_clarification", False)
         if initial_label == "Clarification Needed":
             initial_needs_clarification = True
 
@@ -230,7 +235,7 @@ Rules:
             "predicted_label": initial_label,
             "needs_clarification": initial_needs_clarification,
             "short_reason": initial_output.get("short_reason", ""),
-            "confidence_level": initial_output.get("confidence_level", "Low")
+            "confidence_level": float(initial_output.get("confidence_level", 0.0))
         }
 
         qa_output = self.verify_prediction(user_prompt, normalized_initial)
@@ -266,7 +271,7 @@ Rules:
                 "gold_outcome": row.get("gold_outcome", ""),
                 "initial_predicted_label": llm_output.get("initial_label", ""),
                 "final_predicted_label": llm_output.get("predicted_label", ""),
-                "confidence_level": llm_output.get("confidence_level", ""),
+                "confidence_level": llm_output.get("confidence_level", 0.0),
                 "needs_clarification_pred": llm_output.get("needs_clarification", False),
                 "short_reason": llm_output.get("short_reason", ""),
                 "was_corrected_by_qa": llm_output.get("was_corrected", False),
@@ -279,24 +284,136 @@ Rules:
         results_df.to_csv(output_csv, index=False)
         print(f"\nDone! Results saved to {output_csv}\n")
 
-        correct = (results_df["gold_outcome"] == results_df["final_predicted_label"]).sum()
+        # ==========================================
+        # Metrics
+        # ==========================================
+
+        LABEL_TO_GROUP = {
+            "Education Sensitive Escalation": "safety_override",
+            "Healthcare Urgent Symptoms Disclaimer": "safety_override",
+            "Clarification Needed": "gating_outcome",
+            "Mixed Intent": "gating_outcome",
+            "Clinical Advice Redirect": "gating_outcome",
+            "Out-of-Scope": "last_resort",
+            "Concept Explanation": "routing_label",
+            "Debugging & Code Troubleshooting": "routing_label",
+            "Assignment & Grading Policy": "routing_label",
+            "Exam Logistics & Preparation": "routing_label",
+            "Course Logistics & Resources": "routing_label",
+            "Office Hours / Instructor Access": "routing_label",
+            "Course Exceptions & Disputes": "routing_label",
+            "Scheduling & Appointments": "routing_label",
+            "Insurance & Billing": "routing_label",
+            "Medical Records": "routing_label",
+            "Clinic Type / Specialty Directory": "routing_label",
+            "Pharmacy & Refill Process": "routing_label",
+            "Facility & General Information": "routing_label",
+            "Human Staff Review Needed": "routing_label",
+        }
+
+        results_df["gold_group"] = results_df["gold_outcome"].map(
+            LABEL_TO_GROUP).fillna("unknown")
+        results_df["is_correct"] = results_df["gold_outcome"] == results_df["final_predicted_label"]
+
+        print("=" * 60)
+        print("LLM ROUTER V3 — EVALUATION REPORT")
+        print("=" * 60)
+
+        # 1. Overall accuracy
+        accuracy = results_df["is_correct"].mean()
+        print(f"\nOverall accuracy: {accuracy:.4f} ({accuracy * 100:.1f}%)")
+
+        # 2. Per-group accuracy
+        print("\n--- Per-group accuracy ---")
+        for group, group_df in results_df.groupby("gold_group"):
+            acc = group_df["is_correct"].mean()
+            print(f"  {group:20s}  {acc:.4f}  (n={len(group_df)})")
+
+        # 3. Wrong-confident rate
+        wrong_confident = results_df[
+            (~results_df["is_correct"])
+            & (results_df["confidence_level"] >= 0.8)
+            & (results_df["final_predicted_label"] != "Clarification Needed")
+        ]
+        wc_rate = len(wrong_confident) / len(results_df)
+        print(f"\n--- Wrong-confident rate (confidence >= 0.8) ---")
+        print(f"  Rate: {wc_rate:.4f}  ({len(wrong_confident)} prompts)")
+        if len(wrong_confident) > 0:
+            print("  Examples:")
+            for _, row in wrong_confident.head(5).iterrows():
+                print(
+                    f"    [{row['prompt_id']}] gold={row['gold_outcome']} "
+                    f"predicted={row['final_predicted_label']} "
+                    f"conf={row['confidence_level']:.2f}"
+                )
+
+        # 4. Follow-up recall (Clarification Needed + Mixed Intent)
+        FOLLOWUP_LABELS = {"Clarification Needed", "Mixed Intent"}
+        followup_prompts = results_df[results_df["gold_outcome"].isin(FOLLOWUP_LABELS)]
+        print(f"\n--- Follow-up recall (Clarification Needed + Mixed Intent) ---")
+        if len(followup_prompts) > 0:
+            followup_recall = (
+                followup_prompts["final_predicted_label"].isin(FOLLOWUP_LABELS)
+            ).mean()
+            print(f"  Recall: {followup_recall:.4f}  ({len(followup_prompts)} prompts)")
+            for label in FOLLOWUP_LABELS:
+                subset = followup_prompts[followup_prompts["gold_outcome"] == label]
+                if len(subset) > 0:
+                    label_recall = subset["final_predicted_label"].isin(FOLLOWUP_LABELS).mean()
+                    print(f"    {label}: {label_recall:.4f}  (n={len(subset)})")
+        else:
+            print("  No follow-up prompts in benchmark.")
+
+        # 5. Safety-override recall — overall and per label
+        safety_prompts = results_df[results_df["gold_group"] == "safety_override"]
+        print(f"\n--- Safety-override recall ---")
+        if len(safety_prompts) > 0:
+            overall_safety_recall = (
+                safety_prompts["final_predicted_label"] == safety_prompts["gold_outcome"]
+            ).mean()
+            print(f"  Overall recall: {overall_safety_recall:.4f}  ({len(safety_prompts)} prompts)")
+
+            edu_safety = safety_prompts[
+                safety_prompts["gold_outcome"] == "Education Sensitive Escalation"
+            ]
+            if len(edu_safety) > 0:
+                edu_recall = (
+                    edu_safety["final_predicted_label"] == "Education Sensitive Escalation"
+                ).mean()
+                print(f"  Education Sensitive Escalation:        {edu_recall:.4f}  (n={len(edu_safety)})")
+
+            hc_safety = safety_prompts[
+                safety_prompts["gold_outcome"] == "Healthcare Urgent Symptoms Disclaimer"
+            ]
+            if len(hc_safety) > 0:
+                hc_recall = (
+                    hc_safety["final_predicted_label"] == "Healthcare Urgent Symptoms Disclaimer"
+                ).mean()
+                print(f"  Healthcare Urgent Symptoms Disclaimer: {hc_recall:.4f}  (n={len(hc_safety)})")
+        else:
+            print("  No safety-override prompts in benchmark.")
+
+        # 6. QA correction rate — and whether corrections helped or hurt
         total = len(results_df)
-
-        print("=" * 60)
-        print(f"OVERALL ACCURACY: {correct}/{total} ({(correct / total) * 100:.2f}%)")
-        print("=" * 60)
-
         corrections = results_df["was_corrected_by_qa"].sum()
-        print(f"QA corrections: {corrections}/{total}")
+        print(f"\n--- QA verifier corrections ---")
+        print(f"  Total corrections: {corrections}/{total}")
 
-        print("\n--- Accuracy by domain (analysis only) ---")
-        for dom in results_df["domain"].fillna("missing").unique():
-            dom_df = results_df[results_df["domain"].fillna("missing") == dom]
-            d_correct = (dom_df["gold_outcome"] == dom_df["final_predicted_label"]).sum()
-            d_total = len(dom_df)
-            print(f"{dom}: {d_correct}/{d_total} ({(d_correct/d_total)*100:.2f}%)")
+        corrected_df = results_df[results_df["was_corrected_by_qa"] == True]
+        if len(corrected_df) > 0:
+            helped = corrected_df["is_correct"].sum()
+            hurt = len(corrected_df) - helped
+            print(f"  Corrections that led to correct label:   {helped}")
+            print(f"  Corrections that led to incorrect label: {hurt}")
 
-        print("\n--- Classification report ---")
+        # 7. Per-domain accuracy
+        print("\n--- Per-domain accuracy ---")
+        for dom, dom_df in results_df.groupby(results_df["domain"].fillna("missing")):
+            acc = dom_df["is_correct"].mean()
+            print(f"  {dom:12s}  {acc:.4f}  (n={len(dom_df)})")
+
+        # 8. Full classification report
+        print("\n--- Full classification report ---")
         print(
             classification_report(
                 results_df["gold_outcome"],
