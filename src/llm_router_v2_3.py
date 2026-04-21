@@ -103,7 +103,7 @@ Output your response ONLY as a valid JSON object with these exact keys:
                 "qa_reason": "Verification failed, defaulting to original.",
                 "verified_slots": proposed_slots
             }
-    def check_emergency_keywords(user_prompt):
+    def check_emergency_keywords(self, user_prompt):
         """Stage 1: Deterministic Keyword Routing for High-Risk Healthcare"""
         # Based on your benchmark data (HC-051 to HC-060)
         emergency_keywords = [
@@ -118,7 +118,7 @@ Output your response ONLY as a valid JSON object with these exact keys:
         return False
     def route_request(self, user_prompt):
     # --- STAGE 1: KEYWORD TRIAGE ---
-        if check_emergency_keywords(user_prompt):
+        if self.check_emergency_keywords(user_prompt):
             return {
                 "initial_label": "Urgent Escalation (Emergency Services)",
                 "predicted_label": "Urgent Escalation (Emergency Services)",
@@ -152,6 +152,20 @@ Output your response ONLY as a valid JSON object with these exact keys:
             # Use 8b's output
             final_output = llm_8b_output
             final_output["qa_reason"] = "Resolved by 8B with High/Medium confidence."
+        # --- STAGE 4: QA VERIFICATION ---
+        # Verify the final prediction
+        qa_output = self.verify_prediction(
+            user_prompt=user_prompt, 
+            proposed_label=final_output.get("predicted_label", ""),
+            proposed_slots=final_output.get("extracted_slots", {})
+        )
+        
+        # Update the final output based on QA
+        if not qa_output.get("is_correct", True):
+            final_output["predicted_label"] = qa_output.get("verified_label", final_output.get("predicted_label"))
+            final_output["extracted_slots"] = qa_output.get("verified_slots", final_output.get("extracted_slots"))
+            final_output["qa_reason"] = qa_output.get("qa_reason", final_output["qa_reason"])
+            confidence_level = "High" # Assume QA fixed it confidently
 
         # Return formatted results mapping to your CSV structure
         return {
@@ -164,8 +178,35 @@ Output your response ONLY as a valid JSON object with these exact keys:
             "qa_reason": final_output.get("qa_reason", ""),
             "initial_slots": final_output.get("extracted_slots", {}),
             "final_slots": final_output.get("extracted_slots", {})
+            
         }
-
+    
+    def _call_llm(self, model_name, prompt):
+        """Helper method to execute API calls to the local LLM."""
+        payload = {
+            "model": model_name,
+            "prompt": prompt,
+            "stream": False,
+            "format": "json", 
+            "options": {            
+                "temperature": 0.0, 
+                "seed": 42
+            }
+        }
+        
+        try:
+            response = requests.post(self.api_url, json=payload)
+            response.raise_for_status()
+            return json.loads(response.json().get("response", "{}"))
+        except Exception as e:
+            print(f"LLM Call Error -> {e}")
+            return {
+                "predicted_label": "Error",
+                "confidence_level": "Low",
+                "short_reason": f"API Error: {str(e)}",
+                "needs_clarification": True,
+                "extracted_slots": {}
+            }
     def evaluate_benchmark(self, input_csv, output_csv):
         """Runs the LLM over the entire pilot benchmark and saves the results."""
         print(f"Loading benchmark data from {input_csv}...")
