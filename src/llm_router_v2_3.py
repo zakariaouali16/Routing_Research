@@ -210,5 +210,5 @@ if __name__ == "__main__":
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v2_llm_results.csv"))
     
     # Initialize the updated router
-    router = LLMRouterV2(model_name='llama3', taxonomy_path=taxonomy_path)
+    router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
     router.evaluate_benchmark(benchmark_path, output_path)
