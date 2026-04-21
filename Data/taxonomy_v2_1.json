@@ -1,0 +1,144 @@
+{
+  "project": "Reliable LLM Agents for Routing and Triage",
+  "version": "2.1",
+  "gating_outcomes": [
+    {
+      "name": "Clarification Needed",
+      "definition": "The user request is too vague, lacks required context, or is missing information needed to route it accurately. Fire this before attempting label matching when intent cannot be determined.",
+      "required_slots": []
+    },
+    {
+      "name": "Out-of-Scope",
+      "definition": "The user request does not belong to either the education or healthcare domain. Fire this after checking all routing labels when confidence remains below the floor threshold and no domain signal is present.",
+      "required_slots": []
+    }
+  ],
+  "domains": {
+    "education": {
+      "domain_description": "Computing and programming-related student support.",
+      "labels": [
+        {
+          "name": "Concept Explanation",
+          "definition": "Requests for clarifying theoretical computer science or programming concepts, data structures, algorithms, or language syntax — without involving a specific piece of broken code.",
+          "required_slots": [
+            "concept_name",
+            "complexity_level"
+          ]
+        },
+        {
+          "name": "Debugging & Code Troubleshooting",
+          "definition": "Requests for identifying, explaining, or fixing errors in a specific piece of student-provided code or error log.",
+          "required_slots": [
+            "programming_language",
+            "error_message_or_symptom",
+            "code_snippet"
+          ]
+        },
+        {
+          "name": "Assignment & Grading Policy",
+          "definition": "Questions about assignment requirements, grading rubrics, late submission policies, collaboration rules, or formatting guidelines for a specific course deliverable.",
+          "required_slots": [
+            "assignment_id",
+            "specific_policy_topic"
+          ]
+        },
+        {
+          "name": "Exam & Assessment Prep",
+          "definition": "Inquiries about upcoming exam formats, permitted materials, study guides, practice questions, or review session schedules.",
+          "required_slots": [
+            "exam_name",
+            "subject_area"
+          ]
+        },
+        {
+          "name": "Course Logistics & Environment Setup",
+          "definition": "Questions about IDE or software installation, accessing course platforms, lecture or office hour schedules, or technical setup required to participate in the course.",
+          "required_slots": [
+            "software_or_platform_name",
+            "operating_system",
+            "issue_description"
+          ]
+        },
+        {
+          "name": "Instructor/TA Escalation",
+          "definition": "Sensitive, high-stakes, or interpersonal queries requiring direct human faculty intervention — including grade disputes, academic integrity violations, plagiarism accusations, personal accommodations, or harassment.",
+          "required_slots": [
+            "reason_for_escalation",
+            "course_section"
+          ]
+        }
+      ]
+    },
+    "healthcare": {
+      "domain_description": "Non-clinical, non-diagnostic administrative patient support. Never diagnose, prescribe, or offer medical advice.",
+      "labels": [
+        {
+          "name": "Scheduling & Appointments",
+          "definition": "Requests to book, cancel, reschedule, or check the status of a medical appointment.",
+          "required_slots": [
+            "action_type",
+            "preferred_date_or_timeframe",
+            "department_or_specialty"
+          ]
+        },
+        {
+          "name": "Insurance & Billing",
+          "definition": "Inquiries about accepted insurance networks, payment options, copays, out-of-pocket cost estimates, or explanations of a medical bill.",
+          "required_slots": [
+            "insurance_provider",
+            "billing_question_type"
+          ]
+        },
+        {
+          "name": "Medical Records",
+          "definition": "Requests to access, transfer, release, or obtain a copy of personal medical records or health documents such as vaccination records, visit summaries, or referral letters.",
+          "required_slots": [
+            "record_type",
+            "destination_or_purpose"
+          ]
+        },
+        {
+          "name": "Clinic Type & Specialty Directory",
+          "definition": "Questions about which department, specialist, or type of clinic to visit for a particular administrative need, or requests to locate a provider within the system.",
+          "required_slots": [
+            "specialty_or_department",
+            "reason_for_lookup"
+          ]
+        },
+        {
+          "name": "Facility & General Information",
+          "definition": "Questions about clinic operating hours, physical address, parking, visitor policies, or general contact information.",
+          "required_slots": [
+            "location_name",
+            "info_category"
+          ]
+        },
+        {
+          "name": "Pharmacy & Prescription Logistics",
+          "definition": "Administrative requests about prescription refill status, pharmacy hours, or transferring a prescription to a new location. Does not include advice about dosage, interactions, or clinical suitability.",
+          "required_slots": [
+            "medication_name",
+            "pharmacy_location",
+            "request_type"
+          ]
+        },
+        {
+          "name": "Human Staff Review Needed",
+          "definition": "Requests that are too sensitive, legally complex, or ambiguous for automated routing — requiring review by a human receptionist or patient advocate.",
+          "required_slots": [
+            "request_summary",
+            "urgency_level"
+          ]
+        },
+        {
+          "name": "Urgent Escalation (Emergency Services)",
+          "definition": "Prompts containing cues of acute physical distress or a potential medical emergency. Immediately direct the user to call 911 or go to the nearest emergency room. This is a safety override.",
+          "required_slots": [
+            "primary_symptom_cue",
+            "current_location"
+          ]
+        }
+      ]
+    }
+  }
+}
