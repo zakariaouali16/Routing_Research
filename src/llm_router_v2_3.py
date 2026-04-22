@@ -241,10 +241,15 @@ Output your response ONLY as a valid JSON object with these exact keys:
             
         results_df = pd.DataFrame(results)
         results_df.to_csv(output_csv, index=False)
+        
         print(f"\nDone! Results saved to {output_csv}\n")
         
         # --- Advanced Accuracy Ratings (Same as original) ---
-        correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
+        #correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
+        results_df['gold_label_norm'] = results_df['gold_label'].str.strip().str.lower()
+        results_df['pred_label_norm'] = results_df['final_predicted_label'].str.strip().str.lower()
+
+        correct = (results_df['gold_label_norm'] == results_df['pred_label_norm']).sum()
         total = len(results_df)
         print("="*50)
         print(f"OVERALL POST-VERIFICATION ACCURACY: {correct}/{total} ({(correct/total)*100:.2f}%)")

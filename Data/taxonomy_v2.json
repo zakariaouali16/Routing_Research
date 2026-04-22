@@ -76,7 +76,7 @@
           "required_slots": ["request_summary", "urgency_level"]
         },
         {
-          "name": "Urgent Escalation (Emergency Services)",
+          "name": "Urgent Escalation",
           "definition": "Queries containing cues of acute physical distress or potential medical emergencies, triggering an immediate recommendation to contact emergency services.",
           "required_slots": ["current_location", "primary_symptom"]
         }
