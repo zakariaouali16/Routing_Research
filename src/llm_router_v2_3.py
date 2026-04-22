@@ -216,7 +216,7 @@ Output your response ONLY as a valid JSON object with these exact keys:
         print(f"Routing and Extracting Slots for {len(df)} requests...\n")
         
         for index, row in tqdm(df.iterrows(), total=len(df), desc="Processing Requests", unit="prompt"):
-            prompt_text = row['prompt']
+            prompt_text = row['user_prompt']
             domain = row['domain']
             
             llm_output = self.route_request(prompt_text)
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     
     # Updated paths to reflect v2 mapping
     taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v2.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v2_pilot_benchmark.csv"))
+    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_1_pilot_benchmark.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v2_llm_results.csv"))
     
     # Initialize the updated router
