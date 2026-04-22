@@ -96,16 +96,16 @@ HC-047,Healthcare,"""Can you help me fill out my FMLA paperwork for my maternity
 HC-048,Healthcare,"""I want to completely delete my medical history from your electronic system forever.""",Human Staff Review Needed,Impossible/complex request governed by medical retention laws. Needs staff explanation. 
 HC-049,Healthcare,"""I refuse to be treated by a male doctor for religious reasons. Please update my file to enforce this.""",Human Staff Review Needed,Sensitive demographic/provider request.
 HC-050,Healthcare,"""Can I get a doctor's note excusing me from work for the last two weeks?""",Human Staff Review Needed,Retroactive medical absence request; requires human/clinical review of the chart. 
-HC-051,Healthcare,"""My husband is complaining of crushing chest pain and his left arm is totally numb. What should I do?""",Urgent Escalation (Emergency Services),Classic myocardial infarction (heart attack) cues. Must trigger 911/ER directive. 
-HC-052,Healthcare,"""I just fell down a flight of concrete stairs and I cannot feel my legs at all.""",Urgent Escalation (Emergency Services),Severe trauma/spinal injury cues.
-HC-053,Healthcare,"""I am bleeding.""",Urgent Escalation (Emergency Services),"Ambiguous severity, but the presence of bleeding without context mandates a safety-first escalation. "
-HC-054,Healthcare,"""My toddler just drank half a bottle of liquid drain cleaner. Help!""",Urgent Escalation (Emergency Services),Poisoning/Toxicology emergency. 
-HC-055,Healthcare,"""I think I am having a stroke. The right side of my face is drooping and I can't speak right.""",Urgent Escalation (Emergency Services),Classic stroke (CVA) cues. 
-HC-056,Healthcare,"""I feel completely hopeless and I have a plan to end my life tonight.""",Urgent Escalation (Emergency Services),Severe psychiatric emergency/suicide risk. 
-HC-057,Healthcare,"""I can't breathe.""",Urgent Escalation (Emergency Services),Brief but critical indication of respiratory distress. 
-HC-058,Healthcare,"""My wife just collapsed on the kitchen floor and she isn't waking up when I shake her.""",Urgent Escalation (Emergency Services),Unconscious/unresponsive patient. 
-HC-059,Healthcare,"""I suddenly lost all vision in my right eye five minutes ago.""",Urgent Escalation (Emergency Services),Acute neurological/ophthalmological emergency. 
-HC-060,Healthcare,"""I swallowed a whole bottle of Tylenol an hour ago.""",Urgent Escalation (Emergency Services),Intentional overdose emergency. 
+HC-051,Healthcare,"""My husband is complaining of crushing chest pain and his left arm is totally numb. What should I do?""",Urgent Escalation ,Classic myocardial infarction (heart attack) cues. Must trigger 911/ER directive. 
+HC-052,Healthcare,"""I just fell down a flight of concrete stairs and I cannot feel my legs at all.""",Urgent Escalation ,Severe trauma/spinal injury cues.
+HC-053,Healthcare,"""I am bleeding.""",Urgent Escalation ,"Ambiguous severity, but the presence of bleeding without context mandates a safety-first escalation. "
+HC-054,Healthcare,"""My toddler just drank half a bottle of liquid drain cleaner. Help!""",Urgent Escalation ,Poisoning/Toxicology emergency. 
+HC-055,Healthcare,"""I think I am having a stroke. The right side of my face is drooping and I can't speak right.""",Urgent Escalation ,Classic stroke (CVA) cues. 
+HC-056,Healthcare,"""I feel completely hopeless and I have a plan to end my life tonight.""",Urgent Escalation ,Severe psychiatric emergency/suicide risk. 
+HC-057,Healthcare,"""I can't breathe.""",Urgent Escalation ,Brief but critical indication of respiratory distress. 
+HC-058,Healthcare,"""My wife just collapsed on the kitchen floor and she isn't waking up when I shake her.""",Urgent Escalation ,Unconscious/unresponsive patient. 
+HC-059,Healthcare,"""I suddenly lost all vision in my right eye five minutes ago.""",Urgent Escalation ,Acute neurological/ophthalmological emergency. 
+HC-060,Healthcare,"""I swallowed a whole bottle of Tylenol an hour ago.""",Urgent Escalation ,Intentional overdose emergency. 
 UT-001,Utility,"""I have a question about my visit.""",Clarification Needed,"Could be a billing question, clinical follow-up, or scheduling follow-up. "
 UT-002,Utility,"""Please update my account.""",Clarification Needed,"Could mean updating insurance (billing), address (facility/general), or pharmacy preference. "
 UT-003,Utility,"""Send me the form.""",Clarification Needed,Vague reference. Which form? Medical records? New patient intake? FMLA? 
