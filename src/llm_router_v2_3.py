@@ -24,16 +24,20 @@ class LLMRouterV1:
             for l in domain_data['labels']:
                 all_labels_text += f"- {l['name']}: {l['definition']}\n"
         
+        # --- FIX: Update the prompt to explicitly request the required JSON schema ---
         system_prompt = f"""You are an expert, autonomous routing agent.
 Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains:
 {all_labels_text}
 
 CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
 1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
-2. Respond with ONLY the exact name of the category you choose. No other text."""
+2. Output your response ONLY as a valid JSON object with this exact key:
+{{
+    "predicted_label": "The exact name of the category you chose"
+}}"""
         
         return system_prompt
-
+    
     def verify_prediction(self, user_prompt, proposed_label):
         """A secondary lightweight verification step acting as a QA auditor across ALL domains."""
         
@@ -148,7 +152,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             domain = row['domain']
             
             # Ask the LLM to route and verify it
-            llm_output = self.route_request(prompt_text, domain)
+            llm_output = self.route_request(prompt_text)
             
             result_row = {
                 "prompt_id": row.get('prompt_id', f"ID-{index}"),
