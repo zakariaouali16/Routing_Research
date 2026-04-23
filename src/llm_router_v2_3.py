@@ -224,6 +224,31 @@ if __name__ == "__main__":
     benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_1_pilot_benchmark.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
+    # Initialize the router once
     router = LLMRouterV1(taxonomy_path=taxonomy_path)
-    single_prediction = router.route_request("I think I am having a heart attack")
-    print(single_prediction)
+    
+    print("\n" + "="*50)
+    print("LLM Router Interactive Mode")
+    print("Type 'quit' or 'exit' to stop.")
+    print("="*50 + "\n")
+    
+    # Loop to continuously ask the user for input
+    while True:
+        user_input = input("Enter your question/request: ")
+        
+        # Check if the user wants to exit
+        if user_input.strip().lower() in ['quit', 'exit']:
+            print("Exiting interactive mode...")
+            break
+            
+        # Ignore empty inputs
+        if not user_input.strip():
+            continue
+            
+        # Route the request and print the results nicely
+        print("\nRouting request...")
+        single_prediction = router.route_request(user_input)
+        
+        print("\n--- Prediction Result ---")
+        print(json.dumps(single_prediction, indent=4))
+        print("-" * 25 + "\n")
