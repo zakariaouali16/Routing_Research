@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
+import re
 from sklearn.metrics import accuracy_score, classification_report
 
 # Import your classes
@@ -9,8 +10,17 @@ from baselines.baseline_embedding_router import EmbeddingRouter
 from llm_router_v2_3 import LLMRouterV1
 
 def clean_label(label):
-    """Standardizes labels for fair comparison."""
-    return str(label).strip().lower().replace("_", " ")
+    """Standardizes labels and strips hallucinated domain prefixes for fair comparison."""
+    cleaned = str(label).strip().lower().replace("_", " ")
+    
+    # Strip out any text ending with 'domain' followed by punctuation/spaces
+    # e.g., "education domain - concept explanation" -> "concept explanation"
+    cleaned = re.sub(r'^.*?domain[\s\-\/\>\.]*', '', cleaned)
+    
+    # Handle edge cases where it just says "education / " without the word "domain"
+    cleaned = re.sub(r'^(education|healthcare|utility)[\s\-\/\>\.]*', '', cleaned)
+    
+    return cleaned.strip()
 
 def run_comparison():
     # 1. Setup paths
@@ -88,7 +98,7 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
-            res = llm_router.route_request(prompt, domain) # <--- REMOVE DOMAIN HERE
+            res = llm_router.route_request(prompt) # <--- REMOVE DOMAIN HERE
             l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             llm_preds.append(l_val)
         except Exception as e:

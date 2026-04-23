@@ -24,32 +24,40 @@ class LLMRouterV1:
             for l in domain_data['labels']:
                 all_labels_text += f"- {l['name']}: {l['definition']}\n"
         
+        # --- FIX: Update the prompt to explicitly request the required JSON schema ---
         system_prompt = f"""You are an expert, autonomous routing agent.
 Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains:
 {all_labels_text}
 
 CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
 1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
-2. Respond with ONLY the exact name of the category you choose. No other text."""
+2. Output your response ONLY as a valid JSON object with this exact key:
+{{
+    "predicted_label": "The exact name of the category you chose"
+}}"""
         
         return system_prompt
-
-    def verify_prediction(self, user_prompt, domain, proposed_label):
-        """A secondary lightweight verification step to act as a QA auditor."""
-        domain_key = domain.lower() 
-        labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+    
+    def verify_prediction(self, user_prompt, proposed_label):
+        """A secondary lightweight verification step acting as a QA auditor across ALL domains."""
         
-        verification_prompt = f"""You are a strict QA auditor for a {domain_key} support system.
+        # Build the list of ALL valid categories
+        all_labels_text = ""
+        for domain_name, domain_data in self.taxonomy['domains'].items():
+            all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
+            for l in domain_data['labels']:
+                all_labels_text += f"- {l['name']}: {l['definition']}\n"
+        
+        verification_prompt = f"""You are a strict QA auditor for a support routing system.
 A previous routing agent classified a user's request, and your job is to verify if it is accurate based on the taxonomy.
 
 VALID CATEGORIES:
-{labels_text}
+{all_labels_text}
 
 USER REQUEST: "{user_prompt}"
 PROPOSED LABEL: "{proposed_label}"
 
-Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST.
+Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST across all domains.
 Output your response ONLY as a valid JSON object with these exact keys:
 {{
     "is_correct": true or false,
@@ -65,7 +73,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             "stream": False,
             "format": "json", 
             "options": {            
-                "temperature": 0.0, # Keep at 0 for strict validation
+                "temperature": 0.0,
                 "seed": 42
             }
         }
@@ -78,7 +86,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             tqdm.write(f"Verification Error -> {e}")
             return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
 
-    def route_request(self, user_prompt, domain):
+    def route_request(self, user_prompt):
         """Sends the prompt to Ollama, gets a prediction, and verifies it."""
         # --- PASS 1: Initial Generation ---
         # [Remove the 'domain' parameter from this method's signature]
@@ -115,7 +123,7 @@ Do not include any markdown formatting, conversational text, or explanations out
         initial_label = initial_output.get("predicted_label", "")
 
         # --- PASS 2: Lightweight Verification ---
-        qa_output = self.verify_prediction(user_prompt, domain, initial_label)
+        qa_output = self.verify_prediction(user_prompt,  initial_label)
         
         # Merge the outputs
         final_label = qa_output.get("verified_label", initial_label)
@@ -144,7 +152,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             domain = row['domain']
             
             # Ask the LLM to route and verify it
-            llm_output = self.route_request(prompt_text, domain)
+            llm_output = self.route_request(prompt_text)
             
             result_row = {
                 "prompt_id": row.get('prompt_id', f"ID-{index}"),
@@ -212,9 +220,35 @@ Do not include any markdown formatting, conversational text, or explanations out
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v1.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_pilot_benchmark.csv"))
+    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v2.json"))
+    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_1_pilot_benchmark.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
-    router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
-    router.evaluate_benchmark(benchmark_path, output_path)
+    # Initialize the router once
+    router = LLMRouterV1(taxonomy_path=taxonomy_path)
+    
+    print("\n" + "="*50)
+    print("LLM Router Interactive Mode")
+    print("Type 'quit' or 'exit' to stop.")
+    print("="*50 + "\n")
+    
+    # Loop to continuously ask the user for input
+    while True:
+        user_input = input("Enter your question/request: ")
+        
+        # Check if the user wants to exit
+        if user_input.strip().lower() in ['quit', 'exit']:
+            print("Exiting interactive mode...")
+            break
+            
+        # Ignore empty inputs
+        if not user_input.strip():
+            continue
+            
+        # Route the request and print the results nicely
+        print("\nRouting request...")
+        single_prediction = router.route_request(user_input)
+        
+        print("\n--- Prediction Result ---")
+        print(json.dumps(single_prediction, indent=4))
+        print("-" * 25 + "\n")
