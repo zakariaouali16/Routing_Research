@@ -9,21 +9,8 @@ from baselines.baseline_embedding_router import EmbeddingRouter
 from llm_router_v2_3 import LLMRouterV1
 
 def clean_label(label):
-    """Standardizes labels for fair comparison, removing hallucinated domains."""
-    l = str(label).strip().lower().replace("_", " ")
-    
-    # Strip common hallucinated separators
-    if ">" in l:
-        l = l.split(">")[-1].strip()
-    if "/" in l:
-        l = l.split("/")[-1].strip()
-    if "-" in l:
-        l = l.split("-")[-1].strip()
-        
-    # Manually remove domain words if they still exist
-    l = l.replace("education domain", "").replace("healthcare domain", "").replace("utility domain", "").strip()
-    
-    return l
+    """Standardizes labels for fair comparison."""
+    return str(label).strip().lower().replace("_", " ")
 
 def run_comparison():
     # 1. Setup paths
@@ -101,7 +88,7 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
-            res = llm_router.route_request(prompt) # <--- REMOVE DOMAIN HERE
+            res = llm_router.route_request(prompt, domain) # <--- REMOVE DOMAIN HERE
             l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             llm_preds.append(l_val)
         except Exception as e:

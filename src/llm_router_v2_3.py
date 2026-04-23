@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import requests
 from tqdm import tqdm
-import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class LLMRouterV1:
     def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v2.json'):
@@ -14,71 +14,50 @@ class LLMRouterV1:
         print(f"Loading taxonomy from {taxonomy_path}...")
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
-    
+
     def build_system_prompt(self):
-        """Constructs the prompt using all domains, labels, and required slots."""
+        """Constructs the prompt using all domains and labels from the taxonomy."""
         
         all_labels_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
             all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
             for l in domain_data['labels']:
-                # Dynamically fetch the slots for the prompt
-                slots = ", ".join(l.get('required_slots', [])) if l.get('required_slots') else "None"
-                all_labels_text += f"- {l['name']}: {l['definition']} (Required Slots to Extract: {slots})\n"
+                all_labels_text += f"- {l['name']}: {l['definition']}\n"
         
         system_prompt = f"""You are an expert, autonomous routing agent.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains AND extract the required slots based on the user's text.
-
+Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains:
 {all_labels_text}
 
 CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
-If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
-
-OUTPUT FORMAT:
-Output your response ONLY as a valid JSON object using this exact schema:
-{{
-    "predicted_label": "The exact name of the category ONLY. Do NOT include the domain name, slashes, or arrows.",
-    "confidence_level": "High, Medium, or Low",
-    "short_reason": "One sentence explaining why",
-    "needs_clarification": true or false,
-    "extracted_slots": {{
-        "slot_name": "The extracted value from the prompt, or null if the user did not provide it"
-    }}
-}}"""
+1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
+2. Respond with ONLY the exact name of the category you choose. No other text."""
+        
         return system_prompt
 
-    def verify_prediction(self, user_prompt, proposed_label, proposed_slots):
-        """Secondary lightweight verification step. Completely blind to the gold domain."""
+    def verify_prediction(self, user_prompt, domain, proposed_label):
+        """A secondary lightweight verification step to act as a QA auditor."""
+        domain_key = domain.lower() 
+        labels = self.taxonomy['domains'][domain_key]['labels']
+        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
         
-        # Rebuild the full taxonomy text so the QA agent can cross-check everything
-        all_labels_text = ""
-        for domain_name, domain_data in self.taxonomy['domains'].items():
-            all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
-            for l in domain_data['labels']:
-                slots = ", ".join(l.get('required_slots', [])) if l.get('required_slots') else "None"
-                all_labels_text += f"- {l['name']}: {l['definition']} (Required Slots: {slots})\n"
-        
-        verification_prompt = f"""You are a strict QA auditor for a multi-domain support system.
-A previous routing agent classified a user's request and extracted data. Your job is to verify if it is accurate based on the taxonomy.
+        verification_prompt = f"""You are a strict QA auditor for a {domain_key} support system.
+A previous routing agent classified a user's request, and your job is to verify if it is accurate based on the taxonomy.
 
-VALID CATEGORIES & SLOTS ACROSS ALL DOMAINS:
-{all_labels_text}
+VALID CATEGORIES:
+{labels_text}
 
 USER REQUEST: "{user_prompt}"
 PROPOSED LABEL: "{proposed_label}"
-PROPOSED SLOTS: {json.dumps(proposed_slots)}
 
-Critically analyze if the PROPOSED LABEL is the absolute best fit across ALL domains. If you correct the label, you MUST extract the correct slots for your new label.
-
+Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST.
 Output your response ONLY as a valid JSON object with these exact keys:
 {{
     "is_correct": true or false,
-    "verified_label": "If is_correct is true, output the PROPOSED LABEL. If false, output the corrected valid category name from ANY domain.",
-    "qa_reason": "One short sentence explaining why you confirmed or corrected the label.",
-    "verified_slots": {{
-        "slot_name": "The extracted value for the verified_label, or null if missing"
-    }}
+    "verified_label": "If is_correct is true, output the PROPOSED LABEL. If false, output the corrected valid category name from the VALID CATEGORIES list.",
+    "qa_reason": "One short sentence explaining why you confirmed or corrected the label."
 }}
+
+Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
 """
         payload = {
             "model": self.model_name,
@@ -86,7 +65,7 @@ Output your response ONLY as a valid JSON object with these exact keys:
             "stream": False,
             "format": "json", 
             "options": {            
-                "temperature": 0.0, 
+                "temperature": 0.0, # Keep at 0 for strict validation
                 "seed": 42
             }
         }
@@ -97,95 +76,18 @@ Output your response ONLY as a valid JSON object with these exact keys:
             return json.loads(response.json().get("response", "{}"))
         except Exception as e:
             tqdm.write(f"Verification Error -> {e}")
-            return {
-                "is_correct": True, 
-                "verified_label": proposed_label, 
-                "qa_reason": "Verification failed, defaulting to original.",
-                "verified_slots": proposed_slots
-            }
-    def check_emergency_keywords(self, user_prompt):
-        """Stage 1: Deterministic Keyword Routing for High-Risk Healthcare"""
-        # Based on your benchmark data (HC-051 to HC-060)
-        emergency_keywords = [
-            r"\b(chest pain|heart attack|stroke|suicide|overdose|unconscious|bleeding|can't breathe|poison)\b",
-            r"\b(numb|paralyzed|dropped.*sink|drank.*cleaner)\b" 
-        ]
-        
-        prompt_lower = user_prompt.lower()
-        for pattern in emergency_keywords:
-            if re.search(pattern, prompt_lower):
-                return True
-        return False
-    def route_request(self, user_prompt):
-    # --- STAGE 1: KEYWORD TRIAGE ---
-        if self.check_emergency_keywords(user_prompt):
-            return {
-                "initial_label": "Urgent Escalation (Emergency Services)",
-                "predicted_label": "Urgent Escalation (Emergency Services)",
-                "confidence_level": "High",
-                "short_reason": "Triggered by emergency keyword match.",
-                "needs_clarification": False,
-                "was_corrected": False,
-                "qa_reason": "N/A",
-                "final_slots": {}
-            }
+            return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
 
-        # --- STAGE 2: Llama 8B ---
+    def route_request(self, user_prompt, domain):
+        """Sends the prompt to Ollama, gets a prediction, and verifies it."""
+        # --- PASS 1: Initial Generation ---
+        # [Remove the 'domain' parameter from this method's signature]
         system_prompt = self.build_system_prompt()
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
         
-        # Assuming self.model_name is 'llama3:8b'
-        llm_8b_output = self._call_llm('llama3:8b', full_prompt)
-        
-        confidence = llm_8b_output.get("confidence_level", "Low")
-        
-        # --- STAGE 3: Llama 70B Fallback ---
-        # If 8B is unconfident, kick it to 70B
-        if confidence == "Low" or confidence == "Unknown":
-            print(f"8B lacks confidence on prompt: '{user_prompt[:30]}...'. Escaping to 70B.")
-            llm_70b_output = self._call_llm('llama3:70b', full_prompt)
-            
-            # Use 70b's output
-            final_output = llm_70b_output
-            final_output["qa_reason"] = "Routed to 70B due to 8B low confidence."
-        else:
-            # Use 8b's output
-            final_output = llm_8b_output
-            final_output["qa_reason"] = "Resolved by 8B with High/Medium confidence."
-        # --- STAGE 4: QA VERIFICATION ---
-        # Verify the final prediction
-        qa_output = self.verify_prediction(
-            user_prompt=user_prompt, 
-            proposed_label=final_output.get("predicted_label", ""),
-            proposed_slots=final_output.get("extracted_slots", {})
-        )
-        
-        # Update the final output based on QA
-        if not qa_output.get("is_correct", True):
-            final_output["predicted_label"] = qa_output.get("verified_label", final_output.get("predicted_label"))
-            final_output["extracted_slots"] = qa_output.get("verified_slots", final_output.get("extracted_slots"))
-            final_output["qa_reason"] = qa_output.get("qa_reason", final_output["qa_reason"])
-            confidence_level = "High" # Assume QA fixed it confidently
-
-        # Return formatted results mapping to your CSV structure
-        return {
-            "initial_label": final_output.get("predicted_label", ""),
-            "predicted_label": final_output.get("predicted_label", ""),
-            "confidence_level": final_output.get("confidence_level", "Unknown"),
-            "needs_clarification": final_output.get("needs_clarification", False),
-            "short_reason": final_output.get("short_reason", ""),
-            "was_corrected": (confidence == "Low"), 
-            "qa_reason": final_output.get("qa_reason", ""),
-            "initial_slots": final_output.get("extracted_slots", {}),
-            "final_slots": final_output.get("extracted_slots", {})
-            
-        }
-    
-    def _call_llm(self, model_name, prompt):
-        """Helper method to execute API calls to the local LLM."""
         payload = {
-            "model": model_name,
-            "prompt": prompt,
+            "model": self.model_name,
+            "prompt": full_prompt,
             "stream": False,
             "format": "json", 
             "options": {            
@@ -197,29 +99,52 @@ Output your response ONLY as a valid JSON object with these exact keys:
         try:
             response = requests.post(self.api_url, json=payload)
             response.raise_for_status()
-            return json.loads(response.json().get("response", "{}"))
+            initial_output = json.loads(response.json().get("response", "{}"))
         except Exception as e:
-            print(f"LLM Call Error -> {e}")
+            tqdm.write(f"Error calling LLM for prompt: '{user_prompt[:30]}...' -> {e}")
             return {
+                "initial_label": "Error",
                 "predicted_label": "Error",
                 "confidence_level": "Low",
                 "short_reason": f"API Error: {str(e)}",
                 "needs_clarification": True,
-                "extracted_slots": {}
+                "was_corrected": False,
+                "qa_reason": "N/A"
             }
+
+        initial_label = initial_output.get("predicted_label", "")
+
+        # --- PASS 2: Lightweight Verification ---
+        qa_output = self.verify_prediction(user_prompt, domain, initial_label)
+        
+        # Merge the outputs
+        final_label = qa_output.get("verified_label", initial_label)
+        
+        # Build final aggregated response
+        return {
+            "initial_label": initial_label,
+            "predicted_label": final_label,
+            "confidence_level": initial_output.get("confidence_level", "Unknown"),
+            "needs_clarification": initial_output.get("needs_clarification", False),
+            "short_reason": initial_output.get("short_reason", ""),
+            "was_corrected": not qa_output.get("is_correct", True),
+            "qa_reason": qa_output.get("qa_reason", "")
+        }
+
     def evaluate_benchmark(self, input_csv, output_csv):
         """Runs the LLM over the entire pilot benchmark and saves the results."""
         print(f"Loading benchmark data from {input_csv}...")
         df = pd.read_csv(input_csv)
         results = []
         
-        print(f"Routing and Extracting Slots for {len(df)} requests...\n")
+        print(f"Routing {len(df)} requests. This will take longer due to the 2-pass verification system...\n")
         
         for index, row in tqdm(df.iterrows(), total=len(df), desc="Processing Requests", unit="prompt"):
-            prompt_text = row['user_prompt']
+            prompt_text = row['prompt']
             domain = row['domain']
             
-            llm_output = self.route_request(prompt_text)
+            # Ask the LLM to route and verify it
+            llm_output = self.route_request(prompt_text, domain)
             
             result_row = {
                 "prompt_id": row.get('prompt_id', f"ID-{index}"),
@@ -233,36 +158,63 @@ Output your response ONLY as a valid JSON object with these exact keys:
                 "needs_clarification_pred": llm_output.get("needs_clarification", False),
                 "short_reason": llm_output.get("short_reason", ""),
                 "was_corrected_by_qa": llm_output.get("was_corrected", False),
-                "qa_reason": llm_output.get("qa_reason", ""),
-                # Convert the slots dictionary to a JSON string so it saves cleanly in the CSV
-                "extracted_slots": json.dumps(llm_output.get("final_slots", {}))
+                "qa_reason": llm_output.get("qa_reason", "")
             }
             results.append(result_row)
             
+        # Save to the new CSV
         results_df = pd.DataFrame(results)
         results_df.to_csv(output_csv, index=False)
-        
         print(f"\nDone! Results saved to {output_csv}\n")
         
-        # --- Advanced Accuracy Ratings (Same as original) ---
-        #correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
-        results_df['gold_label_norm'] = results_df['gold_label'].str.strip().str.lower()
-        results_df['pred_label_norm'] = results_df['final_predicted_label'].str.strip().str.lower()
-
-        correct = (results_df['gold_label_norm'] == results_df['pred_label_norm']).sum()
+        # ==========================================
+        # ADVANCED ACCURACY RATINGS
+        # ==========================================
+        
+        # 1. Overall Accuracy (using final verified label)
+        correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
         total = len(results_df)
         print("="*50)
         print(f"OVERALL POST-VERIFICATION ACCURACY: {correct}/{total} ({(correct/total)*100:.2f}%)")
         print("="*50)
 
+        # Optional: Print how many times the QA agent intervened
+        corrections = results_df['was_corrected_by_qa'].sum()
+        print(f"QA Interventions: {corrections} out of {total} prompts.")
+
+        # 2. Accuracy by Domain
+        if 'domain' in results_df.columns:
+            print("\n--- ACCURACY BY DOMAIN ---")
+            for dom in results_df['domain'].unique():
+                domain_df = results_df[results_df['domain'] == dom]
+                d_correct = (domain_df['gold_label'] == domain_df['final_predicted_label']).sum()
+                d_total = len(domain_df)
+                if d_total > 0:
+                    print(f"{dom}: {d_correct}/{d_total} ({(d_correct/d_total)*100:.2f}%)")
+            print("-" * 26)
+
+        # 3. Detailed Classification Report Rating
+        try:
+            from sklearn.metrics import classification_report
+            print("\n--- DETAILED ACCURACY RATING (Per Label) ---")
+            report = classification_report(
+                results_df['gold_label'], 
+                results_df['final_predicted_label'], 
+                zero_division=0
+            )
+            print(report)
+        except ImportError:
+            print("\n[!] Tip: Install scikit-learn (`pip install scikit-learn`) to see a detailed Accuracy Rating per category.")
+
+# ==========================================
+# Run the evaluation
+# ==========================================
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Updated paths to reflect v2 mapping
-    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v2.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_1_pilot_benchmark.csv"))
-    output_path = os.path.abspath(os.path.join(script_dir, "../Data/v2_llm_results.csv"))
+    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v1.json"))
+    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_pilot_benchmark.csv"))
+    output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
-    # Initialize the updated router
     router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
     router.evaluate_benchmark(benchmark_path, output_path)
