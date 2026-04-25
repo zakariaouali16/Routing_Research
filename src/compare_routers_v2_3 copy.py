@@ -2,7 +2,6 @@ import os
 import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
-import re
 from sklearn.metrics import accuracy_score, classification_report
 
 # Import your classes
@@ -10,17 +9,8 @@ from baselines.baseline_embedding_router import EmbeddingRouter
 from llm_router_v2_3 import LLMRouterV1
 
 def clean_label(label):
-    """Standardizes labels and strips hallucinated domain prefixes for fair comparison."""
-    cleaned = str(label).strip().lower().replace("_", " ")
-    
-    # Strip out any text ending with 'domain' followed by punctuation/spaces
-    # e.g., "education domain - concept explanation" -> "concept explanation"
-    cleaned = re.sub(r'^.*?domain[\s\-\/\>\.]*', '', cleaned)
-    
-    # Handle edge cases where it just says "education / " without the word "domain"
-    cleaned = re.sub(r'^(education|healthcare|utility)[\s\-\/\>\.]*', '', cleaned)
-    
-    return cleaned.strip()
+    """Standardizes labels for fair comparison."""
+    return str(label).strip().lower().replace("_", " ")
 
 def run_comparison():
     # 1. Setup paths
