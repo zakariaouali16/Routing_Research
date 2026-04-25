@@ -119,126 +119,59 @@ EDU-117,Education,I received a failing grade for academic dishonesty but was nev
 EDU-118,Education,My final grade is one point below a B and I'm at risk of losing my financial aid. Can the professor review it?,Instructor/TA Escalation,Grade review request with significant personal consequence.
 EDU-119,Education,I reported a classmate for sharing exam questions in a group chat and now I'm being pressured by other students. What should I do?,Instructor/TA Escalation,Retaliation concern after reporting misconduct — requires faculty or admin intervention.
 EDU-120,Education,My professor gave me a verbal warning about my code looking 'too clean' for my level. I didn't do anything wrong but I'm scared. What do I do?,Instructor/TA Escalation,"Informal academic integrity concern with emotional distress — requires faculty intervention, not policy information."
-HC-001,Healthcare,"""I'd like to book an annual physical with Dr. Smith for sometime next month.""",Scheduling & Appointments,Clean booking request. All key intent signals present.
-HC-002,Healthcare,"""I need to cancel my appointment for tomorrow morning.""",Scheduling & Appointments,Clean cancellation. patient_name and department_specialty absent but intent is unambiguous.
-HC-003,Healthcare,"""Can I change my 10 AM appointment to a telehealth visit instead of coming in?""",Scheduling & Appointments,Format modification request. 
+HC-001,Healthcare,"""I'd like to book an annual physical with Dr. Smith for sometime next month.""",Scheduling & Appointments,Standard booking request. 
+HC-002,Healthcare,"""I need to cancel my appointment for tomorrow morning.""",Scheduling & Appointments,Standard cancellation. 
+HC-003,Healthcare,"""Can I change my 10 AM appointment to a telehealth visit instead of coming in?""",Scheduling & Appointments,Modifying appointment format. 
 HC-004,Healthcare,"""When is my next appointment? I forgot to write it down.""",Scheduling & Appointments,"Missing patient identifiers and specialty, but clearly a scheduling query. "
-HC-005,Healthcare,"""I need to be seen today, I can't wait until next week.""",Scheduling & Appointments,Status check. Missing all required slots but routing intent is clear. Underspecified but routable.
-HC-006,Healthcare,I need to move my follow-up appointment to an earlier date — can you check availability?,Scheduling & Appointments,Clean rescheduling request.
-HC-007,Healthcare,"""My son has a fever and I want to book a sick visit for this afternoon.""",Scheduling & Appointments,Clinical context (fever) but the core request is purely administrative (booking a visit). 
-HC-008,Healthcare,"""Can I book a double block of time? I have a lot of things to discuss with the doctor.""",Scheduling & Appointments,Specific logistical request about calendar management. 
-HC-009,Healthcare,I need to see a cardiologist next week but only after 3pm.,Scheduling & Appointments,Specialty and time constraint both present.
-HC-010,Healthcare,"I was told to follow up in two weeks, but I’ll be traveling—what should I do?",Scheduling & Appointments,Rescheduling due to conflict.
-HC-011,Healthcare,Can I book an appointment for my parent even if I’m not listed on their account?,Scheduling & Appointments,Same-day rebooking after missed visit.
-HC-012,Healthcare,"I want to schedule a visit, but I don’t know which doctor handles my condition.",Scheduling & Appointments,Format preference request. No clinical content.
-HC-013,Healthcare,I missed my appointment this morning—can I still be seen today?,Scheduling & Appointments,Rescheduling with availability constraint. patient_name and department_specialty absent. Underspecified but routable.
-HC-014,Healthcare,I have two appointments next week — can I combine them into one visit?,Scheduling & Appointments,Consolidation request. Specific logistical ask.
-HC-015,Healthcare,My doctor referred me to a specialist. How do I book that appointment?,Scheduling & Appointments,Referral-based booking. No clinical content — purely administrative.
-HC-016,Healthcare,I keep getting a busy signal when I call to book. Can I schedule online instead?,Scheduling & Appointments,Channel preference question.
-HC-017,Healthcare,I think I have an appointment sometime this week but I'm not sure which day.,Scheduling & Appointments,Status check with uncertainty. Missing all required slots. Underspecified but routable.
-HC-018,Healthcare,I'd like to book a follow-up but my usual doctor is on leave. Can I see someone else?,Scheduling & Appointments,Provider substitution request.
-HC-019,Healthcare,Can I request a specific nurse for my appointment or is that not possible?,Scheduling & Appointments,Staff preference request within a scheduling context.
-HC-020,Healthcare,I need to book an appointment but I'm not sure how far in advance I need to call.,Scheduling & Appointments,Process/policy question within scheduling context.
-HC-021,Healthcare,"My insurance says this procedure is covered, but I still got billed—can you explain why?",Insurance & Billing,Coverage dispute — billing intent clear but may escalate to Human Staff Review Needed if unresolved. Boundary stress-test case.
-HC-022,Healthcare,"""Do you accept Blue Cross Blue Shield PPO?""",Insurance & Billing,Standard insurance network question. 
-HC-023,Healthcare,"""I received a bill for $500 but I thought my insurance covered preventative care. Can you explain this?""",Insurance & Billing,Billing confusion with mild frustration.
-HC-024,Healthcare,"""How much is the copay to see a dermatologist?""",Insurance & Billing,Routine out-of-pocket estimate. 
-HC-025,Healthcare,"""Can I pay my balance online or do I have to mail a check?""",Insurance & Billing,Payment method logistics. 
-HC-026,Healthcare,"""I don't have insurance. What is the cash price for an x-ray of a broken wrist?""",Insurance & Billing,Uninsured estimate request. 
-HC-027,Healthcare,"""I absolutely cannot afford this $10,000 bill. I am going to lose my house because of this surgery.""",Insurance & Billing,Extreme financial distress — requires patient advocate or financial counselor. Relabeled from Insurance & Billing. Model may incorrectly route to Insurance & Billing. Flag as high-consequence boundary case.
-HC-028,Healthcare,"""I need to update the Medicare ID on my profile.""",Insurance & Billing,Routine administrative update.
-HC-029,Healthcare,"""I got a letter saying my network status changed and you are now out-of-network. Will I be billed for yesterday's visit?""",Insurance & Billing,Complex billing policy question regarding network status overlap. 
-HC-030,Healthcare,I paid my bill last week but I’m still getting reminders. Did something go wrong?,Insurance & Billing,Payment confirmation issue.
-HC-031,Healthcare,I was quoted one price before the visit but charged more afterward—why?,Insurance & Billing,Price discrepancy dispute. Boundary case against Human Staff Review Needed. Clean routing intent.
-HC-032,Healthcare,My insurance recently changed—will that affect my previous bills?,Insurance & Billing,Policy change impact question. Underspecified but routable — no invoice or provider details given.
-HC-033,Healthcare,I don’t understand this bill at all. Can someone walk me through it?,Insurance & Billing,Vague but routable — billing intent is clear. Missing invoice_number. Underspecified but routable.
-HC-034,Healthcare,Is there a payment plan option for large balances?,Insurance & Billing,Financial logistics question.
-HC-035,Healthcare,Does my insurance cover mental health visits?,Insurance & Billing,Coverage verification question.
-HC-036,Healthcare,I got an Explanation of Benefits from my insurance but it doesn't match my bill. Who do I talk to?,Insurance & Billing,EOB discrepancy — sits on boundary with Human Staff Review Needed but billing intent is primary.
-HC-037,Healthcare,What is my deductible and how much of it have I met so far?,Insurance & Billing,Deductible status inquiry. Missing insurance_provider but intent is unambiguous. Underspecified but routable.
-HC-038,Healthcare,I think I was billed for a service I never received.,Insurance & Billing,Billing dispute. Boundary case against Human Staff Review Needed — error claim may require human review. Good stress-test.
-HC-039,Healthcare,Can you tell me if my insurance will cover a second opinion visit?,Insurance & Billing,Coverage verification for specific visit type. 
-HC-040,Healthcare,I have two insurance plans — which one do you bill first?,Insurance & Billing,Coordination of benefits question. Underspecified but routable — common administrative scenario.
-HC-041,Healthcare,What is the main phone number for the front desk?,Facility & General Information,Basic contact information request.
-HC-042,Healthcare,"""What are your operating hours on Saturdays?""",Facility & General Information,Standard hours inquiry. 
-HC-043,Healthcare,"""Where is the patient parking garage located for the main hospital?""",Facility & General Information,Directions/parking. 
-HC-044,Healthcare,"""How many visitors are allowed in the ICU at one time?""",Facility & General Information,Policy inquiry. 
-HC-045,Healthcare,"""Are there wheelchairs available at the main entrance?""",Facility & General Information,Accessibility question. 
-HC-046,Healthcare,"""What is your fax number?""",Facility & General Information,Contact information request. Underspecified — hospital may have multiple department fax numbers. Underspecified but routable.
-HC-047,Healthcare,"""Can I bring my service dog to my chemotherapy appointment?""",Facility & General Information,Policy question involving ADA/service animal compliance. 
-HC-048,Healthcare,"""Is there a cafeteria inside the building? I have to wait for 4 hours.""",Facility & General Information,General facility amenity query. 
-HC-049,Healthcare,Do you validate parking for patients who are here for more than two hours?,Facility & General Information,Parking policy question
-HC-050,Healthcare,"""Do you have free Wi-Fi in the waiting rooms?""",Facility & General Information,General amenity query. 
-HC-051,Healthcare,I have an appointment but I don’t know where exactly to check in—can you guide me?,Facility & General Information,Navigation/check-in guidance. Clean case.
-HC-052,Healthcare,Is there somewhere I can wait comfortably for several hours between appointments?,Facility & General Information,Facility amenity query with specific context.
-HC-053,Healthcare,I’m bringing someone in a wheelchair—what’s the easiest entrance to use?,Facility & General Information,Accessibility and navigation question.
-HC-054,Healthcare,I’m running late and unfamiliar with the area—where should I park quickly?,Facility & General Information,Parking/directions with time pressure.
-HC-055,Healthcare,Is the lab on the same floor as the radiology department?,Facility & General Information,Internal navigation question
-HC-056,Healthcare,Do you have a pharmacy inside the building or do I need to go somewhere else?,Facility & General Information,"Facility amenity query. Sits on boundary with Pharmacy & Prescription Logistics — patient is asking about location, not a prescription request. Boundary stress-test case."
-HC-057,Healthcare,Are visiting hours different for pediatric patients?,Facility & General Information,Visitor policy question for specific ward.
-HC-058,Healthcare,Is there an ATM or cash machine anywhere in the building?,Facility & General Information,General facility amenity query
-HC-059,Healthcare,What is the address of your closest urgent care location?,Facility & General Information,Location/directory inquiry.
-HC-060,Healthcare,Is there a chapel or quiet room available for patients and families?,Facility & General Information,Facility amenity query.
-HC-061,Healthcare,"""I need to request a refill for my blood pressure medication.""",Pharmacy & Prescription Logistics,Standard refill request.
-HC-062,Healthcare,"""Can I transfer my Adderall prescription to a CVS in another state?""",Pharmacy & Prescription Logistics,Logistics involving controlled substances across state lines. 
-HC-063,Healthcare,I need to transfer my prescription to a pharmacy closer to my new address.,Pharmacy & Prescription Logistics,Prescription LogisticsRelocation-based transfer request.
-HC-064,Healthcare,I lost my prescription bottle — how do I get a replacement sent to my pharmacy,Pharmacy & Prescription Logistics,Lost prescription logistics.
-HC-065,Healthcare,"""Do you have the generic version of Lexapro in stock?""",Pharmacy & Prescription Logistics,Standard inventory inquiry. 
-HC-066,Healthcare,"""My doctor said he called it in, but the pharmacist says they don't see it.""",Pharmacy & Prescription Logistics,Communication breakdown between clinic and pharmacy. 
-HC-067,Healthcare,"""What time does the drive-thru pharmacy close today?""",Pharmacy & Prescription Logistics,Pharmacy specific hours. 
-HC-068,Healthcare,"""I need a 90-day supply instead of a 30-day supply for my next refill.""",Pharmacy & Prescription Logistics,Modifying prescription logistics. 
-HC-069,Healthcare,I accidentally picked up the wrong prescription at the pharmacy — how do I get the right one?,Pharmacy & Prescription Logistics,"Wrong prescription pickup. Administrative error, no safety signals. Replaces urgent case. Clean case."
-HC-070,Healthcare,My medication ran out earlier than expected—can I refill it sooner?,Pharmacy & Prescription Logistics,Early refill request with no controlled substance or safety signals.
-HC-071,Healthcare,I think my prescription was sent to the wrong pharmacy—how do I fix that?,Pharmacy & Prescription Logistics,Prescription routing error.
-HC-072,Healthcare,The pharmacy says they need approval but my doctor already sent it—what’s happening?,Pharmacy & Prescription Logistics,Approval communication breakdown.
-HC-073,Healthcare,I need this medication today but the pharmacy says it's out of stock—what are my options?,Pharmacy & Prescription Logistics,Urgency with stock issue. No clinical red flags — purely administrative.
-HC-074,Healthcare,Can I switch to a different pharmacy without contacting my doctor again?,Pharmacy & Prescription Logistics,Transfer process question.
-HC-075,Healthcare,How do I set up automatic refills for my monthly prescriptions?,Pharmacy & Prescription Logistics,Refill logistics setup
-HC-076,Healthcare,I just switched insurance providers — do I need to update anything before my next prescription refill?,Pharmacy & Prescription Logistics,Insurance update in pharmacy context. Sits on boundary with Insurance & Billing but prescription logistics is primary. Boundary stress-test case.
-HC-077,Healthcare,I was told my prescription needs prior authorization — what does that mean and how long does it take?,Pharmacy & Prescription Logistics,Prior authorization process question. Administrative only.
-HC-078,Healthcare,Can I pick up someone else's prescription on their behalf?,Pharmacy & Prescription Logistics,Proxy pickup request. Sits on boundary with Human Staff Review Needed — may require authorization verification. Boundary stress-test case.
-HC-079,Healthcare,I moved to a new city — how do I transfer all my prescriptions to a local pharmacy?,Pharmacy & Prescription Logistics,Bulk transfer logistics. Underspecified but routable — no pharmacy name or medication list provided.
-HC-080,Healthcare,My prescription label says take twice daily but the pharmacy gave me different instructions than my doctor — which do I follow?,Pharmacy & Prescription Logistics,"Instruction discrepancy between doctor and pharmacy. Administrative confusion, no clinical advice needed."
-HC-081,Healthcare,"""I need a complete copy of my medical records sent to my lawyer for a pending lawsuit.""",Human Staff Review Needed,Complex legal/administrative request requiring HIPAA compliance review. 
-HC-082,Healthcare,"""I want to file a formal grievance against Dr. Miller. He was extremely dismissive of my pain.""",Human Staff Review Needed,Patient complaint/grievance requiring patient advocate routing. 
-HC-083,Healthcare,"""My employer is demanding proof of my diagnosis but I don't want to release my full chart. What are my rights?""",Human Staff Review Needed,Privacy/HIPAA rights query; system must not generate legal/privacy advice autonomously. 
-HC-084,Healthcare,"""I am the medical proxy for my mother, who has dementia. I need to override her previous directives.""",Human Staff Review Needed,Complex legal guardianship and consent issue. 
-HC-085,Healthcare,"""I think one of the night nurses stole cash out of my purse while I was sleeping.""",Human Staff Review Needed,Accusation of theft/crime by staff. 
-HC-086,Healthcare,"""Can you help me fill out my FMLA paperwork for my maternity leave?""",Human Staff Review Needed,Complex administrative task requiring human assistance. 
-HC-087,Healthcare,"""I want to completely delete my medical history from your electronic system forever.""",Human Staff Review Needed,Impossible/complex request governed by medical retention laws. Needs staff explanation. 
-HC-088,Healthcare,"""I refuse to be treated by a male doctor for religious reasons. Please update my file to enforce this.""",Human Staff Review Needed,Sensitive demographic/provider request.
-HC-089,Healthcare,"""Can I get a doctor's note excusing me from work for the last two weeks?""",Human Staff Review Needed,Retroactive medical absence request; requires human/clinical review of the chart. 
-HC-090,Healthcare,"I need to send part of my medical record, but not everything—how do I control that?",Human Staff Review Needed,Partial records release request. Privacy-sensitive.
-HC-091,Healthcare,I think there’s an error in my medical record—who can correct it?,Human Staff Review Needed,Record correction request. Requires staff verification.
-HC-092,Healthcare,I sent in a records release form two weeks ago but nothing has happened — who handles this?,Human Staff Review Needed,Specific enough to anchor to Human Staff Review Needed
-HC-093,Healthcare,I was discharged last week but never received my discharge summary — how do I get it?,Human Staff Review Needed,Post-discharge records request. Privacy-sensitive administrative follow-up.
-HC-094,Healthcare,I want to formally request that a specific staff member no longer be assigned to my care.,Human Staff Review Needed,Sensitive staff reassignment request. Requires patient advocate.
-HC-095,Healthcare,I was billed after I explicitly told the billing department to contact my attorney. Who do I escalate this to?,Human Staff Review Needed,Legal/billing conflict escalation. Sits on boundary with Insurance & Billing but legal involvement makes Human Staff Review Needed correct.
-HC-096,Healthcare,I need to authorize my adult son to make medical decisions on my behalf — what paperwork is required?,Human Staff Review Needed,Legal proxy authorization request. Complex administrative process.
-HC-097,Healthcare,I was a patient here years ago and I think my records were shared without my consent.,Human Staff Review Needed,Potential HIPAA violation report. Requires privacy officer involvement. High-consequence case.
-HC-098,Healthcare,I need a letter confirming my diagnosis for my disability insurance claim.,Human Staff Review Needed,Clinical documentation request for legal/insurance purposes. Requires human review.
-HC-099,Healthcare,I want to know who has accessed my medical records in the last six months.,Human Staff Review Needed,Audit log request — HIPAA right of access. Requires staff to pull system logs.
-HC-100,Healthcare,I was told my referral was approved but I never got any paperwork confirming it — can someone look into this?,Human Staff Review Needed,Administrative follow-up requiring staff to verify referral status. Underspecified but routable.
-HC-101,Healthcare,"""My husband is complaining of crushing chest pain and his left arm is totally numb. What should I do?""",Urgent Escalation,Classic myocardial infarction (heart attack) cues. Must trigger 911/ER directive. 
-HC-102,Healthcare,"""I just fell down a flight of concrete stairs and I cannot feel my legs at all.""",Urgent Escalation,Severe trauma/spinal injury cues.
-HC-103,Healthcare,"""I am bleeding.""",Urgent Escalation,Minimal input — ambiguous severity but safety-first escalation is mandatory. Deliberate stress-test for minimal-input handling. System must not gate to Clarification Needed.
-HC-104,Healthcare,"""My toddler just drank half a bottle of liquid drain cleaner. Help!""",Urgent Escalation,Poisoning/Toxicology emergency. 
-HC-105,Healthcare,"""I think I am having a stroke. The right side of my face is drooping and I can't speak right.""",Urgent Escalation,Classic stroke (CVA) cues. 
-HC-106,Healthcare,"""I feel completely hopeless and I have a plan to end my life tonight.""",Urgent Escalation,Severe psychiatric emergency/suicide risk. 
-HC-107,Healthcare,"""I can't breathe.""",Urgent Escalation,Minimal input — respiratory distress signal. Safety-first escalation mandatory regardless of missing context.
-HC-108,Healthcare,"""My wife just collapsed on the kitchen floor and she isn't waking up when I shake her.""",Urgent Escalation,Unconscious/unresponsive patient. 
-HC-109,Healthcare,"""I suddenly lost all vision in my right eye five minutes ago.""",Urgent Escalation,Acute neurological/ophthalmological emergency. 
-HC-110,Healthcare,"""I swallowed a whole bottle of Tylenol an hour ago.""",Urgent Escalation,Intentional overdose emergency. 
-HC-111,Healthcare,My chest feels tight and I’m getting scared—should I come in or call someone?,Urgent Escalation,Ambiguous severity but chest tightness is a red-flag signal. System must escalate rather than route to Scheduling. Boundary stress-test against Scheduling & Appointments.
-HC-112,Healthcare,I took more medication than I should have and now I feel strange.,Urgent Escalation,Vague overdose admission with physical symptoms. System must escalate rather than route to Pharmacy. Boundary stress-test against Pharmacy & Prescription Logistics.
-HC-113,Healthcare,I think I might be having thoughts of hurting myself — is there someone I can talk to?,Urgent Escalation,Clear psychiatric distress signal. Less ambiguous than original while still being a boundary stress-test against Clarification Needed. Safety-first escalation mandatory.
-HC-114,Healthcare,I think I'm having an allergic reaction — my throat is starting to swell.,Urgent Escalation,Anaphylaxis cues. Throat swelling is a life-threatening signal.
-HC-115,Healthcare,My father has been unconscious for about ten minutes and I don't know what to do.,Urgent Escalation,Unconscious patient with prolonged duration. High urgency.
-HC-116,Healthcare,I was just in a car accident and my passenger is not responding.,Urgent Escalation,Trauma emergency involving unresponsive person.
-HC-117,Healthcare,I think my child swallowed something small and is now making a choking sound.,Urgent Escalation,Pediatric choking emergency.
-HC-118,Healthcare,I've been having severe chest pain for the last 20 minutes and I took aspirin but it's not helping.,Urgent Escalation,Cardiac emergency with failed self-treatment attempt.
-HC-119,Healthcare,I feel like I might pass out — my vision is going dark and I'm sweating a lot.,Urgent Escalation,Syncope/shock cues.
-HC-120,Healthcare,I haven't been able to stop crying for three days and I don't want to be here anymore.,Urgent Escalation,Suicidal ideation signal. Ambiguous phrasing but safety-first escalation is mandatory. Boundary stress-test against Clarification Needed.
+HC-005,Healthcare,"""I need to be seen today, I can't wait until next week.""",Scheduling & Appointments,High urgency/anxiety regarding scheduling. Missing specialty/reason. 
+HC-006,Healthcare,"""I am terrified about my biopsy results. Can you move my follow-up to an earlier date?""",Scheduling & Appointments,"Scheduling intent, but accompanied by high patient anxiety. "
+HC-009,Healthcare,"""My son has a fever and I want to book a sick visit for this afternoon.""",Scheduling & Appointments,Clinical context (fever) but the core request is purely administrative (booking a visit). 
+HC-010,Healthcare,"""Can I book a double block of time? I have a lot of things to discuss with the doctor.""",Scheduling & Appointments,Specific logistical request regarding the calendar. 
+HC-011,Healthcare,"""Do you accept Blue Cross Blue Shield PPO?""",Insurance & Billing,Standard insurance network question. 
+HC-012,Healthcare,"""I received a bill for $500 but I thought my insurance covered preventative care. Can you explain this?""",Insurance & Billing,Dispute/confusion over a bill; mild frustration. 
+HC-013,Healthcare,"""How much is the copay to see a dermatologist?""",Insurance & Billing,Routine out-of-pocket estimate. 
+HC-014,Healthcare,"""Can I pay my balance online or do I have to mail a check?""",Insurance & Billing,Payment method logistics. 
+HC-016,Healthcare,"""I don't have insurance. What is the cash price for an x-ray of a broken wrist?""",Insurance & Billing,Uninsured estimate request. 
+HC-017,Healthcare,"""I absolutely cannot afford this $10,000 bill. I am going to lose my house because of this surgery.""",Insurance & Billing,High distress regarding financial hardship; may require escalation to financial counseling or patient advocacy. 
+HC-018,Healthcare,"""I need to update the Medicare ID on my profile.""",Insurance & Billing,Routine administrative update.
+HC-020,Healthcare,"""I got a letter saying my network status changed and you are now out-of-network. Will I be billed for yesterday's visit?""",Insurance & Billing,Complex billing policy question regarding network status overlap. 
+HC-021,Healthcare,"""What are your operating hours on Saturdays?""",Facility & General Information,Standard hours inquiry. 
+HC-022,Healthcare,"""Where is the patient parking garage located for the main hospital?""",Facility & General Information,Directions/parking. 
+HC-023,Healthcare,"""How many visitors are allowed in the ICU at one time?""",Facility & General Information,Policy inquiry. 
+HC-024,Healthcare,"""Are there wheelchairs available at the main entrance?""",Facility & General Information,Accessibility question. 
+HC-025,Healthcare,"""What is your fax number?""",Facility & General Information,Ambiguous if the hospital has multiple departments with different faxes. 
+HC-026,Healthcare,"""Can I bring my service dog to my chemotherapy appointment?""",Facility & General Information,Policy question involving ADA/service animal compliance. 
+HC-027,Healthcare,"""Is there a cafeteria inside the building? I have to wait for 4 hours.""",Facility & General Information,General facility amenity query. 
+HC-029,Healthcare,"""My abusive ex-husband is in the main lobby. Can security escort me to my car safely?""",Facility & General Information,"Safety/Security risk. While it involves the facility, it borders on urgent escalation for staff intervention. "
+HC-030,Healthcare,"""Do you have free Wi-Fi in the waiting rooms?""",Facility & General Information,General amenity query. 
+HC-031,Healthcare,"""I need to request a refill for my blood pressure medication.""",Pharmacy & Prescription Logistics,Standard refill request.
+HC-032,Healthcare,"""Can I transfer my Adderall prescription to a CVS in another state?""",Pharmacy & Prescription Logistics,Logistics involving controlled substances across state lines. 
+HC-034,Healthcare,"""The pharmacy is closed but I ran out of my insulin. What do I do?""",Pharmacy & Prescription Logistics,Administrative inquiry that presents a near-urgent medical risk due to lack of life-saving medication. 
+HC-035,Healthcare,"""I dropped my painkillers down the sink by accident. I need an early refill approved.""",Pharmacy & Prescription Logistics,Controlled substance policy violation/abuse risk; must be handled carefully. 
+HC-036,Healthcare,"""Do you have the generic version of Lexapro in stock?""",Pharmacy & Prescription Logistics,Standard inventory inquiry. 
+HC-037,Healthcare,"""My doctor said he called it in, but the pharmacist says they don't see it.""",Pharmacy & Prescription Logistics,Communication breakdown between clinic and pharmacy. 
+HC-038,Healthcare,"""What time does the drive-thru pharmacy close today?""",Pharmacy & Prescription Logistics,Pharmacy specific hours. 
+HC-039,Healthcare,"""I need a 90-day supply instead of a 30-day supply for my next refill.""",Pharmacy & Prescription Logistics,Modifying prescription logistics. 
+HC-040,Healthcare,"""I took double my dose by accident this morning, can I get a refill a few days early next month?""",Pharmacy & Prescription Logistics,"The user is asking an administrative refill question, but admits to an overdose/medication error. Triaging safety is required. "
+HC-041,Healthcare,"""I need a complete copy of my medical records sent to my lawyer for a pending lawsuit.""",Human Staff Review Needed,Complex legal/administrative request requiring HIPAA compliance review. 
+HC-042,Healthcare,"""I want to file a formal grievance against Dr. Miller. He was extremely dismissive of my pain.""",Human Staff Review Needed,Patient complaint/grievance requiring patient advocate routing. 
+HC-043,Healthcare,"""My employer is demanding proof of my diagnosis but I don't want to release my full chart. What are my rights?""",Human Staff Review Needed,Privacy/HIPAA rights query; system must not generate legal/privacy advice autonomously. 
+HC-044,Healthcare,"""I am the medical proxy for my mother, who has dementia. I need to override her previous directives.""",Human Staff Review Needed,Complex legal guardianship and consent issue. 
+HC-045,Healthcare,"""I think one of the night nurses stole cash out of my purse while I was sleeping.""",Human Staff Review Needed,Accusation of theft/crime by staff. 
+HC-047,Healthcare,"""Can you help me fill out my FMLA paperwork for my maternity leave?""",Human Staff Review Needed,Complex administrative task requiring human assistance. 
+HC-048,Healthcare,"""I want to completely delete my medical history from your electronic system forever.""",Human Staff Review Needed,Impossible/complex request governed by medical retention laws. Needs staff explanation. 
+HC-049,Healthcare,"""I refuse to be treated by a male doctor for religious reasons. Please update my file to enforce this.""",Human Staff Review Needed,Sensitive demographic/provider request.
+HC-050,Healthcare,"""Can I get a doctor's note excusing me from work for the last two weeks?""",Human Staff Review Needed,Retroactive medical absence request; requires human/clinical review of the chart. 
+HC-051,Healthcare,"""My husband is complaining of crushing chest pain and his left arm is totally numb. What should I do?""",Urgent Escalation,Classic myocardial infarction (heart attack) cues. Must trigger 911/ER directive. 
+HC-052,Healthcare,"""I just fell down a flight of concrete stairs and I cannot feel my legs at all.""",Urgent Escalation,Severe trauma/spinal injury cues.
+HC-053,Healthcare,"""I am bleeding.""",Urgent Escalation,"Ambiguous severity, but the presence of bleeding without context mandates a safety-first escalation. "
+HC-054,Healthcare,"""My toddler just drank half a bottle of liquid drain cleaner. Help!""",Urgent Escalation,Poisoning/Toxicology emergency. 
+HC-055,Healthcare,"""I think I am having a stroke. The right side of my face is drooping and I can't speak right.""",Urgent Escalation,Classic stroke (CVA) cues. 
+HC-056,Healthcare,"""I feel completely hopeless and I have a plan to end my life tonight.""",Urgent Escalation,Severe psychiatric emergency/suicide risk. 
+HC-057,Healthcare,"""I can't breathe.""",Urgent Escalation,Brief but critical indication of respiratory distress. 
+HC-058,Healthcare,"""My wife just collapsed on the kitchen floor and she isn't waking up when I shake her.""",Urgent Escalation,Unconscious/unresponsive patient. 
+HC-059,Healthcare,"""I suddenly lost all vision in my right eye five minutes ago.""",Urgent Escalation,Acute neurological/ophthalmological emergency. 
+HC-060,Healthcare,"""I swallowed a whole bottle of Tylenol an hour ago.""",Urgent Escalation,Intentional overdose emergency. 
 UT-001,Utility,"""I have a question about my visit.""",Clarification Needed,"Could be a billing question, clinical follow-up, or scheduling follow-up. "
 UT-002,Utility,"""Please update my account.""",Clarification Needed,"Could mean updating insurance (billing), address (facility/general), or pharmacy preference. "
 UT-003,Utility,"""Send me the form.""",Clarification Needed,Vague reference. Which form? Medical records? New patient intake? FMLA? 
@@ -269,3 +202,28 @@ UT-027,Utility,"""The output is wrong.""",Clarification Needed,"Ambiguous: Needs
 UT-028,Utility,"""My script isn't working.""",Clarification Needed,"Ambiguous: Doesn't specify the language, the error, or provide code. "
 UT-029,Utility,"""Does this count toward my final grade?""",Clarification Needed,"Ambiguous: ""this"" is undefined. Could be an extra credit task, a quiz, or a lab. "
 UT-030,Utility,"""Can I resubmit it for a better score?""",Clarification Needed,Ambiguous: Needs to specify which assignment; medium risk due to grading impact.
+HC-061,Healthcare,I need to see a cardiologist next week but only after 3pm.,Scheduling & Appointments,
+HC-062,Healthcare,"I was told to follow up in two weeks, but I’ll be traveling—what should I do?",Scheduling & Appointments,
+HC-063,Healthcare,Can I book an appointment for my parent even if I’m not listed on their account?,Scheduling & Appointments,
+HC-064,Healthcare,"I want to schedule a visit, but I don’t know which doctor handles my condition.",Scheduling & Appointments,
+HC-065,Healthcare,I missed my appointment this morning—can I still be seen today?,Scheduling & Appointments,
+HC-066,Healthcare,"My insurance says this procedure is covered, but I still got billed—can you explain why?",Insurance & Billing,
+HC-067,Healthcare,I paid my bill last week but I’m still getting reminders. Did something go wrong?,Insurance & Billing,
+HC-068,Healthcare,I was quoted one price before the visit but charged more afterward—why?,Insurance & Billing,
+HC-069,Healthcare,My insurance recently changed—will that affect my previous bills?,Insurance & Billing,
+HC-070,Healthcare,I don’t understand this bill at all. Can someone walk me through it?,Insurance & Billing,
+HC-071,Healthcare,My medication ran out earlier than expected—can I refill it sooner?,Pharmacy & Prescription Logistics,
+HC-072,Healthcare,I think my prescription was sent to the wrong pharmacy—how do I fix that?,Pharmacy & Prescription Logistics,
+HC-073,Healthcare,The pharmacy says they need approval but my doctor already sent it—what’s happening?,Pharmacy & Prescription Logistics,
+HC-074,Healthcare,I need this medication today but the pharmacy says it's out of stock—what are my options?,Pharmacy & Prescription Logistics,
+HC-075,Healthcare,Can I switch to a different pharmacy without contacting my doctor again?,Pharmacy & Prescription Logistics,
+HC-076,Healthcare,I have an appointment but I don’t know where exactly to check in—can you guide me?,Facility & General Information,
+HC-077,Healthcare,Is there somewhere I can wait comfortably for several hours between appointments?,Facility & General Information,
+HC-078,Healthcare,I’m bringing someone in a wheelchair—what’s the easiest entrance to use?,Facility & General Information,
+HC-079,Healthcare,I’m running late and unfamiliar with the area—where should I park quickly?,Facility & General Information,
+HC-080,Healthcare,"I need to send part of my medical record, but not everything—how do I control that?",Human Staff Review Needed,
+HC-081,Healthcare,I think there’s an error in my medical record—who can correct it?,Human Staff Review Needed,
+HC-082,Healthcare,I submitted a form last week but haven’t heard back—how do I follow up?,Human Staff Review Needed,
+HC-083,Healthcare,My chest feels tight and I’m getting scared—should I come in or call someone?,Urgent Escalation,
+HC-084,Healthcare,I took more medication than I should have and now I feel strange.,Urgent Escalation,
+HC-085,Healthcare,I’m alone and not feeling safe right now—can someone help me?,Urgent Escalation,
