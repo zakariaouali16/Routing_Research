@@ -1,6 +1,6 @@
 {
   "project": "Reliable LLM Agents for Routing and Triage",
-  "version": "1.4",
+  "version": "2.1",
   "domains": {
     "utility": {
       "domain_description": "Cross-domain handling for underspecified or ambiguous input",
