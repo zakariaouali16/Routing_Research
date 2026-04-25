@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import requests
 from tqdm import tqdm
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class LLMRouterV1:
@@ -33,7 +34,7 @@ CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
 1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
 2. Output your response ONLY as a valid JSON object with this exact key:
 {{
-    "predicted_label": "The exact name of the category you chose"
+    "predicted_label": "The EXACT name of the category (e.g., 'Concept Explanation'). DO NOT include the domain name or any prefixes."
 }}"""
         
         return system_prompt
@@ -61,7 +62,7 @@ Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER R
 Output your response ONLY as a valid JSON object with these exact keys:
 {{
     "is_correct": true or false,
-    "verified_label": "If is_correct is true, output the PROPOSED LABEL. If false, output the corrected valid category name from the VALID CATEGORIES list.",
+    "verified_label": "If is_correct is true, output the EXACT category name without the domain. If false, output the corrected valid category name from the VALID CATEGORIES list ONLY.",
     "qa_reason": "One short sentence explaining why you confirmed or corrected the label."
 }}
 
