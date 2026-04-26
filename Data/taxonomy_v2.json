@@ -1,6 +1,6 @@
 {
   "project": "Reliable LLM Agents for Routing and Triage",
-  "version": "1.2",
+  "version": "1.3",
   "domains": {
     "utility": {
       "domain_description": "Cross-domain handling for underspecified or ambiguous input",
@@ -17,8 +17,8 @@
       "labels": [
         {
           "name": "Concept Explanation",
-          "definition": "Requests for clarifying theoretical computer science concepts, algorithms, or language syntax without involving specific code troubleshooting.",
-          "required_slots": ["concept_name", "complexity_level"]
+          "definition": "Requests to learn, define, compare, or explain general theoretical computer science concepts, programming language rules, data structures, or algorithms. These queries focus on understanding 'how' or 'why' something works conceptually (e.g., 'What is a pointer?', 'Difference between list and tuple') rather than fixing an error. If the user provides a specific error message, unexpected output, or broken code they need fixed, route to Debugging & Code Troubleshooting instead. If the concept is completely omitted (e.g., 'explain this to me'), route to Clarification Needed.",
+          "required_slots": ["concept_name"]
         },
         {
           "name": "Debugging & Code Troubleshooting",
@@ -37,12 +37,12 @@
         },
         {
           "name": "Course Logistics & Environment Setup",
-          "definition": "Questions about IDE/software installation, accessing course platforms, lecture schedules, or office hour timings.",
-          "required_slots": ["software_name", "operating_system", "installation_step"]
+          "definition": "Questions about course-specific software or tool installation, accessing course platforms (Canvas, Gradescope, GitHub Classroom), lecture schedules, office hour timings, or submission platform navigation.",
+          "required_slots": ["query_type", "platform_or_course_element"]
         },
         {
           "name": "Instructor/TA Escalation",
-          "definition": "Complex, sensitive, or highly specific queries (e.g., grade disputes, personal accommodations, suspected plagiarism) that require direct human faculty intervention.",
+          "definition": "Complex, sensitive, or highly specific queries requiring direct human faculty intervention, including grade disputes, personal accommodations, academic dishonesty (suspected or reported plagiarism, exam violations, misconduct), retaliation concerns, or safety issues involving students.",
           "required_slots": ["reason_for_escalation", "course_section"]
         }
       ]
@@ -72,12 +72,12 @@
         },
         {
           "name": "Human Staff Review Needed",
-          "definition": "Ambiguous, complex, or privacy-sensitive administrative requests (e.g., medical records release) that require review by a human receptionist or patient advocate.",
+          "definition": "Ambiguous, complex, or privacy-sensitive administrative requests that require review by a human receptionist or patient advocate. This includes medical records requests, patient grievances, legal or HIPAA-related inquiries, staff complaints, proxy authorization, and documentation requests. Use this label when the request involves sensitive administrative action that cannot be resolved by information alone. Do NOT use this label for standard appointment booking, prescription requests, or billing questions.",
           "required_slots": ["request_summary", "urgency_level"]
         },
         {
           "name": "Urgent Escalation",
-          "definition": "Queries containing cues of acute physical distress or potential medical emergencies, triggering an immediate recommendation to contact emergency services.",
+          "definition": "Queries containing cues of acute physical distress, potential medical emergencies, or serious emotional/psychiatric distress (including suicidal ideation, self-harm, or expressions of immediate personal danger), triggering an immediate recommendation to contact emergency services or a crisis helpline.",
           "required_slots": ["current_location", "primary_symptom"]
         }
       ]
