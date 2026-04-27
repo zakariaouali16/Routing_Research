@@ -7,7 +7,7 @@
       "labels": [
         {
           "name": "Clarification Needed",
-          "definition": "The user request is too vague, lacks necessary context, or contains contradictory information that prevents accurate routing to a specialized domain.",
+          "definition": "Use this label when a request contains keywords that point to a specific domain (like billing, coding, or scheduling), but entirely lacks the required context or slots to take action. If you have to guess the user's specific problem, choose this label. It also covers when the user request is too vague, lacks necessary context, or contains contradictory information that prevents accurate routing to a specialized domain.",
           "required_slots": []
         }
       ]
