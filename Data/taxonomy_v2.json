@@ -7,7 +7,7 @@
       "labels": [
         {
           "name": "Clarification Needed",
-          "definition": "Use when the request is too vague to route without follow-up questions. This includes vague concept requests (e.g., 'explain this') or vague debugging requests without specific errors/code (e.g., 'My script isn't working', 'The output is wrong').",
+          "definition": "The user request is too vague, lacks necessary context, or contains contradictory information that prevents accurate routing to a specialized domain.",
           "required_slots": []
         }
       ]
@@ -17,33 +17,33 @@
       "labels": [
         {
           "name": "Concept Explanation",
-          "definition": "Requests to explain general computer science concepts (e.g., 'What is a pointer?'). The user MUST name a specific concept. Do NOT use for asking if a concept is on an exam (route to Exam Prep), defining assignment rubric terms (route to Assignment Policy), or requesting exact homework solutions (route to Escalation).",
+          "definition": "Requests to learn, define, compare, or explain general theoretical computer science concepts, programming language rules, data structures, or algorithms. These queries focus on understanding 'how' or 'why' something works conceptually (e.g., 'What is a pointer?', 'Difference between list and tuple') rather than fixing an error. If the user provides a specific error message, unexpected output, or broken code they need fixed, route to Debugging & Code Troubleshooting instead. If the concept is completely omitted (e.g., 'explain this to me'), route to Clarification Needed.",
           "required_slots": ["concept_name"]
         },
         {
           "name": "Debugging & Code Troubleshooting",
-          "definition": "Requests to fix logic or runtime errors in student-written code. The user must provide a specific error message or code snippet. Excludes environment/installation errors (route to Course Logistics), autograder point deductions (route to Assignment Policy), and vague 'code broken' complaints (route to Clarification Needed).",
+          "definition": "Requests for identifying, explaining, or fixing errors within a specific piece of student-provided code or error log.",
           "required_slots": ["programming_language", "error_message", "code_snippet"]
         },
         {
           "name": "Assignment & Grading Policy",
-          "definition": "Inquiries about assignment rules, late policies, submission formats, or autograder point deductions. Includes requests to clarify grading rubric terminology (e.g., 'Does PEP 8 matter?', 'What counts as hardcoding here?').",
+          "definition": "Questions regarding assignment requirements, grading rubrics, late submission policies, or formatting guidelines.",
           "required_slots": ["assignment_id", "specific_policy_topic"]
         },
         {
           "name": "Exam & Assessment Prep",
-          "definition": "Questions about exam formats, permitted materials, study guides, practice questions, or asking if specific topics/concepts will be tested on an upcoming assessment.",
+          "definition": "Inquiries about exam formats, permitted materials, study guides, or requests for practice questions.",
           "required_slots": ["exam_name", "subject_area"]
         },
         {
           "name": "Course Logistics & Environment Setup",
-          "definition": "Questions about schedules, office hours, platform access, or installing software. Includes troubleshooting errors during environment setup, software installation, or issues with course-provided tooling (e.g., Docker crashing, pip install failing).",
-          "required_slots": ["tool_or_platform_name"]
+          "definition": "Questions about course-specific software or tool installation, accessing course platforms (Canvas, Gradescope, GitHub Classroom), lecture schedules, office hour timings, or submission platform navigation.",
+          "required_slots": ["query_type", "platform_or_course_element"]
         },
         {
           "name": "Instructor/TA Escalation",
-          "definition": "Overrides other categories for sensitive issues requiring human intervention. Includes academic dishonesty (asking for exact homework/exam solutions), formal grade disputes (e.g., 'TA graded me unfairly'), plagiarism flags, harassment, and personal/medical emergencies.",
-          "required_slots": ["issue_summary", "urgency"]
+          "definition": "Complex, sensitive, or highly specific queries requiring direct human faculty intervention, including grade disputes, personal accommodations, academic dishonesty (suspected or reported plagiarism, exam violations, misconduct), retaliation concerns, or safety issues involving students.",
+          "required_slots": ["reason_for_escalation", "course_section"]
         }
       ]
     },
