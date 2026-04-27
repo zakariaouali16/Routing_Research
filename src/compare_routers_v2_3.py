@@ -20,7 +20,7 @@ def run_comparison():
     DATA_PATH = os.path.join(BASE_DIR, "Data", "v1_1_pilot_benchmark.csv")
     TAXONOMY_PATH = os.path.join(BASE_DIR, "Data", "taxonomy_v2.json")
     
-    RESULTS_DIR = os.path.join(BASE_DIR, "results")
+    RESULTS_DIR = os.path.join(BASE_DIR, "results","phase3")
     os.makedirs(RESULTS_DIR, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
@@ -31,33 +31,55 @@ def run_comparison():
     router_name = LLMRouterV1.__name__
     
     # 3. Format the new output file name specifically for the LLM router
-    # Example output: LLMRouterV1_taxonomy_v2_20260405_153153.csv
     file_name = f"benchmark_{router_name}_{taxonomy_name}_{timestamp}.csv"
     output_file = os.path.join(RESULTS_DIR, file_name)
 
     # 2. Load data
     df = pd.read_csv(DATA_PATH)
     
+    # --- FIX 1: Create a temporary DataFrame/CSV for the Baseline Router ---
+    temp_data_path = DATA_PATH.replace('.csv', '_temp_fit.csv')
+    df_temp = df.rename(columns={'gold_label': 'gold_outcome'})
+    df_temp.to_csv(temp_data_path, index=False)
+    
     # 3. Initialize Routers
     print("\n--- Initializing Routers ---")
     baseline_router = EmbeddingRouter()
-    baseline_router.fit(DATA_PATH) 
     
+    # --- FIXED: Use the new training dataset for fitting ---
+    TRAINING_PATH = os.path.join(BASE_DIR, "Data", "training_data.csv")
+    temp_train_path = TRAINING_PATH.replace('.csv', '_temp_fit.csv')
+    
+    # Load training data and format it for the baseline router
+    df_train = pd.read_csv(TRAINING_PATH)
+    df_train = df_train.rename(columns={'gold_label': 'gold_outcome'})
+    df_train.to_csv(temp_train_path, index=False)
+    
+    # Fit the baseline on the separate training data
+    baseline_router.fit(temp_train_path) 
+    
+    # Clean up the temporary training file
+    if os.path.exists(temp_train_path):
+        os.remove(temp_train_path)
+        
     llm_router = LLMRouterV1(taxonomy_path=TAXONOMY_PATH)
 
     # 4. Run Predictions
     baseline_preds = []
     llm_preds = []
-    gold_labels = df['label'].tolist()
+    
+    # --- FIX 2: Map to the correct 'gold_label' column ---
+    gold_labels = df['gold_label'].tolist()
 
     print(f"\n--- Running benchmark on {len(df)} rows ---")
     for index, row in tqdm(df.iterrows(), total=df.shape[0]):
-        prompt = row['prompt']
+        
+        # --- FIX 3: Map to the correct 'user_prompt' column ---
+        prompt = row['user_prompt']
         domain = row['domain']
         
         # --- Baseline Prediction ---
         try:
-            # Call the correct method: route_request
             res = baseline_router.route_request(prompt)
             b_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             baseline_preds.append(b_val)
@@ -66,8 +88,7 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
-            # Call the correct method: route_request
-            res = llm_router.route_request(prompt, domain)
+            res = llm_router.route_request(prompt) # <--- REMOVE DOMAIN HERE
             l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
             llm_preds.append(l_val)
         except Exception as e:
@@ -96,6 +117,15 @@ def run_comparison():
 
     print(f"Baseline (Embedding) Accuracy: {baseline_acc * 100:.2f}%")
     print(f"LLM (Llama3) Accuracy:         {llm_acc * 100:.2f}%")
+    
+    # --- FIX: Extract only the unique, actual labels from the gold standard ---
+    unique_gold_labels = sorted(list(set(gold_cleaned)))
 
+    # --- ADDED: Detailed classification reports per label ---
+    print("\n--- DETAILED ACCURACY RATING (Baseline Router) ---")
+    print(classification_report(gold_cleaned, base_cleaned, labels=unique_gold_labels, zero_division=0))
+    
+    print("\n--- DETAILED ACCURACY RATING (LLM Router) ---")
+    print(classification_report(gold_cleaned, llm_cleaned, labels=unique_gold_labels, zero_division=0))
 if __name__ == "__main__":
     run_comparison()
