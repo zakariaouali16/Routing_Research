@@ -1,0 +1,232 @@
+{
+    "project": "Reliable LLM Agents for Routing and Triage",
+    "version": "4.1",
+    "precedence_rules": [
+        "Safety override outcomes (group: safety_override) take precedence over all gating outcomes and all routing labels only when the prompt contains a clearly identifiable safety incident — such as a specific threat, harassment, misconduct, or acute symptom for education, or any life-threatening situation for healthcare. Vague distress without a specific incident does not trigger a safety override and should be treated as Clarification Needed instead.",
+        "If any safety_override trigger is present in a prompt \u2014 including prompts that also contain Mixed Intent \u2014 assign the safety_override outcome, not Mixed Intent.",
+        "If multiple safety_override outcomes are triggered simultaneously, assign Healthcare Urgent Symptoms Disclaimer first if urgent symptom cues are present; otherwise assign Education Sensitive Escalation.",
+        "If no safety_override applies, check Clarification Needed and Mixed Intent before attempting to assign a routing label.",
+        "If no safety_override and no Clarification Needed or Mixed Intent applies, check Clinical Advice Redirect before assigning a routing label.",
+        "Assign a normal routing label only when no safety_override, no Clarification Needed, no Mixed Intent, and no Clinical Advice Redirect applies.",
+        "Assign Out-of-Scope only as a last resort \u2014 after confirming that no safety override, no gating outcome, and no routing label applies to any part of the prompt.",
+        "If a misconduct or academic integrity cue is present, assign Education Sensitive Escalation even if the prompt is framed as a grade dispute, deadline extension, or exception request.",
+        "Use Assignment & Grading Policy when the user is asking what a stated course rule or grading criterion is. Use Course Exceptions & Disputes when the user is asking for a person-specific exception, override, appeal, regrade, deadline relief, or judgment-based review."
+    ],
+    "annotation_rules": [
+        "If a prompt contains two or more distinct, separable, and unrelated requests that could each be independently routed to different labels, annotate it as Mixed Intent. If the prompt is vague, blended, or underspecified rather than clearly separable into distinct intents, use Clarification Needed instead. Exception: if any safety_override trigger is present, assign the safety_override outcome instead.",
+        "Use Clarification Needed only when the prompt does not clearly contain multiple separable intents and lacks enough information for reliable routing.",
+        "If a prompt contains one primary request and other details only provide context, do not use Mixed Intent.",
+        "Clinical or symptom-based healthcare prompts that require diagnosis, treatment advice, medication safety judgment, or medical decision-making must not be assigned to normal non-clinical healthcare routing labels.",
+        "Use Healthcare Urgent Symptoms Disclaimer for prompts describing symptoms or distress suggesting immediate or emergency evaluation. Do not use this outcome merely because words like 'urgent' or 'emergency' appear; apply it only when the described situation itself suggests acute or life-threatening need. This outcome takes precedence over Clinical Advice Redirect when both could apply.",
+        "Use Clinical Advice Redirect for non-urgent prompts that still request diagnosis, symptom interpretation, treatment advice, medication safety guidance, or medically judgment-based care recommendations.",
+        "Pharmacy & Refill Process covers administrative logistics only (refill requests, transfers, pickup, process questions). If the prompt asks whether a medication is safe, appropriate, or compatible with another drug, use Clinical Advice Redirect instead.",
+        "Questions about how to contact the instructor or TA, office hours availability, or how to reach support staff belong to Office Hours / Instructor Access, even when the prompt mentions Zoom links, scheduling pages, or location logistics.",
+        "Trigger terms are examples of escalation or urgency cues and should be interpreted in context, not matched mechanically without regard to the actual request.",
+        "Out-of-Scope is a fallback of last resort. Only assign it after confirming that no safety override, no Clarification Needed, no Mixed Intent, no Clinical Advice Redirect, and no routing label applies to any part of the prompt.",
+        "If a prompt contains unrelated personally identifiable or highly sensitive personal information, ignore it for routing and annotate based on the underlying intent. Redact or replace the sensitive information in benchmark data before storage or sharing.",
+        "If a prompt is too nonsensical or corrupted to interpret reliably, use Clarification Needed.",
+        "Use Human Staff Review Needed for complex legal, HIPAA-related, complaint, grievance, guardianship, proxy, staff misconduct, or sensitive administrative requests that cannot be handled by standard non-clinical routing alone. Do not use for routine administrative questions that fit an existing healthcare routing label.",
+        "If the patient is asking which department or specialty handles a type of request for administrative navigation purposes, use Clinic Type / Specialty Directory. If the patient needs a human staff member to make a decision or take action on their specific case, use Human Staff Review Needed.",
+        "A prompt presenting two options about the same topic using 'or' is not Mixed Intent \u2014 it is a single question with two possible answers and should be routed to the appropriate single label. Mixed Intent requires two intents that are unrelated enough that each could be independently routed to a different label. Example of NOT Mixed Intent: 'Is the exam open book or closed book?' is one intent (Exam Logistics & Preparation), not two. Example of Mixed Intent: 'Can I reschedule my appointment and also check my balance?' contains two unrelated intents (Scheduling & Appointments + Insurance & Billing) and qualifies as Mixed Intent."
+    ],
+    "non_routing_outcomes": {
+        "description": "Outcomes used when the message should not be assigned to a normal semantic routing label. Safety override outcomes take full precedence over gating outcomes and routing labels. Out-of-Scope is a fallback of last resort checked only after all other outcomes and routing labels have been ruled out.",
+        "outcomes": [
+            {
+                "name": "Education Sensitive Escalation",
+                "definition": "Requests or disclosures involving academic integrity violations, harassment, threats, impersonation, or other sensitive education-related incidents that require escalation rather than normal academic support routing. This outcome takes precedence over Course Exceptions & Disputes even when the prompt is framed as a grade dispute or exception request, if a misconduct or integrity cue is present.",
+                "required_slots": [
+                    "Academic integrity, threat, harassment, impersonation, or other sensitive education incident requiring escalation"
+                ],
+                "triggers": [
+                    "plagiarism",
+                    "cheating",
+                    "leaked exam",
+                    "bought essay",
+                    "harassment",
+                    "threat",
+                    "impersonation",
+                    "academic integrity",
+                    "misconduct"
+                ],
+                "group": "safety_override"
+            },
+            {
+                "name": "Healthcare Urgent Symptoms Disclaimer",
+                "definition": "Messages describing symptoms or distress suggesting immediate or emergency evaluation. Use when the described situation itself suggests acute or life-threatening need, not merely because words like 'urgent' or 'emergency' appear in the prompt. This outcome takes precedence over Clinical Advice Redirect when both could apply.",
+                "required_slots": [
+                    "Symptom or distress cue suggesting acute or life-threatening need"
+                ],
+                "triggers": [
+                    "can't breathe",
+                    "chest pain",
+                    "bleeding heavily",
+                    "passed out",
+                    "unconscious",
+                    "overdose",
+                    "seizure",
+                    "stroke",
+                    "heart attack symptoms",
+                    "severe allergic reaction",
+                    "suicidal thoughts"
+                ],
+                "group": "safety_override"
+            },
+            {
+                "name": "Clarification Needed",
+                "definition": "The request appears potentially in scope, but lacks enough information to satisfy a label's required slots or to distinguish between plausible labels. Use when the prompt is vague, blended, or underspecified rather than clearly separable into distinct intents.",
+                "required_slots": [
+                    "Potentially in-scope request",
+                    "Missing information prevents reliable routing"
+                ],
+                "group": "gating_outcome"
+            },
+            {
+                "name": "Mixed Intent",
+                "definition": "The request contains two or more distinct, separable, and unrelated routable intents that could each be independently routed to different labels, so assigning a single routing label would be incomplete or unreliable. Do not use this outcome if the prompt is merely vague or blended \u2014 use Clarification Needed instead. Do not use this outcome if any safety_override trigger is present; assign the safety_override outcome instead.",
+                "required_slots": [
+                    "Two or more distinct, separable, and unrelated requests",
+                    "Requests could each be independently routed to different labels",
+                    "No safety_override trigger present"
+                ],
+                "group": "gating_outcome"
+            },
+            {
+                "name": "Clinical Advice Redirect",
+                "definition": "The prompt requests diagnosis, symptom interpretation, treatment advice, medication safety guidance, or medically judgment-based care recommendations, which are outside the scope of non-clinical healthcare routing. Use Healthcare Urgent Symptoms Disclaimer instead if urgent symptom cues are present.",
+                "required_slots": [
+                    "Clinical advice, symptom interpretation, treatment, or medication-safety request",
+                    "No urgent symptom or acute distress cue present"
+                ],
+                "group": "gating_outcome"
+            },
+            {
+                "name": "Out-of-Scope",
+                "definition": "Assign only as a last resort after confirming that no safety override, no Clarification Needed, no Mixed Intent, no Clinical Advice Redirect, and no routing label applies to any part of the prompt. The request must be clearly interpretable but fall entirely outside both the education and non-clinical healthcare domains. Do not use for nonsensical or corrupted prompts \u2014 use Clarification Needed for those. Do not use if any part of the prompt is routable.",
+                "required_slots": [
+                    "Clear, interpretable request",
+                    "Outside education and non-clinical healthcare domains",
+                    "No safety override, gating outcome, or routing label applies to any part of the prompt"
+                ],
+                "group": "last_resort"
+            }
+        ]
+    },
+    "domains": {
+        "education": {
+            "domain_description": "Computing/programming-related student support.",
+            "labels": [
+                {
+                    "name": "Concept Explanation",
+                    "definition": "Requests to explain a computing, programming, or technical concept without diagnosing a specific code failure.",
+                    "required_slots": [
+                        "Clearly identified computing, programming, or technical concept/topic"
+                    ]
+                },
+                {
+                    "name": "Debugging & Code Troubleshooting",
+                    "definition": "Requests to identify, explain, or fix a specific code, environment, or execution problem using concrete technical details.",
+                    "required_slots": [
+                        "Error message, code snippet, or clearly described technical issue"
+                    ]
+                },
+                {
+                    "name": "Assignment & Grading Policy",
+                    "definition": "Questions asking what a stated assignment requirement, rubric, grading rule, formatting expectation, submission rule, or course policy is. Use this label when the user is asking what the rule is, not asking for a personal exception or judgment call.",
+                    "required_slots": [
+                        "Assignment, course, or policy context",
+                        "Specific policy or grading question"
+                    ]
+                },
+                {
+                    "name": "Exam Logistics & Preparation",
+                    "definition": "Questions about exam format, allowed materials, study resources, coverage, or assessment preparation.",
+                    "required_slots": [
+                        "Exam, quiz, or assessment context",
+                        "Specific logistics or preparation question"
+                    ]
+                },
+                {
+                    "name": "Course Logistics & Resources",
+                    "definition": "Questions about course platforms, software setup, access to materials, lecture schedules, labs, or course resources. Do not use for questions specifically about contacting or reaching the instructor or TA; use Office Hours / Instructor Access for those.",
+                    "required_slots": [
+                        "Platform, tool, material, or course logistics context"
+                    ]
+                },
+                {
+                    "name": "Office Hours / Instructor Access",
+                    "definition": "Requests about how, when, or where to contact the instructor or TA, including office hours availability and contact methods. Use this label even when the prompt mentions Zoom links, scheduling pages, or location logistics, as long as the core question is about reaching the instructor or TA.",
+                    "required_slots": [
+                        "Instructor, TA, or office-hours access context"
+                    ]
+                },
+                {
+                    "name": "Course Exceptions & Disputes",
+                    "definition": "Requests asking for a person-specific exception, override, appeal, regrade, deadline relief, or judgment-based review of a course decision. Use this label when the user is not simply asking what the rule is, but is asking for a personal ruling or reconsideration. Do not use this label if a misconduct or academic integrity cue is present; use Education Sensitive Escalation instead.",
+                    "required_slots": [
+                        "Course, assignment, exam, or decision context",
+                        "Specific exception, dispute, appeal, or review request",
+                        "No misconduct or academic integrity cue present"
+                    ]
+                }
+            ]
+        },
+        "healthcare": {
+            "domain_description": "Non-clinical, non-diagnostic healthcare support.",
+            "labels": [
+                {
+                    "name": "Scheduling & Appointments",
+                    "definition": "Requests to book, cancel, reschedule, or check the status of an appointment.",
+                    "required_slots": [
+                        "Appointment-related action",
+                        "Scheduling context"
+                    ]
+                },
+                {
+                    "name": "Insurance & Billing",
+                    "definition": "Questions about insurance coverage, claims, copays, billing, payments, or charge explanations.",
+                    "required_slots": [
+                        "Insurance, claim, bill, payment, or charge context"
+                    ]
+                },
+                {
+                    "name": "Medical Records",
+                    "definition": "Requests about obtaining, sending, correcting, or locating medical records or vaccine records.",
+                    "required_slots": [
+                        "Record type or record-related request context"
+                    ]
+                },
+                {
+                    "name": "Clinic Type / Specialty Directory",
+                    "definition": "Requests to identify the appropriate clinic, department, or specialty for a non-urgent administrative purpose. Use this label only when the request is about administrative navigation to an already-recognized service type. Do not use this label for symptom-based requests asking what care is medically appropriate; use Clinical Advice Redirect for those, or Healthcare Urgent Symptoms Disclaimer if urgent cues are present.",
+                    "required_slots": [
+                        "Need to identify the appropriate clinic, department, or specialty for a non-urgent administrative purpose"
+                    ]
+                },
+                {
+                    "name": "Pharmacy & Refill Process",
+                    "definition": "Administrative questions about prescription refills, transfers, pickup, or pharmacy process. Covers logistics and process only. If the prompt asks whether a medication is safe, appropriate, or compatible with another drug or condition, use Clinical Advice Redirect instead.",
+                    "required_slots": [
+                        "Prescription, refill, transfer, pickup, or pharmacy-process context",
+                        "No medication safety, appropriateness, or drug-interaction question present"
+                    ]
+                },
+                {
+                    "name": "Facility & General Information",
+                    "definition": "Questions about clinic hours, location, parking, contact information, or visitor policy.",
+                    "required_slots": [
+                        "Facility, clinic, or service context"
+                    ]
+                },
+                {
+                    "name": "Human Staff Review Needed",
+                    "definition": "Case-specific administrative requests that require direct human staff judgment, intervention, or action and cannot be resolved through standard non-clinical routing alone. Includes complex legal or HIPAA-related requests, complaints or grievances, guardianship or proxy decisions, staff misconduct allegations, or any administrative matter where a staff member must take a specific action on the patient's behalf. Do not use for routine procedural questions that fit an existing healthcare routing label or can be answered without staff action.",
+                    "required_slots": [
+                        "Case-specific request requiring human staff judgment, intervention, or action",
+                        "Cannot be resolved by standard non-clinical administrative routing alone"
+                    ]
+                }
+            ]
+        }
+    }
+}

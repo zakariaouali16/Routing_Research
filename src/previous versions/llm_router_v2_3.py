@@ -6,36 +6,14 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class LLMRouterV1:
-    def __init__(self, small_model='llama3:8b', large_model='llama3:70b', taxonomy_path='../../Data/taxonomy_v2.json', confidence_threshold=0.85):
-        self.small_model = small_model
-        self.large_model = large_model
-        self.confidence_threshold = confidence_threshold
+    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v2.json'):
+        self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
         
         # Load the taxonomy
         print(f"Loading taxonomy from {taxonomy_path}...")
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
-
-    def _call_api(self, model_name, prompt):
-        """Helper function to handle Ollama API calls safely."""
-        payload = {
-            "model": model_name,
-            "prompt": prompt,
-            "stream": False,
-            "format": "json", 
-            "options": {            
-                "temperature": 0.0, 
-                "seed": 42
-            }
-        }
-        try:
-            response = requests.post(self.api_url, json=payload)
-            response.raise_for_status()
-            return json.loads(response.json().get("response", "{}"))
-        except Exception as e:
-            tqdm.write(f"API Error with {model_name} -> {e}")
-            return None
 
     def build_system_prompt(self, domain):
         """Constructs the prompt using the specific domain labels from the taxonomy."""
@@ -62,7 +40,7 @@ User: "Is it done yet?"
     "needs_clarification": true, 
     "short_reason": "Prompt is too short and lacks specific keywords regarding what 'it' is.", 
     "predicted_label": "Clarification Needed", 
-    "confidence_level": 0.95
+    "confidence_level": "High"
 }}
 
 User: "I need to talk to someone about yesterday."
@@ -70,7 +48,7 @@ User: "I need to talk to someone about yesterday."
     "needs_clarification": true, 
     "short_reason": "Vague timeframe reference without specific intent or department mentioned.", 
     "predicted_label": "Clarification Needed", 
-    "confidence_level": 0.88
+    "confidence_level": "High"
 }}
 
 Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
@@ -78,14 +56,14 @@ Analyze the user's prompt carefully. You must output your response ONLY as a val
     "needs_clarification": true or false,
     "short_reason": "One short sentence explaining the core issue in the prompt",
     "predicted_label": "The exact name of the label from the list above",
-    "confidence_level": A float between 0.0 and 1.0 representing your confidence in this prediction
+    "confidence_level": "High, Medium, or Low"
 }}
 
 Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
 """
         return system_prompt
 
-    def verify_prediction(self, user_prompt, domain, proposed_label, active_model):
+    def verify_prediction(self, user_prompt, domain, proposed_label):
         """A secondary lightweight verification step to act as a QA auditor."""
         domain_key = domain.lower() 
         labels = self.taxonomy['domains'][domain_key]['labels']
@@ -110,71 +88,75 @@ Output your response ONLY as a valid JSON object with these exact keys:
 
 Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
 """
-        result = self._call_api(active_model, verification_prompt)
-        if not result:
+        payload = {
+            "model": self.model_name,
+            "prompt": verification_prompt,
+            "stream": False,
+            "format": "json", 
+            "options": {            
+                "temperature": 0.0, # Keep at 0 for strict validation
+                "seed": 42
+            }
+        }
+        
+        try:
+            response = requests.post(self.api_url, json=payload)
+            response.raise_for_status()
+            return json.loads(response.json().get("response", "{}"))
+        except Exception as e:
+            tqdm.write(f"Verification Error -> {e}")
             return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
-        return result
 
     def route_request(self, user_prompt, domain):
-        """Sends prompt to small LLM, checks confidence, escalates to large LLM if needed, then verifies."""
+        """Sends the prompt to Ollama, gets a prediction, and verifies it."""
+        # --- PASS 1: Initial Generation ---
         system_prompt = self.build_system_prompt(domain)
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
         
-        # --- PASS 1: Initial Generation (Small Model) ---
-        active_model = self.small_model
-        initial_output = self._call_api(active_model, full_prompt)
+        payload = {
+            "model": self.model_name,
+            "prompt": full_prompt,
+            "stream": False,
+            "format": "json", 
+            "options": {            
+                "temperature": 0.0, 
+                "seed": 42
+            }
+        }
         
-        if not initial_output:
-            return self._format_error("API Error during initial routing")
-
-        # Safely parse confidence level as a float
         try:
-            confidence = float(initial_output.get("confidence_level", 0.0))
-        except ValueError:
-            confidence = 0.0
-
-        # --- ESCALATION: Check Confidence Gate ---
-        if confidence < self.confidence_threshold:
-            tqdm.write(f"Low confidence ({confidence:.2f}) from {active_model}. Escalating to {self.large_model}...")
-            active_model = self.large_model
-            escalated_output = self._call_api(active_model, full_prompt)
-            
-            if escalated_output:
-                initial_output = escalated_output
-                try:
-                    confidence = float(initial_output.get("confidence_level", 0.0))
-                except ValueError:
-                    confidence = 0.0
+            response = requests.post(self.api_url, json=payload)
+            response.raise_for_status()
+            initial_output = json.loads(response.json().get("response", "{}"))
+        except Exception as e:
+            tqdm.write(f"Error calling LLM for prompt: '{user_prompt[:30]}...' -> {e}")
+            return {
+                "initial_label": "Error",
+                "predicted_label": "Error",
+                "confidence_level": "Low",
+                "short_reason": f"API Error: {str(e)}",
+                "needs_clarification": True,
+                "was_corrected": False,
+                "qa_reason": "N/A"
+            }
 
         initial_label = initial_output.get("predicted_label", "")
 
         # --- PASS 2: Lightweight Verification ---
-        # Verifies using the model that made the final decision
-        qa_output = self.verify_prediction(user_prompt, domain, initial_label, active_model)
+        qa_output = self.verify_prediction(user_prompt, domain, initial_label)
         
+        # Merge the outputs
         final_label = qa_output.get("verified_label", initial_label)
         
+        # Build final aggregated response
         return {
             "initial_label": initial_label,
             "predicted_label": final_label,
-            "confidence_level": confidence,
-            "model_used": active_model, # Tracking which model actually answered it
+            "confidence_level": initial_output.get("confidence_level", "Unknown"),
             "needs_clarification": initial_output.get("needs_clarification", False),
             "short_reason": initial_output.get("short_reason", ""),
             "was_corrected": not qa_output.get("is_correct", True),
             "qa_reason": qa_output.get("qa_reason", "")
-        }
-
-    def _format_error(self, message):
-        return {
-            "initial_label": "Error",
-            "predicted_label": "Error",
-            "confidence_level": 0.0,
-            "model_used": "None",
-            "short_reason": message,
-            "needs_clarification": True,
-            "was_corrected": False,
-            "qa_reason": "N/A"
         }
 
     def evaluate_benchmark(self, input_csv, output_csv):
@@ -183,7 +165,7 @@ Do not include any markdown formatting, conversational text, or explanations out
         df = pd.read_csv(input_csv)
         results = []
         
-        print(f"Routing {len(df)} requests. Escalation threshold is {self.confidence_threshold}...\n")
+        print(f"Routing {len(df)} requests. This will take longer due to the 2-pass verification system...\n")
         
         for index, row in tqdm(df.iterrows(), total=len(df), desc="Processing Requests", unit="prompt"):
             prompt_text = row['prompt']
@@ -200,8 +182,7 @@ Do not include any markdown formatting, conversational text, or explanations out
                 "is_ambiguous_gold": row.get('is_ambiguous', ''),
                 "initial_predicted_label": llm_output.get("initial_label", ""),
                 "final_predicted_label": llm_output.get("predicted_label", ""),
-                "confidence_level": llm_output.get("confidence_level", 0.0),
-                "model_used": llm_output.get("model_used", ""),
+                "confidence_level": llm_output.get("confidence_level", ""),
                 "needs_clarification_pred": llm_output.get("needs_clarification", False),
                 "short_reason": llm_output.get("short_reason", ""),
                 "was_corrected_by_qa": llm_output.get("was_corrected", False),
@@ -224,11 +205,6 @@ Do not include any markdown formatting, conversational text, or explanations out
         print("="*50)
         print(f"OVERALL POST-VERIFICATION ACCURACY: {correct}/{total} ({(correct/total)*100:.2f}%)")
         print("="*50)
-
-        # Print model usage stats
-        small_uses = (results_df['model_used'] == self.small_model).sum()
-        large_uses = (results_df['model_used'] == self.large_model).sum()
-        print(f"Model Workload - {self.small_model}: {small_uses} | {self.large_model}: {large_uses}")
 
         # Optional: Print how many times the QA agent intervened
         corrections = results_df['was_corrected_by_qa'].sum()
@@ -268,5 +244,5 @@ if __name__ == "__main__":
     benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_pilot_benchmark.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
-    router = LLMRouterV1(small_model='llama3:8b', large_model='llama3:70b', taxonomy_path=taxonomy_path, confidence_threshold=0.85)
+    router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
     router.evaluate_benchmark(benchmark_path, output_path)
