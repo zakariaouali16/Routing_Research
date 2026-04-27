@@ -22,7 +22,7 @@
         },
         {
           "name": "Debugging & Code Troubleshooting",
-          "definition": "Requests for identifying, explaining, or fixing errors within a specific piece of student-provided code or error log.",
+          "definition": "Requests for identifying, explaining, or fixing errors within a specific piece of student-provided code or error log. This label REQUIRES the presence of actual code snippets, specific error messages, or clear technical context. Broad complaints like 'my code is broken' go to Clarification Needed.",
           "required_slots": ["programming_language", "error_message", "code_snippet"]
         },
         {
