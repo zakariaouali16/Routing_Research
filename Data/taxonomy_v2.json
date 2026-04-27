@@ -72,7 +72,7 @@
         },
         {
           "name": "Human Staff Review Needed",
-          "definition": "Ambiguous, complex, or privacy-sensitive administrative requests (e.g., medical records release) that require review by a human receptionist or patient advocate.",
+          "definition": "Ambiguous, complex, or privacy-sensitive administrative requests that require review by a human receptionist or patient advocate. This includes medical records requests, patient grievances, legal or HIPAA-related inquiries, staff complaints, proxy authorization, and documentation requests. Use this label when the request involves sensitive administrative action that cannot be resolved by information alone. Do NOT use this label for standard appointment booking, prescription requests, or billing questions.",
           "required_slots": ["request_summary", "urgency_level"]
         },
         {
