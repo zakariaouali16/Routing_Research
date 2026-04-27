@@ -7,7 +7,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class LLMRouterV1:
-    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_v2.json'):
+    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase3.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
         
@@ -221,8 +221,8 @@ Do not include any markdown formatting, conversational text, or explanations out
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v2.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_1_pilot_benchmark.csv"))
+    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_phase3.json"))
+    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/pilot_benchmark_phase3.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
     # Initialize the router once

@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, classification_report
 
 # Import your classes
 from baselines.baseline_embedding_router import EmbeddingRouter
-from llm_router_v2_3 import LLMRouterV1
+from llm_router_phase3 import LLMRouterV1
 
 def clean_label(label):
     """Standardizes labels for fair comparison."""
