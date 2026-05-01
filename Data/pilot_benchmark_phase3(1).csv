@@ -95,20 +95,31 @@ EDU-093,Education,Are there any practice tests available for the midterm next we
 EDU-094,Education,What chapters will the final exam cover?,Exam & Assessment Prep,
 EDU-095,Education,Do you have a study guide for the upcoming quiz?,Exam & Assessment Prep,
 EDU-096,Education,Are calculators allowed during the math exam?,Exam & Assessment Prep,
-EDU-097,Education,"""I can't seem to get the Java JDK installed on my Mac, it keeps saying 'command not found'.""",Programming Environment Setup,Local environment setup issue. 
-EDU-099,Education,"""Is there a recommended IDE for the C++ assignments, or can I just use VS Code?""",Programming Environment Setup,Tooling recommendation inquiry. 
-EDU-102,Education,"""How do I configure the virtual environment for the week 3 Python project?""",Programming Environment Setup,Assignment-specific environment setup. 
-EDU-104,Education,"""The docker container provided for the assignment is crashing on startup for Windows users.""",Programming Environment Setup,Student reports a bug in course-provided tooling — not student code. Course Logistics is correct; good boundary test case against Debugging.
-EDU-106,Education,"""Which version of Node.js do we need to install for the frontend module?""",Programming Environment Setup,Software versioning requirement. 
-EDU-107,Education,I'm on Windows and the Makefile for the assignment isn't working. Do I need to install WSL?,Programming Environment Setup,Platform-specific setup question for course tooling.
-EDU-109,Education,The pip install for the course requirements.txt keeps failing with a dependency conflict. How do I fix this?,Programming Environment Setup,"Environment setup issue for course assignment — about course tooling, not student code."
-EDU-114,Education,The Docker image for Assignment 4 is over 5GB. is there a lighter version for students with limited disk space?,Programming Environment Setup,Technical setup constraint question about course-provided tooling.
-EDU-116,Education,The course syllabus says we need a specific version of Python but the lab computers have a different version installed. What should we do?,Programming Environment Setup,"Software version conflict on course-provided equipment — environment setup question, not student code."
-EDU-117,Education,How do I set up the virtual machine for the networking lab?,Programming Environment Setup,
-EDU-118,Education,"I'm having trouble installing Jupyter Notebook on my Mac, what should I do?",Programming Environment Setup,
-EDU-119,Education,Where can I find the syllabus for this semester?,Programming Environment Setup,
-EDU-120,Education,Which version of Java are we required to use for this course?,Programming Environment Setup,
-EDU-121,Education,How do I set up the virtual machine for the networking lab?,Programming Environment Setup,
+EDU-097,Education,"""I can't seem to get the Java JDK installed on my Mac, it keeps saying 'command not found'.""",Course Logistics & Environment Setup,Local environment setup issue. 
+EDU-098,Education,"""Where is the zoom link for Professor Smith's Tuesday office hours?""",Course Logistics & Environment Setup,Routine scheduling/access question. 
+EDU-099,Education,"""Is there a recommended IDE for the C++ assignments, or can I just use VS Code?""",Course Logistics & Environment Setup,Tooling recommendation inquiry. 
+EDU-100,Education,"""I'm having trouble logging into the autograder platform with my student ID.""",Course Logistics & Environment Setup,Platform access issue blocking submission. 
+EDU-101,Education,What time does the Monday lab start?,Course Logistics & Environment Setup,Basic schedule inquiry. 
+EDU-102,Education,"""How do I configure the virtual environment for the week 3 Python project?""",Course Logistics & Environment Setup,Assignment-specific environment setup. 
+EDU-103,Education,"""Are the lecture recordings posted on Canvas or Panopto?""",Course Logistics & Environment Setup,Platform navigation inquiry. 
+EDU-104,Education,"""The docker container provided for the assignment is crashing on startup for Windows users.""",Course Logistics & Environment Setup,Student reports a bug in course-provided tooling — not student code. Course Logistics is correct; good boundary test case against Debugging.
+EDU-105,Education,Are there office hours over spring break?,Course Logistics & Environment Setup,Schedule exception question. 
+EDU-106,Education,"""Which version of Node.js do we need to install for the frontend module?""",Course Logistics & Environment Setup,Software versioning requirement. 
+EDU-107,Education,I'm on Windows and the Makefile for the assignment isn't working. Do I need to install WSL?,Course Logistics & Environment Setup,Platform-specific setup question for course tooling.
+EDU-108,Education,"Where do I submit the final project? Canvas, Gradescope, or the autograder?",Course Logistics & Environment Setup,Submission platform navigation question.
+EDU-109,Education,The pip install for the course requirements.txt keeps failing with a dependency conflict. How do I fix this?,Course Logistics & Environment Setup,"Environment setup issue for course assignment — about course tooling, not student code."
+EDU-110,Education,Is there a course Slack or Discord where students can ask questions between office hours?,Course Logistics & Environment Setup,Course communication platform question.
+EDU-111,Education,"I can't clone the starter code repo, it's asking for a password. Do I need to set up an SSH key for GitHub Classroom?",Course Logistics & Environment Setup,Version control setup for course assignment.
+EDU-112,Education,Are lectures recorded and if so where can I find them after class?,Course Logistics & Environment Setup,Course resource access question.
+EDU-113,Education,My Gradescope account doesn't show this course. How do I get added?,Course Logistics & Environment Setup,Course platform enrollment issue.
+EDU-114,Education,The Docker image for Assignment 4 is over 5GB. is there a lighter version for students with limited disk space?,Course Logistics & Environment Setup,Technical setup constraint question about course-provided tooling.
+EDU-115,Education,The course website says office hours are in room 204 but someone told me they moved. Where are they actually held?,Course Logistics & Environment Setup,Schedule/location clarification question — straightforward Course Logistics.
+EDU-116,Education,The course syllabus says we need a specific version of Python but the lab computers have a different version installed. What should we do?,Course Logistics & Environment Setup,"Software version conflict on course-provided equipment — environment setup question, not student code."
+EDU-117,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
+EDU-118,Education,"I'm having trouble installing Jupyter Notebook on my Mac, what should I do?",Course Logistics & Environment Setup,
+EDU-119,Education,Where can I find the syllabus for this semester?,Course Logistics & Environment Setup,
+EDU-120,Education,Which version of Java are we required to use for this course?,Course Logistics & Environment Setup,
+EDU-121,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
 EDU-122,Education,"""I believe the TA unfairly deducted 20 points from my project for a misunderstanding of the prompt. I want to appeal this.""",Instructor/TA Escalation,Formal grade dispute requiring faculty review. 
 EDU-123,Education,"""I need to discuss my disability accommodations for the final exam with the instructor.""",Instructor/TA Escalation,"Sensitive, legally-protected PII/accommodations. "
 EDU-124,Education,"""Another student in my group has completely stopped responding and hasn't contributed code. How do we handle this for grading?""",Instructor/TA Escalation,Interpersonal conflict with grading impact — requires faculty judgment.

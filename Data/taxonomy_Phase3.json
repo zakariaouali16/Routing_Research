@@ -17,12 +17,12 @@
       "labels": [
         {
           "name": "Concept Explanation",
-          "definition": "Requests to learn, define, compare, or explain general theoretical computer science concepts, programming language rules, data structures, or algorithms. These queries focus on understanding 'how' or 'why' something works conceptually (e.g., 'What is a pointer?', 'Difference between list and tuple') rather than fixing an error. If the user provides a specific error message, unexpected output, or broken code they need fixed, route to Debugging & Code Troubleshooting instead. If the concept is completely omitted (e.g., 'explain this to me'), route to Clarification Needed.",
+          "definition": "Requests to learn, define, compare, or explain general theoretical computer science concepts.",
           "required_slots": ["concept_name"]
         },
         {
           "name": "Debugging & Code Troubleshooting",
-          "definition": "Requests for identifying, explaining, or fixing errors within a specific piece of student-provided code or error log.",
+          "definition": "Requests for identifying or fixing errors within a specific piece of student-provided code or error log.",
           "required_slots": ["programming_language", "error_message", "code_snippet"]
         },
         {
@@ -36,8 +36,8 @@
           "required_slots": ["exam_name", "subject_area"]
         },
         {
-          "name": "Course Logistics & Environment Setup",
-          "definition": "Questions about course-specific software or tool installation, accessing course platforms (Canvas, Gradescope, GitHub Classroom), lecture schedules, office hour timings, or submission platform navigation.",
+          "name": "Programming Environment Setup",
+          "definition": "Inquiries about setting up or configuring programming environments, including IDEs, text editors, or development tools.",
           "required_slots": ["query_type", "platform_or_course_element"]
         },
         {
