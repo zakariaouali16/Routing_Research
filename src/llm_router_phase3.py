@@ -122,10 +122,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             }
 
         initial_label = initial_output.get("predicted_label", "")
-        first_pass_response = self.call_llm(system_prompt, user_input) 
-        first_pass_label = self.extract_label(first_pass_response) # Replace with your extraction logic
-        
-        final_label = first_pass_label
+
         # --- PASS 2: Lightweight Verification ---
         qa_output = self.verify_prediction(user_prompt,  initial_label)
         

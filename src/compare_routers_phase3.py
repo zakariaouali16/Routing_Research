@@ -66,14 +66,13 @@ def run_comparison():
 
     # 4. Run Predictions
     baseline_preds = []
-    llm_first_pass_preds = [] # NEW
-    llm_final_preds = []      # NEW
+    llm_preds = []
     
     # --- FIX 2: Map to the correct 'gold_label' column ---
     gold_labels = df['gold_label'].tolist()
 
     print(f"\n--- Running benchmark on {len(df)} rows ---")
-    for index, row in tqdm(df.iterrows(), total=len(df)):
+    for index, row in tqdm(df.iterrows(), total=df.shape[0]):
         
         # --- FIX 3: Map to the correct 'user_prompt' column ---
         prompt = row['user_prompt']
@@ -89,28 +88,22 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
-            
-            # Unpack the dictionary returned by the updated router
-            llm_result = llm_router.route_request(prompt)
-            llm_first_pass_preds.append(llm_result.get("first_pass", "Error"))
-            llm_final_preds.append(llm_result.get("final_pass", "Error"))
+            res = llm_router.route_request(prompt) # <--- REMOVE DOMAIN HERE
+            l_val = res.get('predicted_label', 'Error') if isinstance(res, dict) else str(res)
+            llm_preds.append(l_val)
         except Exception as e:
-            llm_first_pass_preds.append(f"Err: {str(e)}")
-            llm_final_preds.append(f"Err: {str(e)}")
+            llm_preds.append(f"Err: {str(e)}")
             
     # 5. Export results to CSV
     df['baseline_prediction'] = baseline_preds
-    df['llm_1st_pass_prediction'] = llm_first_pass_preds # NEW
-    df['llm_final_prediction'] = llm_final_preds         # NEW
+    df['llm_prediction'] = llm_preds
     
     gold_cleaned = [clean_label(l) for l in gold_labels]
     base_cleaned = [clean_label(l) for l in baseline_preds]
-    llm_first_cleaned  = [clean_label(l) for l in llm_first_pass_preds] # NEW
-    llm_final_cleaned  = [clean_label(l) for l in llm_final_preds]      # NEW
+    llm_cleaned  = [clean_label(l) for l in llm_preds]
 
     df['baseline_match'] = [g == b for g, b in zip(gold_cleaned, base_cleaned)]
-    df['llm_1st_pass_match'] = [g == l for g, l in zip(gold_cleaned, llm_first_cleaned)] # NEW
-    df['llm_final_match'] = [g == l for g, l in zip(gold_cleaned, llm_final_cleaned)]    # NEW
+    df['llm_match'] = [g == l for g, l in zip(gold_cleaned, llm_cleaned)]
 
     df.to_csv(output_file, index=False)
 
@@ -120,20 +113,11 @@ def run_comparison():
     print("="*50)
 
     baseline_acc = accuracy_score(gold_cleaned, base_cleaned)
-    llm_1st_acc = accuracy_score(gold_cleaned, llm_first_cleaned) # NEW
-    llm_final_acc = accuracy_score(gold_cleaned, llm_final_cleaned) # NEW
+    llm_acc = accuracy_score(gold_cleaned, llm_cleaned)
 
     print(f"Baseline (Embedding) Accuracy: {baseline_acc * 100:.2f}%")
-    print(f"LLM (Llama3) 1st Pass Accuracy: {llm_1st_acc * 100:.2f}%")
-    print(f"LLM (Llama3) Final Pass Accuracy: {llm_final_acc * 100:.2f}%")
-    # Calculate the delta to see if the 2nd pass helped or hurt
-    delta = (llm_final_acc - llm_1st_acc) * 100
-    if delta > 0:
-        print(f"-> The 2nd pass IMPROVED accuracy by {delta:.2f}%")
-    elif delta < 0:
-        print(f"-> The 2nd pass DEGRADED accuracy by {abs(delta):.2f}% (Counter-productive)")
-    else:
-        print("-> The 2nd pass had NO IMPACT on overall accuracy.")
+    print(f"LLM (Llama3) Accuracy:         {llm_acc * 100:.2f}%")
+    
     # --- FIX: Extract only the unique, actual labels from the gold standard ---
     unique_gold_labels = sorted(list(set(gold_cleaned)))
 
@@ -141,8 +125,7 @@ def run_comparison():
     print("\n--- DETAILED ACCURACY RATING (Baseline Router) ---")
     print(classification_report(gold_cleaned, base_cleaned, labels=unique_gold_labels, zero_division=0))
     
-    # You might want to print the report for the final pass (or both!)
-    print("\n--- DETAILED ACCURACY RATING (LLM Router - Final Pass) ---")
-    print(classification_report(gold_cleaned, llm_final_cleaned, labels=unique_gold_labels, zero_division=0))
+    print("\n--- DETAILED ACCURACY RATING (LLM Router) ---")
+    print(classification_report(gold_cleaned, llm_cleaned, labels=unique_gold_labels, zero_division=0))
 if __name__ == "__main__":
     run_comparison()
