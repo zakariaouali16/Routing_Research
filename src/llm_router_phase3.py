@@ -123,11 +123,10 @@ Do not include any markdown formatting, conversational text, or explanations out
 
         initial_label = initial_output.get("predicted_label", "")
 
-        # --- PASS 2: Lightweight Verification ---
-        qa_output = self.verify_prediction(user_prompt,  initial_label)
+        # --- PASS 2 REMOVED ---
         
         # Merge the outputs
-        final_label = qa_output.get("verified_label", initial_label)
+        final_label = initial_label
         
         # Build final aggregated response
         return {
@@ -136,8 +135,8 @@ Do not include any markdown formatting, conversational text, or explanations out
             "confidence_level": initial_output.get("confidence_level", "Unknown"),
             "needs_clarification": initial_output.get("needs_clarification", False),
             "short_reason": initial_output.get("short_reason", ""),
-            "was_corrected": not qa_output.get("is_correct", True),
-            "qa_reason": qa_output.get("qa_reason", "")
+            "was_corrected": False,
+            "qa_reason": ""
         }
 
     def evaluate_benchmark(self, input_csv, output_csv):
@@ -146,7 +145,7 @@ Do not include any markdown formatting, conversational text, or explanations out
         df = pd.read_csv(input_csv)
         results = []
         
-        print(f"Routing {len(df)} requests. This will take longer due to the 2-pass verification system...\n")
+        print(f"Routing {len(df)} requests...\n")
         
         for index, row in tqdm(df.iterrows(), total=len(df), desc="Processing Requests", unit="prompt"):
             prompt_text = row['prompt']
