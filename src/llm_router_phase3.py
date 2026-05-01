@@ -32,9 +32,10 @@ Your task is to classify the user's request into EXACTLY ONE of the following ro
 
 CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
 1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
-2. Output your response ONLY as a valid JSON object with this exact key:
+2. Output your response ONLY as a valid JSON object with these exact keys:
 {{
-    "predicted_label": "The EXACT name of the category (e.g., 'Concept Explanation'). DO NOT include the domain name or any prefixes."
+    "reasoning": "Briefly explain which categories you considered, why you rejected them, and why your final choice fits the definition best.",
+    "predicted_label": "The EXACT name of the category (e.g., 'Concept Explanation'). DO NOT include the domain name."
 }}"""
         
         return system_prompt
