@@ -89,8 +89,9 @@ def run_comparison():
 
         # --- LLM Prediction ---
         try:
+            
             # Unpack the dictionary returned by the updated router
-            llm_result = llm_router.route_request(user_prompt)
+            llm_result = llm_router.route_request(prompt)
             llm_first_pass_preds.append(llm_result.get("first_pass", "Error"))
             llm_final_preds.append(llm_result.get("final_pass", "Error"))
         except Exception as e:
@@ -140,7 +141,8 @@ def run_comparison():
     print("\n--- DETAILED ACCURACY RATING (Baseline Router) ---")
     print(classification_report(gold_cleaned, base_cleaned, labels=unique_gold_labels, zero_division=0))
     
-    print("\n--- DETAILED ACCURACY RATING (LLM Router) ---")
-    print(classification_report(gold_cleaned, llm_cleaned, labels=unique_gold_labels, zero_division=0))
+    # You might want to print the report for the final pass (or both!)
+    print("\n--- DETAILED ACCURACY RATING (LLM Router - Final Pass) ---")
+    print(classification_report(gold_cleaned, llm_final_cleaned, labels=unique_gold_labels, zero_division=0))
 if __name__ == "__main__":
     run_comparison()
