@@ -15,7 +15,6 @@ class LLMRouterV1:
 
     def build_system_prompt(self):
         """Constructs the routing prompt using all domains and labels from the taxonomy."""
-
         all_labels_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
             all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
@@ -37,13 +36,9 @@ Output your response ONLY as a valid JSON object with this exact key:
         """
         Step A — Gate.
         Decides whether the prompt has enough information to route confidently.
-        Uses label definitions only — required slots are intentionally excluded
-        because real-world prompts rarely supply all slots yet are still clearly routable.
         Returns True (enough info, proceed to routing) or False (not enough, return Clarification Needed).
         Defaults to True if the gate itself fails, so no prompt is silently dropped.
         """
-
-        # Build label definitions reference (no required slots — too strict for real prompts)
         definitions_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
             definitions_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
@@ -51,18 +46,25 @@ Output your response ONLY as a valid JSON object with this exact key:
                 definitions_text += f"- {label['name']}: {label['definition']}\n"
 
         gate_prompt = f"""You are a gating agent for a routing system.
-Your job is to decide if the user request contains enough information to confidently match it to one of the labels below.
+Your job is to decide if the user request contains enough information to confidently match it to exactly one of the labels below.
 
 ROUTING LABELS:
 {definitions_text}
 
-Answer "false" (not enough information) ONLY when:
-- The request is so vague or generic that it cannot be matched to any single label (e.g. "I need help", "something is wrong", "can you check this")
+Answer "false" (not enough information) when ANY of these conditions are met:
+- The request is so vague that no subject or intent can be identified
+  (e.g. "I need help", "something is wrong", "can you check this")
 - The intent is completely unclear even after reading the full message
+- The intent is clear but the request is missing a specific referent
+  needed to route it to exactly one label
+  (e.g. "Is my prescription ready?" — intent is clear but which prescription,
+  which patient, which pharmacy is unknown;
+  "What's on the test?" — intent is clear but which exam, which course is unknown;
+  "Where are you located?" — intent is clear but which clinic or location is unknown)
 
 Answer "true" (enough information) when:
-- The request clearly matches one label based on its definition, even if minor details like names or dates are missing
-- The intent of the request is obvious, even if it is brief
+- The request clearly matches one label based on its definition, even if minor details are missing
+- The subject and intent are both clear enough to commit to exactly one label without guessing
 
 Respond ONLY as a valid JSON object:
 {{
@@ -211,7 +213,7 @@ if __name__ == "__main__":
     router = LLMRouterV1(taxonomy_path=taxonomy_path)
 
     print("\n" + "="*50)
-    print("LLM Router V2 — Gate + Route")
+    print("LLM Router V1 — Gate + Route")
     print("Type 'quit' to exit.")
     print("="*50 + "\n")
 
