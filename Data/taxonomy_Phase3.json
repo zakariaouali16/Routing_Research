@@ -7,7 +7,7 @@
       "labels": [
         {
           "name": "Clarification Needed",
-          "definition": "The request is too vague, missing context,  contradictory or have less word count than 5 words without the context.",
+          "definition": "The request is too vague, missing key context, or contradictory in a way that makes routing impossible. Use this when no specific label can be confidently applied without first asking the student or patient a follow-up question. Broad complaints like 'my code is broken' or 'I need help' belong here.",
           "required_slots": []
         }
       ]
