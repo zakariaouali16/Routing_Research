@@ -1,57 +1,49 @@
 {
   "project": "Reliable LLM Agents for Routing and Triage",
-  "version": "1.5",
+  "version": "2.1",
+  "architecture_note": "Clarification Needed is the only gating outcome and fires before the LLM router. All domain labels including Urgent Escalation and Instructor/TA Escalation are handled by the LLM router.",
+
+  "gating_outcomes": [
+    {
+      "name": "Clarification Needed",
+      "definition": "The request lacks enough information to commit to exactly one routing label without guessing. Fires when: (1) intent is completely unclear, (2) intent is clear but the specific referent needed to route confidently is missing. Handled by the gate before the LLM router.",
+      "handled_by": "gate"
+    }
+  ],
+
   "domains": {
     "education": {
       "domain_description": "Computing/programming-related student support",
       "labels": [
         {
           "name": "Concept Explanation",
-          "definition": "The student wants to understand how or why something works \u2014 a language feature, data structure, algorithm, or theoretical CS concept. The focus is on learning, not fixing. Route here when there is no broken code, no error message, and no exam or assignment framing driving the question. If the student is asking what something means in the context of an upcoming exam, route to Exam & Assessment Prep instead. If the concept is not named at all, the gate will handle this.",
-          "required_slots": [
-            "concept_name"
-          ]
+          "definition": "The student wants to understand how or why something works — a language feature, data structure, algorithm, or theoretical CS concept. The focus is on learning, not fixing. Route here when there is no broken code, no error message, and no exam or assignment framing driving the question. If the student is asking what something means in the context of an upcoming exam, route to Exam & Assessment Prep instead. If the concept is not named at all, the gate will handle this.",
+          "required_slots": ["concept_name"]
         },
         {
           "name": "Debugging & Code Troubleshooting",
-          "definition": "The student has written code that is not behaving as expected, and they need help finding or fixing the problem. The broken software must belong to the student \u2014 their own script, their own implementation, their own project. If the thing that is broken is course infrastructure (an IDE, a Docker container, an autograder, a package the course requires, GitHub Classroom, or any tool the course provides), route to Course Logistics & Environment Setup instead. A valid debugging request typically includes a code snippet, an error message, or a clear description of unexpected behavior. Vague complaints like 'my code is broken' without any of these the gate will handle this.",
-          "required_slots": [
-            "programming_language",
-            "error_message_or_behavior",
-            "code_snippet"
-          ]
+          "definition": "The student has written code that is not behaving as expected, and they need help finding or fixing the problem. The broken software must belong to the student — their own script, their own implementation, their own project. If the thing that is broken is course infrastructure (an IDE, a Docker container, an autograder, a package the course requires, GitHub Classroom, or any tool the course provides), route to Course Logistics & Environment Setup instead. A valid debugging request typically includes a code snippet, an error message, or a clear description of unexpected behavior. Vague complaints like 'my code is broken' without any of these the gate will handle this.",
+          "required_slots": ["programming_language", "error_message_or_behavior", "code_snippet"]
         },
         {
           "name": "Assignment & Grading Policy",
-          "definition": "The student wants to know what a rule or policy is \u2014 about assignment requirements, grading rubrics, late submissions, formatting, or what is or isn't allowed. The key test: if the question can be answered by stating a policy, it belongs here. If it requires a human to look at the student's specific situation and make a decision, route to Instructor/TA Escalation instead.",
-          "required_slots": [
-            "assignment_id",
-            "specific_policy_topic"
-          ]
+          "definition": "The student wants to know what a rule or policy is — about assignment requirements, grading rubrics, late submissions, formatting, or what is or isn't allowed. The key test: if the question can be answered by stating a policy, it belongs here. If it requires a human to look at the student's specific situation and make a decision, route to Instructor/TA Escalation instead.",
+          "required_slots": ["assignment_id", "specific_policy_topic"]
         },
         {
           "name": "Exam & Assessment Prep",
-          "definition": "The student is asking about the exam itself \u2014 its format, scope, permitted materials, what topics will be tested, how answers should be written, or where to find practice resources. Route here when the exam is the subject of the question, not just the reason behind it. A student saying 'explain BFS for my final exam' is asking about a concept, not about the exam \u2014 that goes to Concept Explanation. Route here for questions like 'will BFS be on the final?' or 'can I use a cheat sheet?' where the exam is what the student actually wants to know about.",
-          "required_slots": [
-            "exam_name",
-            "subject_area"
-          ]
+          "definition": "The student is asking about the exam itself — its format, scope, permitted materials, what topics will be tested, how answers should be written, or where to find practice resources. Route here when the exam is the subject of the question, not just the reason behind it. A student saying 'explain BFS for my final exam' is asking about a concept, not about the exam — that goes to Concept Explanation. Route here for questions like 'will BFS be on the final?' or 'can I use a cheat sheet?' where the exam is what the student actually wants to know about.",
+          "required_slots": ["exam_name", "subject_area"]
         },
         {
           "name": "Course Logistics & Environment Setup",
           "definition": "The student needs help with something the course provides or requires, but that is outside their own code. This covers tool installation (JDK, Python, Docker, Node.js), course platform access (Canvas, Gradescope, GitHub Classroom), lecture schedules, office hours, submission procedures, and any software or infrastructure the course owns. The key question is: is the broken or confusing thing something the student built, or something the course gave them? If the course gave it to them, route here.",
-          "required_slots": [
-            "query_type",
-            "platform_or_course_element"
-          ]
+          "required_slots": ["query_type", "platform_or_course_element"]
         },
         {
           "name": "Instructor/TA Escalation",
-          "definition": "Use this label when the student's situation cannot be resolved by stating a policy \u2014 it requires a human to review their specific case and make a decision. This includes grade disputes, disability accommodations, academic dishonesty (reporting or being accused), safety concerns, retaliation, scholarship or form sign-offs, and missing or contested grades. The key test: if answering requires someone to look at the student's record and act, it belongs here. Also use this label when a student is clearly attempting to get answers to active homework or exam questions, regardless of how the request is framed.",
-          "required_slots": [
-            "reason_for_escalation",
-            "course_section"
-          ]
+          "definition": "Use this label when the student's situation cannot be resolved by stating a policy — it requires a human to review their specific case and make a decision. This includes grade disputes, disability accommodations, academic dishonesty (reporting or being accused), safety concerns, retaliation, scholarship or form sign-offs, and missing or contested grades. The key test: if answering requires someone to look at the student's record and act, it belongs here. Also use this label when a student is clearly attempting to get answers to active homework or exam questions, regardless of how the request is framed.",
+          "required_slots": ["reason_for_escalation", "course_section"]
         }
       ]
     },
@@ -61,52 +53,32 @@
         {
           "name": "Scheduling & Appointments",
           "definition": "Requests to book, cancel, reschedule, or check the status of an upcoming medical appointment.",
-          "required_slots": [
-            "patient_name",
-            "preferred_date",
-            "department_specialty"
-          ]
+          "required_slots": ["patient_name", "preferred_date", "department_specialty"]
         },
         {
           "name": "Insurance & Billing",
           "definition": "Inquiries regarding accepted insurance networks, payment methods, copays, out-of-pocket estimates, or explanations of medical bills.",
-          "required_slots": [
-            "insurance_provider",
-            "invoice_number"
-          ]
+          "required_slots": ["insurance_provider", "invoice_number"]
         },
         {
           "name": "Facility & General Information",
           "definition": "Questions about clinic operating hours, physical location, parking availability, visitor policies, or general contact information.",
-          "required_slots": [
-            "location_name",
-            "info_category"
-          ]
+          "required_slots": ["location_name", "info_category"]
         },
         {
           "name": "Pharmacy & Prescription Logistics",
           "definition": "Administrative requests regarding prescription refill status, pharmacy hours, or how to transfer a prescription to a new location.",
-          "required_slots": [
-            "medication_name",
-            "pharmacy_address",
-            "request_type"
-          ]
+          "required_slots": ["medication_name", "pharmacy_address", "request_type"]
         },
         {
           "name": "Human Staff Review Needed",
           "definition": "The request is sensitive, legally complex, or privacy-related in a way that requires a human staff member to handle it directly. This includes medical records requests, patient grievances, HIPAA inquiries, staff complaints, proxy authorization, and documentation for legal or insurance purposes. Use this when the situation cannot be resolved by providing information alone. Standard appointment booking, prescription requests, and billing questions do not belong here.",
-          "required_slots": [
-            "request_summary",
-            "urgency_level"
-          ]
+          "required_slots": ["request_summary", "urgency_level"]
         },
         {
           "name": "Urgent Escalation",
-          "definition": "The message contains signs of a medical emergency, acute physical distress, or serious psychiatric crisis \u2014 including suicidal ideation, self-harm, or expressions of immediate danger. Always route here when these signals are present, even if the message is brief or ambiguous. Do not the gate will handle this when safety may be at risk.",
-          "required_slots": [
-            "current_location",
-            "primary_symptom"
-          ]
+          "definition": "The message contains signs of a medical emergency, acute physical distress, or serious psychiatric crisis — including suicidal ideation, self-harm, or expressions of immediate danger. Always route here when these signals are present, even if the message is brief or ambiguous. Do not require the user to provide more details when safety may be at risk.",
+          "required_slots": ["current_location", "primary_symptom"]
         }
       ]
     }

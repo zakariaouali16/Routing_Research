@@ -5,6 +5,7 @@ import requests
 from tqdm import tqdm
 
 class LLMRouterV1:
+
     def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase3_1.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
@@ -14,7 +15,11 @@ class LLMRouterV1:
             self.taxonomy = json.load(f)
 
     def build_system_prompt(self):
-        """Constructs the routing prompt using all domains and labels from the taxonomy."""
+        """
+        Constructs the routing prompt using all domain labels.
+        Clarification Needed is intentionally excluded — it is handled
+        by the gate before this method is ever called.
+        """
         all_labels_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
             all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
@@ -29,7 +34,6 @@ Output your response ONLY as a valid JSON object with this exact key:
 {{
     "predicted_label": "The EXACT name of the category. DO NOT include the domain name or any prefixes."
 }}"""
-
         return system_prompt
 
     def check_gate(self, user_prompt):
@@ -93,7 +97,7 @@ USER REQUEST: "{user_prompt}"
             return result.get("has_enough_info", True)
         except Exception as e:
             tqdm.write(f"Gate error for prompt '{user_prompt[:40]}...' -> {e}")
-            return True  # fail open — let it through to the router
+            return True
 
     def route_request(self, user_prompt):
         """
@@ -102,7 +106,7 @@ USER REQUEST: "{user_prompt}"
           Step B — Route: only if gate passes, pick a label
         """
 
-        # ── STEP A: Gate ──────────────────────────────────────────────────
+        # ── STEP A: Gate ──────────────────────────────────────────────────────
         has_enough_info = self.check_gate(user_prompt)
 
         if not has_enough_info:
@@ -116,7 +120,7 @@ USER REQUEST: "{user_prompt}"
                 "qa_reason": "Blocked by gate."
             }
 
-        # ── STEP B: Route ─────────────────────────────────────────────────
+        # ── STEP B: Route ─────────────────────────────────────────────────────
         system_prompt = self.build_system_prompt()
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
 
@@ -220,7 +224,7 @@ if __name__ == "__main__":
     while True:
         user_input = input("Enter your request: ")
         if user_input.strip().lower() in ['quit', 'exit']:
-            break
+        	break
         if not user_input.strip():
             continue
         result = router.route_request(user_input)
