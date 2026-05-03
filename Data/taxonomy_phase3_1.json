@@ -19,7 +19,7 @@
         },
         {
           "name": "Assignment & Grading Policy",
-          "definition": "The student wants to know what a rule or policy is \u2014 about assignment requirements or project requirements, grading rubrics, late submissions, formatting, or what is or isn't allowed. The key test: if the question can be answered by stating a policy, it belongs here. If it requires a human to look at the student's specific situation and make a decision, route to Instructor/TA Escalation instead.",
+          "definition": "The student wants to know what a rule or policy is \u2014 about assignment requirements, grading rubrics, late submissions, formatting, or what is or isn't allowed. The key test: if the question can be answered by stating a policy, it belongs here. If it requires a human to look at the student's specific situation and make a decision, route to Instructor/TA Escalation instead.",
           "required_slots": [
             "student_id"
           ]
