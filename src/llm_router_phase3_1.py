@@ -25,21 +25,13 @@ class LLMRouterV1:
 
         system_prompt = f"""You are an expert, autonomous routing agent.
 Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
-### AMBIGUITY & RECALL PRIORITY (CRITICAL) ###
-You must route to 'Clarification Needed' if ANY of the following are true:
-1. UNDEFINED PRONOUNS: The user says "this", "it", or "that" without having defined it previously (e.g., "Why is it crashing?").
-2. MISSING IDENTIFIERS: The request refers to a "visit", "assignment", "claim", or "code" but does not provide a specific name, ID, or context.
-3. VAGUE SUBJECTS: The user asks about a broad topic with no specific question (e.g., "the thing about memory").
-4. MULTIPLE TARGETS: The request is so brief it could reasonably fall into two different categories (e.g., "I need help with my account" could be Billing OR Logistics).
-
-When in doubt, choose 'Clarification Needed'. It is better to ask for more info than to route a vague request to a specific department.
 {all_labels_text}
 
 CRITICAL INSTRUCTION FOR MISSING INFORMATION:
 1. First, determine the best-fit category for the user's request.
 2. Check the "Required slots" listed for that category.
-
-3. Output your response ONLY as a valid JSON object with these exact keys:
+3. If the user's request DOES NOT contain the information for ALL required slots, you MUST set the predicted_label to "Clarification Needed".
+4. Output your response ONLY as a valid JSON object with these exact keys:
 {{
     "predicted_label": "The EXACT name of the category (must be 'Clarification Needed' if any slots are missing)",
     "confidence_level": "High, Medium, or Low",
