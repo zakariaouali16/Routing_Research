@@ -27,9 +27,7 @@
         {
           "name": "Exam & Assessment Prep",
           "definition": "The student is asking about the exam itself \u2014 its format, scope, permitted materials, what topics will be tested, how answers should be written, or where to find practice resources. Route here when the exam is the subject of the question, not just the reason behind it. A student saying 'explain BFS for my final exam' is asking about a concept, not about the exam \u2014 that goes to Concept Explanation. Route here for questions like 'will BFS be on the final?' or 'can I use a cheat sheet?' where the exam is what the student actually wants to know about.",
-          "required_slots": [
-            "class_id or class name"
-          ]
+          "required_slots": ["class_id or class name"]
         },
         {
           "name": "Course Logistics & Environment Setup",
@@ -84,16 +82,6 @@
         {
           "name": "Urgent Escalation",
           "definition": "The message contains signs of a medical emergency, acute physical distress, or serious psychiatric crisis \u2014 including suicidal ideation, self-harm, or expressions of immediate danger. Always route here when these signals are present, even if the message is brief or ambiguous. Do not the gate will handle this when safety may be at risk.",
-          "required_slots": []
-        }
-      ]
-    },
-    "utility": {
-      "domain_description": "General system and interaction management",
-      "labels": [
-        {
-          "name": "Clarification Needed",
-          "definition": "The user's request is too vague, ambiguous, or lacks specific details (like account numbers, assignment names, or specific symptoms) to be safely routed to a specialized category. Use this if the prompt uses undefined pronouns (e.g., 'this', 'it', 'the thing'), refers to a 'visit' or 'assignment' without naming it, or asks a question that could fit multiple specific categories depending on missing context. When in doubt about whether a request is specific enough, choose this label.",
           "required_slots": []
         }
       ]
