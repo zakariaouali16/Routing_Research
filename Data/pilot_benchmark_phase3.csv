@@ -11,6 +11,6 @@ ENV-009,Education,"""When setting up PostgreSQL for the database assignment, I f
 ENV-010,Education,"""I am trying to install the custom cs-grader package provided in the zip file, but pip is throwing a wheel building error.""",Course Logistics & Environment Setup
 ENV-011,Education,"""Which specific version of the C++ compiler (g++) do we need to install for the Linux environment setup?""",Course Logistics & Environment Setup
 ENV-012,Education,"""I'm trying to set up SSH keys to access the course server, but the ssh-keygen command is hanging indefinitely.""",Course Logistics & Environment Setup
-ENV-013,Education,"""The Jupyter Notebook server starts, but when I open the localhost link in my browser, it asks for a token that I don't have.""",Course Logistics & Environment Setup
+ENV-013,Education,"""The Jupyter Notebook server starts, but when I open the localhost link in my browser, it asks for a token that i don't have.""",Course Logistics & Environment Setup
 ENV-014,Education,"""VS Code keeps prompting me to install the C# Dev Kit extension, but the syllabus says we only need the .NET SDK. Do I need the extension too?""",Course Logistics & Environment Setup
 ENV-015,Education,"""I downloaded the provided Ubuntu ISO for the class, but VMware Player is giving me a 'hardware virtualization is disabled in BIOS' error.""",Course Logistics & Environment Setup
