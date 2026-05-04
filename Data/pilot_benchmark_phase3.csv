@@ -1,4 +1,4 @@
-prompt_id,Domain,User Prompt,gold_label
+prompt_id,domain,user_prompt,gold_label
 ENV-001,Education,"""I'm getting a 'command not found: python3' error after installing Python from the official website on my Mac. How do I fix my PATH?""",Course Logistics & Environment Setup
 ENV-002,Education,"""When I try to run npm install for the starter code, it throws a giant block of red errors about node-gyp. What am I doing wrong?""",Course Logistics & Environment Setup
 ENV-003,Education,"""How do I configure IntelliJ IDEA to use the specific JDK 17 version we need for this class instead of my default JDK 21?""",Course Logistics & Environment Setup
