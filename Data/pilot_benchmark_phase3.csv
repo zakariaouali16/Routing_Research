@@ -1,4 +1,4 @@
-ID,Domain,User Prompt,Gold Label
+prompt_id,domain,user_prompt,gold_label
 LOG-001,Education,"""I'm trying to install the required JDK 17 for this class, but the installer is giving me a PATH error on Windows. How do I fix this?""",Course Logistics & Environment Setup
 LOG-002,Education,"""What are the TA office hours for this week? I need help understanding the grading rubric.""",Course Logistics & Environment Setup
 LOG-003,Education,"""Gradescope isn't letting me upload my ZIP file for Assignment 2. It says 'submission disabled'.""",Course Logistics & Environment Setup
