@@ -1,16 +1,16 @@
 prompt_id,domain,user_prompt,gold_label
-LOG-001,Education,"""I'm trying to install the required JDK 17 for this class, but the installer is giving me a PATH error on Windows. How do I fix this?""",Course Logistics & Environment Setup
-LOG-002,Education,"""What are the TA office hours for this week? I need help understanding the grading rubric.""",Course Logistics & Environment Setup
-LOG-003,Education,"""Gradescope isn't letting me upload my ZIP file for Assignment 2. It says 'submission disabled'.""",Course Logistics & Environment Setup
-LOG-004,Education,"""When I try to clone the starter code from GitHub Classroom, it says I don't have repository access permissions.""",Course Logistics & Environment Setup
-LOG-005,Education,"""I'm getting a 'Docker daemon is not running' error when trying to start the course-provided virtual environment.""",Course Logistics & Environment Setup
-LOG-006,Education,"""Will Monday's lecture be recorded and posted on Canvas, or do we have to attend in person?""",Course Logistics & Environment Setup
-LOG-007,Education,"""Is there a specific file naming convention we need to follow when submitting our final project scripts?""",Course Logistics & Environment Setup
-LOG-008,Education,"""The autograder keeps timing out on my submission, even though my code runs instantly on my local machine. Is the server down?""",Course Logistics & Environment Setup
-LOG-009,Education,"""How do I configure VS Code or PyCharm to use the specific conda environment listed in the syllabus?""",Course Logistics & Environment Setup
-LOG-010,Education,"""Where can I find the Zoom link for the Thursday discussion sections?""",Course Logistics & Environment Setup
-LOG-011,Education,"""I accidentally submitted the wrong file to the portal. Can someone reset my submission attempts so I can re-upload?""",Course Logistics & Environment Setup
-LOG-012,Education,"""The course-provided testing library CS101-TestUtil is throwing a deprecation warning on my Mac when I import it. Should I ignore it?""",Course Logistics & Environment Setup
-LOG-013,Education,"""Are we supposed to install Node.js version 18 or 20 for the upcoming web development project?""",Course Logistics & Environment Setup
-LOG-014,Education,"""I can't access the Week 3 reading materials on Canvas; they are completely grayed out for me.""",Course Logistics & Environment Setup
-LOG-015,Education,"""What is the procedure for requesting a late extension for Homework 4 due to a medical emergency?""",Course Logistics & Environment Setup
+ENV-001,Education,"""I'm getting a 'command not found: python3' error after installing Python from the official website on my Mac. How do I fix my PATH?""",Course Logistics & Environment Setup
+ENV-002,Education,"""When I try to run npm install for the starter code, it throws a giant block of red errors about node-gyp. What am I doing wrong?""",Course Logistics & Environment Setup
+ENV-003,Education,"""How do I configure IntelliJ IDEA to use the specific JDK 17 version we need for this class instead of my default JDK 21?""",Course Logistics & Environment Setup
+ENV-004,Education,"""The instructions say to activate the conda environment, but conda activate cs101 says the environment doesn't exist.""",Course Logistics & Environment Setup
+ENV-005,Education,"""I installed Docker Desktop on Windows, but it says WSL 2 is required and won't start the course container.""",Course Logistics & Environment Setup
+ENV-006,Education,"""I'm having trouble linking my local Git repository to GitHub Classroom. It keeps asking for a personal access token instead of my password.""",Course Logistics & Environment Setup
+ENV-007,Education,"""Is there a workaround for installing the course virtual machine on an M-series Apple Silicon Mac? VirtualBox says it's not supported.""",Course Logistics & Environment Setup
+ENV-008,Education,"""My PyCharm isn't recognizing the pytest module even though I ran pip install -r requirements.txt. It's underlined in red.""",Course Logistics & Environment Setup
+ENV-009,Education,"""When setting up PostgreSQL for the database assignment, I forgot the default postgres user password. How can I reset it?""",Course Logistics & Environment Setup
+ENV-010,Education,"""I am trying to install the custom cs-grader package provided in the zip file, but pip is throwing a wheel building error.""",Course Logistics & Environment Setup
+ENV-011,Education,"""Which specific version of the C++ compiler (g++) do we need to install for the Linux environment setup?""",Course Logistics & Environment Setup
+ENV-012,Education,"""I'm trying to set up SSH keys to access the course server, but the ssh-keygen command is hanging indefinitely.""",Course Logistics & Environment Setup
+ENV-013,Education,"""The Jupyter Notebook server starts, but when I open the localhost link in my browser, it asks for a token that I don't have.""",Course Logistics & Environment Setup
+ENV-014,Education,"""VS Code keeps prompting me to install the C# Dev Kit extension, but the syllabus says we only need the .NET SDK. Do I need the extension too?""",Course Logistics & Environment Setup
+ENV-015,Education,"""I downloaded the provided Ubuntu ISO for the class, but VMware Player is giving me a 'hardware virtualization is disabled in BIOS' error.""",Course Logistics & Environment Setup
