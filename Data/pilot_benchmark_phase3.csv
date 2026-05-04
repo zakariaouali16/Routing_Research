@@ -6,13 +6,13 @@ GEN-004,Healthcare,"""I can't pay this entire balance right now. Can I set up a 
 GEN-005,Healthcare,"""My recent insurance claim was denied stating it was 'out of network'. What do I do next?""",Insurance & Billing,Needs guidance on handling a denied insurance claim.
 GEN-006,Healthcare,"""Is Dr. Smith in-network for Aetna HMO, or will I have to pay out-of-network rates?""",Insurance & Billing,Provider-specific insurance network verification.
 GEN-007,Healthcare,"""I just got a new insurance plan through my employer. Where do I upload or send my new insurance card information?""",Insurance & Billing,Administrative request to update billing records.
-GEN-008,Healthcare,"""I need an itemized receipt for my appointment last Thursday so I can submit it for my FSA reimbursement.""",Insurance & Billing,Request for specific billing documentation.
+GEN-008,Healthcare,"""I need an itemized receipt so I can submit it for my FSA reimbursement.""",Insurance & Billing,Request for specific billing documentation.
 GEN-009,Healthcare,"""Why did I get two separate bills for the same ER visit? One is from the hospital and one is from a doctor.""",Insurance & Billing,Clarification needed on split billing practices (facility vs. provider).
 GEN-010,Healthcare,"""What is your billing department's phone number? I have a question about statement #12345.""",Insurance & Billing,Requesting contact info specifically for the billing department.
 GEN-011,Healthcare,"""Does Medicare Part B cover the annual wellness exam at your clinic?""",Insurance & Billing,Medicare-specific coverage question.
 GEN-012,Healthcare,"""I think I was double-charged for my bloodwork on Tuesday. My credit card shows two pending transactions.""",Insurance & Billing,Reporting a potential billing error or duplicate charge.
 GEN-013,Healthcare,"""Can you verify my coverage and tell me what my copay will be before my appointment next week?""",Insurance & Billing,Pre-appointment benefit verification.
-GEN-014,Healthcare,"""How do I dispute a late fee on my account? I mailed the check weeks ago.""",Insurance & Billing,Dispute of administrative/billing fees.
+GEN-014,Healthcare,"""How do I dispute a late bill on my account? """,Insurance & Billing,Dispute of administrative/billing fees.
 GEN-015,Healthcare,"""If I provide my secondary insurance, will it be billed automatically after my primary insurance processes the claim?""",Insurance & Billing,Question regarding the coordination of benefits.
 GEN-016,Healthcare,"""I lost my job and cannot afford this $2,000 medical bill. Do you have a charity care or financial assistance program?""",Insurance & Billing,Inquiry about financial hardship programs.
 GEN-017,Healthcare,"""Are your telemedicine visits billed at the same rate as in-person visits, or is there a different fee schedule?""",Insurance & Billing,Question comparing costs of different visit modalities.
