@@ -1,16 +1,21 @@
 prompt_id,domain,user_prompt,gold_label
-ENV-001,Education,"""I'm getting a 'command not found: python3' error after installing Python from the official website on my Mac. How do I fix my PATH?""",Course Logistics & Environment Setup
-ENV-002,Education,"""When I try to run npm install for the starter code, it throws a giant block of red errors about node-gyp. What am I doing wrong?""",Course Logistics & Environment Setup
-ENV-003,Education,"""How do I configure IntelliJ IDEA to use the specific JDK 17 version we need for this class instead of my default JDK 21?""",Course Logistics & Environment Setup
-ENV-004,Education,"""The instructions say to activate the conda environment, but conda activate cs101 says the environment doesn't exist.""",Course Logistics & Environment Setup
-ENV-005,Education,"""I installed Docker Desktop on Windows, but it says WSL 2 is required and won't start the course container.""",Course Logistics & Environment Setup
-ENV-006,Education,"""I'm having trouble linking my local Git repository to GitHub Classroom. It keeps asking for a personal access token instead of my password.""",Course Logistics & Environment Setup
-ENV-007,Education,"""Is there a workaround for installing the course virtual machine on an M-series Apple Silicon Mac? VirtualBox says it's not supported.""",Course Logistics & Environment Setup
-ENV-008,Education,"""My PyCharm isn't recognizing the pytest module even though I ran pip install -r requirements.txt. It's underlined in red.""",Course Logistics & Environment Setup
-ENV-009,Education,"""When setting up PostgreSQL for the database assignment, I forgot the default postgres user password. How can I reset it?""",Course Logistics & Environment Setup
-ENV-010,Education,"""I am trying to install the custom cs-grader package provided in the zip file, but pip is throwing a wheel building error.""",Course Logistics & Environment Setup
-ENV-011,Education,"""Which specific version of the C++ compiler (g++) do we need to install for the Linux environment setup?""",Course Logistics & Environment Setup
-ENV-012,Education,"""I'm trying to set up SSH keys to access the course server, but the ssh-keygen command is hanging indefinitely.""",Course Logistics & Environment Setup
-ENV-013,Education,"""The Jupyter Notebook server starts, but when I open the localhost link in my browser, it asks for a token that i don't have.""",Course Logistics & Environment Setup
-ENV-014,Education,"""VS Code keeps prompting me to install the C# Dev Kit extension, but the syllabus says we only need the .NET SDK. Do I need the extension too?""",Course Logistics & Environment Setup
-ENV-015,Education,"""I downloaded the provided Ubuntu ISO for the class, but VMware Player is giving me a 'hardware virtualization is disabled in BIOS' error.""",Course Logistics & Environment Setup
+ESC-001,Education,"""I lost 10 points on assignment 3 for 'inefficient algorithm,' but my code runs in O(N) time as required by the rubric. Can a TA manually review my submission?""",Instructor/TA Escalation
+ESC-002,Education,"""I just received my official DRC accommodation letter for 1.5x time on exams. Can you ensure this is applied to my account before the midterm tomorrow?""",Instructor/TA Escalation
+ESC-003,Education,"""I noticed another student looking at my screen and copying my code during the lab section today. I want to report this confidentially.""",Instructor/TA Escalation
+ESC-004,Education,"""I received an email saying my Project 2 code was flagged by MOSS for plagiarism, but I wrote everything from scratch! Who can I meet with to clear this up?""",Instructor/TA Escalation
+ESC-005,Education,"""Another student in my group project has been making inappropriate comments and I feel very unsafe. I need to be moved to a different group immediately.""",Instructor/TA Escalation
+ESC-006,Education,"""After I reported my group member to the TA for not contributing, they started sending me threatening messages on Discord. I need help.""",Instructor/TA Escalation
+ESC-007,Education,"""I have a progress verification form for my ROTC scholarship that requires the instructor's signature by Friday. When are the professor's office hours?""",Instructor/TA Escalation
+ESC-008,Education,"""My grade for Quiz 4 is showing as a zero on Canvas, but I was definitely in class and handed the paper directly to the TA.""",Instructor/TA Escalation
+ESC-009,Education,"""The autograder gave me a 0% because of a timeout error, but my code runs fine locally in under 1 second. Can an instructor look at my log files?""",Instructor/TA Escalation
+ESC-010,Education,"""Can you just show me the exact line of code I need to write for step 3 of the current homework? I've been stuck on it for hours.""",Instructor/TA Escalation
+ESC-011,Education,"""I'm taking the take-home midterm right now and I don't understand question 4. Is the correct data structure to use a binary search tree?""",Instructor/TA Escalation
+ESC-012,Education,"""I need the professor to sign my CPT authorization form for my summer internship. Can someone review my standing and sign it?""",Instructor/TA Escalation
+ESC-013,Education,"""I participated in all the iClicker polls during today's lecture, but my participation grade is missing from the gradebook.""",Instructor/TA Escalation
+ESC-014,Education,"""I think the TA graded my midterm question 2 too harshly. I had the right logic but just a minor syntax error, so I deserve partial credit.""",Instructor/TA Escalation
+ESC-015,Education,"""I need to take the final exam in a reduced-distraction environment as per my accommodations. How is this arranged for this specific class?""",Instructor/TA Escalation
+ESC-016,Education,"""Can you check my code and tell me if it's too similar to what's posted on Chegg? I looked at it for inspiration but I don't want to get flagged.""",Instructor/TA Escalation
+ESC-017,Education,"""What is the expected output for the hidden test cases on assignment 5? I need to know so I can fix my code.""",Instructor/TA Escalation
+ESC-018,Education,"""My extension was approved for HW 2, but the grading system still automatically applied a 20% late penalty to my final score. Can someone fix this?""",Instructor/TA Escalation
+ESC-019,Education,"""I'm applying to graduate school and need a letter of recommendation. Could the instructor review my class performance and write one for me?""",Instructor/TA Escalation
+ESC-020,Education,"""I lost points on my project for missing inline comments, but if you look at lines 45-60 in my submission, the comments are right there. Please correct my grade.""",Instructor/TA Escalation
