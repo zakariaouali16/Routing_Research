@@ -62,103 +62,118 @@ EDU-060,Education," My Python script keeps throwing an IndexError, can you help 
 EDU-061,Education,. Why is my C++ compiler saying 'undefined reference to main'?,Debugging & Code Troubleshooting,
 EDU-062,Education,My code has an infinite loop and I can't figure out where it is.,Debugging & Code Troubleshooting,
 EDU-063,Education,"I'm getting a NullPointerException in Java, how do I fix it?",Debugging & Code Troubleshooting,
-EDU-064,Education,my id is 371181. Can I use external libraries for the final project or can I only use the ones from the requirements?,Assignment & Grading Policy,Clear question about assignment constraints/requirements.
-EDU-065,Education,"my student id is 699334. If I submit my code like 10 minutes late, how much do they take off?",Assignment & Grading Policy,Specific late submission policy question — asking about the rule before submitting.
-EDU-066,Education,my student id is 834842. Does PEP 8 actually affect our grade on the Python homework?,Assignment & Grading Policy,Clear inquiry about formatting/style guidelines for grading.
-EDU-067,Education,"my student id is 449887. I see that 'efficiency' is 30% of the grade for Homework 4. If my code works perfectly but uses nested for-loops, am I going to fail the assignment?",Assignment & Grading Policy,Student anxiety about grading weights — fundamentally a rubric clarification question.
-EDU-068,Education,"my student id is 926345. Are we allowed to work in pairs for Homework 3, or is it strictly individual?",Assignment & Grading Policy,Collaboration policy question for a specific assignment.
-EDU-069,Education,my student id is 895885. Does the final project need to be submitted as a .zip file or pushed to a GitHub repo?,Assignment & Grading Policy,Submission format question — asking about policy before submitting.
-EDU-070,Education,my student id is 197199. How much of the project grade is based on the written report versus the actual code?,Assignment & Grading Policy,Grade breakdown question for a specific deliverable.
-EDU-071,Education,"my student id is 116250. If my code passes all the test cases but the autograder gives me a 0, does the TA manually review it?",Assignment & Grading Policy,"Question about grading procedure — asking about policy, not contesting an outcome."
-EDU-072,Education,my student id is 505516. Is there any extra credit in this course and does it actually make a difference to your final grade?,Assignment & Grading Policy,Extra credit policy question.
-EDU-073,Education,my student id is 700103. Can I resubmit Assignment 2 if I realize I made a mistake after the deadline?,Assignment & Grading Policy,Late resubmission policy question — asking about the rule before acting.
-EDU-074,Education,my student id is 386757. Does commenting our code actually affect the grade or is it just a style suggestion?,Assignment & Grading Policy,Rubric clarification — asking whether a specific element is graded.
-EDU-075,Education,my student id is 851867. The assignment says 'no hardcoding' but I'm not sure what counts as hardcoding in this context. Can you clarify?,Assignment & Grading Policy,"Rubric boundary clarification — asking what the rule means, not contesting it."
-EDU-076,Education,"my student id is 798179. If two students turn in code that looks really similar, does that automatically get flagged as plagiarism?",Assignment & Grading Policy,"Academic integrity policy question — asking what the rule is, not reporting or admitting a violation."
-EDU-077,Education,my student id is 969290. How many points is each part of the rubric worth for the midterm project?,Assignment & Grading Policy,Grade breakdown question — asking about policy before submitting.
-EDU-078,Education,Is it okay to use code from the lecture slides in our homework as long as we cite it?,Assignment & Grading Policy,Citation and reuse policy question — asking about the rule before acting.
-EDU-079,Education,What happens to my grade if I miss the demo session for the final project?,Assignment & Grading Policy,Attendance/participation policy question for a specific deliverable.
-EDU-080,Education,"Can I use ChatGPT to help me understand concepts while doing the homework, or is that not allowed?",Assignment & Grading Policy,AI tool usage policy question — asking what the rule is before using it.
-EDU-081,Education,Is the group project grade individual or does the whole team get the same score?,Assignment & Grading Policy,Grading structure question for a group deliverable.
-EDU-082,Education, If I only finish part of the assignment do I still get some points or is it a zero?,Assignment & Grading Policy,Partial credit policy question.
-EDU-083,Education,my student id is 727803. If I find a bug after submitting can I email the TA a fix and would they count it?,Assignment & Grading Policy,"Post-submission fix policy question — asking about the rule, not disputing a grade."
-EDU-084,Education,What's the late penalty if I submit homework 3 a day late?,Assignment & Grading Policy,
-EDU-085,Education,my student id is 848653. Does participation in lecture count towards our final grade?,Assignment & Grading Policy,
-EDU-086,Education,How many points is the group project worth?,Assignment & Grading Policy,
-EDU-087,Education,Is the lowest homework score dropped at the end of the term?,Assignment & Grading Policy,
-EDU-088,Education,for class CS101. Will the final exam be multiple choice or free-response coding questions?,Exam & Assessment Prep,Clear exam format inquiry.
-EDU-089,Education,"for class PHY105. Are we allowed to bring a cheat sheet to the midterm, and if so, what size?",Exam & Assessment Prep,Permitted materials question.
-EDU-090,Education,for class MATH202. Do you have any practice questions for the section on dynamic programming?,Exam & Assessment Prep,Request for topic-specific study materials in exam prep context.
-EDU-091,Education,for class PHY122. Will the exam cover the material from the guest lecture in week 8?,Exam & Assessment Prep,Exam scope/content question.
-EDU-092,Education,for class PHY144. Is the upcoming quiz open-book or closed-book?,Exam & Assessment Prep,Assessment rules inquiry.
-EDU-093,Education,for class PHY444. Where can I find the study guide for the second midterm?,Exam & Assessment Prep,Locating exam prep resources.
-EDU-094,Education,for class PHY354. How many questions are typically on the final exam?,Exam & Assessment Prep,Exam structure inquiry.
-EDU-095,Education,for class CS101. Do we need to know the exact syntax for library functions we never actually used in class?,Exam & Assessment Prep,Boundary of exam material.
-EDU-096,Education,for class PHY105. Can we use calculators on the algorithms exam?,Exam & Assessment Prep,Permitted tools for assessment.
-EDU-097,Education,for class ENG101. I can't find the study guide and the exam starts in 2 hours!,Exam & Assessment Prep,"Student urgently looking for a study resource — time pressure is logistical, not a safety issue. Clear Exam & Assessment Prep."
-EDU-098,Education,for class CS101. Is there an old final exam posted somewhere I can use to practice?,Exam & Assessment Prep,Request for timed practice exam
-EDU-099,Education,for class CSS322. Will the midterm be cumulative or only cover material from the last three weeks?,Exam & Assessment Prep,"Exam scope question — forward looking, not contesting a grade."
-EDU-100,Education,for class PHY501. Is it okay to use Python built-in functions like sorted() on the exam or do we need to implement everything from scratch?,Exam & Assessment Prep,Permitted approaches question for upcoming exam.
-EDU-101,Education,for class MATH101. How much time do we get for the final exam?,Exam & Assessment Prep,Exam logistics question — duration.
-EDU-102,Education,for class MATH202. Will there be a review session before the midterm and if so when is it?,Exam & Assessment Prep,Exam prep logistics — looking for review session details.
-EDU-103,Education,for class CS101. I heard the final has a section on graph algorithms — should I focus on BFS and DFS or all traversal methods?,Exam & Assessment Prep,Exam scope/study focus question — forward looking.
-EDU-104,Education,for class ENG101. Do we have to memorize all the Big-O stuff or will they give us a reference sheet?,Exam & Assessment Prep,Permitted materials and exam expectations question.
-EDU-105,Education,for class MATH102. Will the review session before the exam cover everything or just certain topics?,Exam & Assessment Prep,Review session scope question in exam prep context.
-EDU-106,Education,for class ENG101. Do we lose points for wrong answers on the multiple choice section or is it just no credit?,Exam & Assessment Prep,Exam grading structure question — asking about policy before the exam.
-EDU-107,Education,for class MATH432. Is pseudocode acceptable for the coding questions on the final or do we need to write actual syntax?,Exam & Assessment Prep,Exam format and expectations question.
-EDU-108,Education,for class MATH333. Are there any practice tests available for the midterm next week?,Exam & Assessment Prep,
-EDU-109,Education,for class MATH202. What chapters will the final exam cover?,Exam & Assessment Prep,
-EDU-110,Education,for class ENG101. Do you have a study guide for the upcoming quiz?,Exam & Assessment Prep,
-EDU-111,Education,for class PHY105. Are calculators allowed during the math exam?,Exam & Assessment Prep,
-EDU-112,Education,"""I can't seem to get the Java JDK installed on my Mac, it keeps saying 'command not found'.""",Course Logistics & Environment Setup,Local environment setup issue.
-EDU-113,Education,"""Where is the zoom link for Professor Smith's Tuesday office hours?""",Course Logistics & Environment Setup,Routine scheduling/access question.
-EDU-114,Education,"""Is there a recommended IDE for the C++ assignments, or can I just use VS Code?""",Course Logistics & Environment Setup,Tooling recommendation inquiry.
-EDU-115,Education,"""I'm having trouble logging into the autograder platform with my student ID.""",Course Logistics & Environment Setup,Platform access issue blocking submission.
-EDU-116,Education,What time does the Monday lab start?,Course Logistics & Environment Setup,Basic schedule inquiry.
-EDU-117,Education,"""How do I configure the virtual environment for the week 3 Python project?""",Course Logistics & Environment Setup,Assignment-specific environment setup.
-EDU-118,Education,"""Are the lecture recordings posted on Canvas or Panopto?""",Course Logistics & Environment Setup,Platform navigation inquiry.
-EDU-119,Education,"""The docker container provided for the assignment is crashing on startup for Windows users.""",Course Logistics & Environment Setup,Student reports a bug in course-provided tooling — not student code. Course Logistics is correct; good boundary test case against Debugging.
-EDU-120,Education,Are there office hours over spring break?,Course Logistics & Environment Setup,Schedule exception question.
-EDU-121,Education,"""Which version of Node.js do we need to install for the frontend module?""",Course Logistics & Environment Setup,Software versioning requirement.
-EDU-122,Education,I'm on Windows and the Makefile for the assignment isn't working. Do I need to install WSL?,Course Logistics & Environment Setup,Platform-specific setup question for course tooling.
-EDU-123,Education,"Where do I submit the final project? Canvas, Gradescope, or the autograder?",Course Logistics & Environment Setup,Submission platform navigation question.
-EDU-124,Education,The pip install for the course requirements.txt keeps failing with a dependency conflict. How do I fix this?,Course Logistics & Environment Setup,"Environment setup issue for course assignment — about course tooling, not student code."
-EDU-125,Education,Is there a course Slack or Discord where students can ask questions between office hours?,Course Logistics & Environment Setup,Course communication platform question.
-EDU-126,Education,"I can't clone the starter code repo, it's asking for a password. Do I need to set up an SSH key for GitHub Classroom?",Course Logistics & Environment Setup,Version control setup for course assignment.
-EDU-127,Education,Are lectures recorded and if so where can I find them after class?,Course Logistics & Environment Setup,Course resource access question.
-EDU-128,Education,My Gradescope account doesn't show this course. How do I get added?,Course Logistics & Environment Setup,Course platform enrollment issue.
-EDU-129,Education,The Docker image for Assignment 4 is over 5GB. is there a lighter version for students with limited disk space?,Course Logistics & Environment Setup,Technical setup constraint question about course-provided tooling.
-EDU-130,Education,The course website says office hours are in room 204 but someone told me they moved. Where are they actually held?,Course Logistics & Environment Setup,Schedule/location clarification question — straightforward Course Logistics.
-EDU-131,Education,The course syllabus says we need a specific version of Python but the lab computers have a different version installed. What should we do?,Course Logistics & Environment Setup,"Software version conflict on course-provided equipment — environment setup question, not student code."
-EDU-132,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
-EDU-133,Education,"I'm having trouble installing Jupyter Notebook on my Mac, what should I do?",Course Logistics & Environment Setup,
-EDU-134,Education,Where can I find the syllabus for this semester?,Course Logistics & Environment Setup,
-EDU-135,Education,Which version of Java are we required to use for this course?,Course Logistics & Environment Setup,
-EDU-136,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
-EDU-137,Education,my student id is 912337. I believe the TA unfairly deducted 20 points from my project for a misunderstanding of the prompt. I want to appeal this.,Instructor/TA Escalation,Formal grade dispute requiring faculty review.
-EDU-138,Education,my student id is 791611. I need to discuss my disability accommodations for the final exam with the instructor.,Instructor/TA Escalation,"Sensitive, legally-protected PII/accommodations. "
-EDU-139,Education,Another student in my group has completely stopped responding and hasn't contributed code. How do we handle this for grading?,Instructor/TA Escalation,Interpersonal conflict with grading impact — requires faculty judgment.
-EDU-140,Education,"my student id is 777930. I received an email about an academic integrity violation on Homework 4, but I didn't cheat. Who do I talk to?",Instructor/TA Escalation,Disciplinary action; agent must not engage in discussion.
-EDU-141,Education,my student id is 322276. I am dealing with a severe family emergency and need an incomplete grade for the semester. What is the process?,Instructor/TA Escalation,Severe personal emergency affecting academic standing.
-EDU-142,Education,my student id is 879055. I think someone might have copied my code repository from GitHub without my permission.,Instructor/TA Escalation,Suspected academic misconduct by another student.
-EDU-143,Education,my student id is 499748. I want to contest my final grade in the course; it doesn't align with my calculations.,Instructor/TA Escalation,Major administrative grade dispute.
-EDU-144,Education,Can I schedule a private meeting with the professor to discuss a personal issue affecting my coursework?,Instructor/TA Escalation,"Request for sensitive, private faculty interaction. "
-EDU-145,Education,"my student id is 353882. The autograder flagged my submission for plagiarism, but I only used the starter code provided in the lecture.",Instructor/TA Escalation,Plagiarism dispute; requires immediate escalation.
-EDU-146,Education,my student id is 800067. I need the professor to sign a form for my scholarship confirming my current standing in the class.,Instructor/TA Escalation,Administrative signature request requiring faculty authority.
-EDU-147,Education,Can you explain the exact step-by-step algorithm I need to use to solve Homework 2 Question 4?,Concept Explanation,Direct academic dishonesty — student is requesting a solution to a specific homework problem. System must refuse and escalate regardless of conceptual framing.
-EDU-148,Education," I am in the middle of the online midterm right now. Quick, explain how Dijkstra's algorithm handles negative edge weights!",Instructor/TA Escalation,Active academic dishonesty during exam — system must refuse and escalate.
-EDU-149,Education,my student id is 785952. I have severe test anxiety and need to request extended time for the final exam. How do I set this up officially?,Instructor/TA Escalation,Disability accommodation request requiring faculty or disability services intervention.
-EDU-150,Education, I feel like the TA has been grading my work more harshly than other students and I want to raise this formally.,Instructor/TA Escalation,"Grading bias concern — requires faculty judgment, not just policy information."
-EDU-151,Education,my student id is 488065. I was hospitalized during the week of the midterm and missed it entirely. I have documentation. What are my options?,Instructor/TA Escalation,Medical emergency makeup request requiring instructor decision.
-EDU-152,Education,A student in my lab section has been making uncomfortable comments toward me and I don't feel safe. Who handles this?,Instructor/TA Escalation,Harassment or safety concern — requires faculty or student affairs escalation.
-EDU-153,Education,my student id is 514486. I received a failing grade for academic dishonesty but was never notified or given a chance to respond. Is there an appeal process?,Instructor/TA Escalation,Formal academic integrity appeal — requires institutional process.
-EDU-154,Education,My final grade is one point below a B and I'm at risk of losing my financial aid. Can the professor review it?,Instructor/TA Escalation,Grade review request with significant personal consequence.
-EDU-155,Education, I reported a classmate for sharing exam questions in a group chat and now I'm being pressured by other students. What should I do?,Instructor/TA Escalation,Retaliation concern after reporting misconduct — requires faculty or admin intervention.
-EDU-156,Education,My professor gave me a verbal warning about my code looking 'too clean' for my level. I didn't do anything wrong but I'm scared. What do I do?,Instructor/TA Escalation,"Informal academic integrity concern with emotional distress — requires faculty intervention, not policy information."
-EDU-157,Education,"my student id is 922442. I feel that my last assignment was graded unfairly, can a TA take a look?",Instructor/TA Escalation,
-EDU-158,Education,"my student id is 977087. I need an extension on my project due to personal reasons, who do I talk to?",Instructor/TA Escalation,
-EDU-159,Education,"my student id is 109652. I haven't received a grade for my essay yet, can the instructor check?",Instructor/TA Escalation,
-EDU-160,Education,"my student id is 643221. I disagree with the feedback on my paper, can I discuss this with the professor?",Instructor/TA Escalation,
+EDU-064,Education,"""""""I keep getting an 'IndexError: list index out of range' on line 14 of my Python script, but the array definitely has 10 items. What is wrong?""""""",Debugging & Code Troubleshooting,Clear debugging request specifying the error type and location in the student's own code.
+EDU-065,Education,"""""""Why is my while loop running forever? I incremented the counter but it never stops printing. Here is my code...""""""",Debugging & Code Troubleshooting,Describes unexpected behavior (infinite loop) in the student's own implementation.
+EDU-066,Education,"""""""I am getting a NullPointerException in Java when trying to call my getStudentName() method, but I'm pretty sure I instantiated the object correctly.""""""",Debugging & Code Troubleshooting,Classic student debugging scenario involving a specific language runtime error.
+EDU-067,Education,"""""""Can someone help? My C++ program compiles fine but segfaults immediately when I run it.""""""",Debugging & Code Troubleshooting,Mentions a specific error (segmentation fault) occurring at runtime on the student's code.
+EDU-068,Education,"""""""I'm trying to sort a list in Python doing my_list = my_list.sort(), but now my_list is just printing as None. Why did it delete my data?""""""",Debugging & Code Troubleshooting,Logic error/misunderstanding of in-place operations causing unexpected behavior in the student's script.
+EDU-069,Education,"""""""My React component isn't updating when I click the button. I used setState like we learned in lecture yesterday but the screen stays the same.""""""",Debugging & Code Troubleshooting,Clearly describes unexpected behavior in a front-end assignment/project.
+EDU-070,Education,"""""""I keep getting a 'SyntaxError: unexpected token' in my JavaScript file. I checked all my curly braces and parentheses and they seem fine.""""""",Debugging & Code Troubleshooting,Troubleshooting request for a syntax error the student cannot visually locate.
+EDU-071,Education,"""""""When I run my SQL query for the homework, it returns a bunch of duplicate rows instead of just one row per customer.""""""",Debugging & Code Troubleshooting,Student's own database query is not behaving as expected (logic error).
+EDU-072,Education,"""""""My recursive function for calculating Fibonacci numbers works for n=5, but when I try n=50 my program just freezes and never finishes.""""""",Debugging & Code Troubleshooting,Performance/optimization debugging on the student's algorithm implementation.
+EDU-073,Education,"""""""Why does my C code print random garbage characters like @ instead of the string I passed to it?""""""",Debugging & Code Troubleshooting,Memory/pointer bug in student code resulting in unexpected output behavior.
+EDU-074,Education,"""""""I am getting a KeyError: 'user_id' when I try to loop through the JSON response I fetched. How do I fix this?""""""",Debugging & Code Troubleshooting,Error encountered while parsing data in a student's script.
+EDU-075,Education,"""""""My binary search tree insert method is failing the unit tests. It says 'Expected 5, got 0' for the tree height.""""""",Debugging & Code Troubleshooting,The student's code is failing test cases due to a logical flaw.
+EDU-076,Education,"""""""I tried to write a regex to extract email addresses, but it's only matching the first letter of the domain. My regex: [a-z]+@[a-z]\.com""""""",Debugging & Code Troubleshooting,Broken implementation provided in the prompt; student expects it to match the full domain.
+EDU-077,Education,"""""""The malloc in my C assignment is returning NULL and I'm not sure if I'm calculating the struct size incorrectly.""""""",Debugging & Code Troubleshooting,Troubleshooting a specific memory allocation failure in the student's assignment.
+EDU-078,Education,"""""""Getting a TypeError: Cannot read properties of undefined (reading 'map') when rendering my list. Here's my App.js file.""""""",Debugging & Code Troubleshooting,Explicit error message provided alongside context of the student's own broken code.
+EDU-079,Education,my id is 371181. Can I use external libraries for the final project or can I only use the ones from the requirements?,Assignment & Grading Policy,Clear question about assignment constraints/requirements.
+EDU-080,Education,"my student id is 699334. If I submit my code like 10 minutes late, how much do they take off?",Assignment & Grading Policy,Specific late submission policy question — asking about the rule before submitting.
+EDU-081,Education,my student id is 834842. Does PEP 8 actually affect our grade on the Python homework?,Assignment & Grading Policy,Clear inquiry about formatting/style guidelines for grading.
+EDU-082,Education,"my student id is 449887. I see that 'efficiency' is 30% of the grade for Homework 4. If my code works perfectly but uses nested for-loops, am I going to fail the assignment?",Assignment & Grading Policy,Student anxiety about grading weights — fundamentally a rubric clarification question.
+EDU-083,Education,"my student id is 926345. Are we allowed to work in pairs for Homework 3, or is it strictly individual?",Assignment & Grading Policy,Collaboration policy question for a specific assignment.
+EDU-084,Education,my student id is 895885. Does the final project need to be submitted as a .zip file or pushed to a GitHub repo?,Assignment & Grading Policy,Submission format question — asking about policy before submitting.
+EDU-085,Education,my student id is 197199. How much of the project grade is based on the written report versus the actual code?,Assignment & Grading Policy,Grade breakdown question for a specific deliverable.
+EDU-086,Education,"my student id is 116250. If my code passes all the test cases but the autograder gives me a 0, does the TA manually review it?",Assignment & Grading Policy,"Question about grading procedure — asking about policy, not contesting an outcome."
+EDU-087,Education,my student id is 505516. Is there any extra credit in this course and does it actually make a difference to your final grade?,Assignment & Grading Policy,Extra credit policy question.
+EDU-088,Education,my student id is 700103. Can I resubmit Assignment 2 if I realize I made a mistake after the deadline?,Assignment & Grading Policy,Late resubmission policy question — asking about the rule before acting.
+EDU-089,Education,my student id is 386757. Does commenting our code actually affect the grade or is it just a style suggestion?,Assignment & Grading Policy,Rubric clarification — asking whether a specific element is graded.
+EDU-090,Education,my student id is 851867. The assignment says 'no hardcoding' but I'm not sure what counts as hardcoding in this context. Can you clarify?,Assignment & Grading Policy,"Rubric boundary clarification — asking what the rule means, not contesting it."
+EDU-091,Education,"my student id is 798179. If two students turn in code that looks really similar, does that automatically get flagged as plagiarism?",Assignment & Grading Policy,"Academic integrity policy question — asking what the rule is, not reporting or admitting a violation."
+EDU-092,Education,my student id is 969290. How many points is each part of the rubric worth for the midterm project?,Assignment & Grading Policy,Grade breakdown question — asking about policy before submitting.
+EDU-093,Education,Is it okay to use code from the lecture slides in our homework as long as we cite it?,Assignment & Grading Policy,Citation and reuse policy question — asking about the rule before acting.
+EDU-094,Education,What happens to my grade if I miss the demo session for the final project?,Assignment & Grading Policy,Attendance/participation policy question for a specific deliverable.
+EDU-095,Education,"Can I use ChatGPT to help me understand concepts while doing the homework, or is that not allowed?",Assignment & Grading Policy,AI tool usage policy question — asking what the rule is before using it.
+EDU-096,Education,Is the group project grade individual or does the whole team get the same score?,Assignment & Grading Policy,Grading structure question for a group deliverable.
+EDU-097,Education, If I only finish part of the assignment do I still get some points or is it a zero?,Assignment & Grading Policy,Partial credit policy question.
+EDU-098,Education,my student id is 727803. If I find a bug after submitting can I email the TA a fix and would they count it?,Assignment & Grading Policy,"Post-submission fix policy question — asking about the rule, not disputing a grade."
+EDU-099,Education,What's the late penalty if I submit homework 3 a day late?,Assignment & Grading Policy,
+EDU-100,Education,my student id is 848653. Does participation in lecture count towards our final grade?,Assignment & Grading Policy,
+EDU-101,Education,How many points is the group project worth?,Assignment & Grading Policy,
+EDU-102,Education,Is the lowest homework score dropped at the end of the term?,Assignment & Grading Policy,
+EDU-103,Education,for class CS101. Will the final exam be multiple choice or free-response coding questions?,Exam & Assessment Prep,Clear exam format inquiry.
+EDU-104,Education,"for class PHY105. Are we allowed to bring a cheat sheet to the midterm, and if so, what size?",Exam & Assessment Prep,Permitted materials question.
+EDU-105,Education,for class MATH202. Do you have any practice questions for the section on dynamic programming?,Exam & Assessment Prep,Request for topic-specific study materials in exam prep context.
+EDU-106,Education,for class PHY122. Will the exam cover the material from the guest lecture in week 8?,Exam & Assessment Prep,Exam scope/content question.
+EDU-107,Education,for class PHY144. Is the upcoming quiz open-book or closed-book?,Exam & Assessment Prep,Assessment rules inquiry.
+EDU-108,Education,for class PHY444. Where can I find the study guide for the second midterm?,Exam & Assessment Prep,Locating exam prep resources.
+EDU-109,Education,for class PHY354. How many questions are typically on the final exam?,Exam & Assessment Prep,Exam structure inquiry.
+EDU-110,Education,for class CS101. Do we need to know the exact syntax for library functions we never actually used in class?,Exam & Assessment Prep,Boundary of exam material.
+EDU-111,Education,for class PHY105. Can we use calculators on the algorithms exam?,Exam & Assessment Prep,Permitted tools for assessment.
+EDU-112,Education,for class ENG101. I can't find the study guide and the exam starts in 2 hours!,Exam & Assessment Prep,"Student urgently looking for a study resource — time pressure is logistical, not a safety issue. Clear Exam & Assessment Prep."
+EDU-113,Education,for class CS101. Is there an old final exam posted somewhere I can use to practice?,Exam & Assessment Prep,Request for timed practice exam
+EDU-114,Education,for class CSS322. Will the midterm be cumulative or only cover material from the last three weeks?,Exam & Assessment Prep,"Exam scope question — forward looking, not contesting a grade."
+EDU-115,Education,for class PHY501. Is it okay to use Python built-in functions like sorted() on the exam or do we need to implement everything from scratch?,Exam & Assessment Prep,Permitted approaches question for upcoming exam.
+EDU-116,Education,for class MATH101. How much time do we get for the final exam?,Exam & Assessment Prep,Exam logistics question — duration.
+EDU-117,Education,for class MATH202. Will there be a review session before the midterm and if so when is it?,Exam & Assessment Prep,Exam prep logistics — looking for review session details.
+EDU-118,Education,for class CS101. I heard the final has a section on graph algorithms — should I focus on BFS and DFS or all traversal methods?,Exam & Assessment Prep,Exam scope/study focus question — forward looking.
+EDU-119,Education,for class ENG101. Do we have to memorize all the Big-O stuff or will they give us a reference sheet?,Exam & Assessment Prep,Permitted materials and exam expectations question.
+EDU-120,Education,for class MATH102. Will the review session before the exam cover everything or just certain topics?,Exam & Assessment Prep,Review session scope question in exam prep context.
+EDU-121,Education,for class ENG101. Do we lose points for wrong answers on the multiple choice section or is it just no credit?,Exam & Assessment Prep,Exam grading structure question — asking about policy before the exam.
+EDU-122,Education,for class MATH432. Is pseudocode acceptable for the coding questions on the final or do we need to write actual syntax?,Exam & Assessment Prep,Exam format and expectations question.
+EDU-123,Education,for class MATH333. Are there any practice tests available for the midterm next week?,Exam & Assessment Prep,
+EDU-124,Education,for class MATH202. What chapters will the final exam cover?,Exam & Assessment Prep,
+EDU-125,Education,for class ENG101. Do you have a study guide for the upcoming quiz?,Exam & Assessment Prep,
+EDU-126,Education,for class PHY105. Are calculators allowed during the math exam?,Exam & Assessment Prep,
+EDU-127,Education,"""I can't seem to get the Java JDK installed on my Mac, it keeps saying 'command not found'.""",Course Logistics & Environment Setup,Local environment setup issue.
+EDU-128,Education,"""Where is the zoom link for Professor Smith's Tuesday office hours?""",Course Logistics & Environment Setup,Routine scheduling/access question.
+EDU-129,Education,"""Is there a recommended IDE for the C++ assignments, or can I just use VS Code?""",Course Logistics & Environment Setup,Tooling recommendation inquiry.
+EDU-130,Education,"""I'm having trouble logging into the autograder platform with my student ID.""",Course Logistics & Environment Setup,Platform access issue blocking submission.
+EDU-131,Education,What time does the Monday lab start?,Course Logistics & Environment Setup,Basic schedule inquiry.
+EDU-132,Education,"""How do I configure the virtual environment for the week 3 Python project?""",Course Logistics & Environment Setup,Assignment-specific environment setup.
+EDU-133,Education,"""Are the lecture recordings posted on Canvas or Panopto?""",Course Logistics & Environment Setup,Platform navigation inquiry.
+EDU-134,Education,"""The docker container provided for the assignment is crashing on startup for Windows users.""",Course Logistics & Environment Setup,Student reports a bug in course-provided tooling — not student code. Course Logistics is correct; good boundary test case against Debugging.
+EDU-135,Education,Are there office hours over spring break?,Course Logistics & Environment Setup,Schedule exception question.
+EDU-136,Education,"""Which version of Node.js do we need to install for the frontend module?""",Course Logistics & Environment Setup,Software versioning requirement.
+EDU-137,Education,I'm on Windows and the Makefile for the assignment isn't working. Do I need to install WSL?,Course Logistics & Environment Setup,Platform-specific setup question for course tooling.
+EDU-138,Education,"Where do I submit the final project? Canvas, Gradescope, or the autograder?",Course Logistics & Environment Setup,Submission platform navigation question.
+EDU-139,Education,The pip install for the course requirements.txt keeps failing with a dependency conflict. How do I fix this?,Course Logistics & Environment Setup,"Environment setup issue for course assignment — about course tooling, not student code."
+EDU-140,Education,Is there a course Slack or Discord where students can ask questions between office hours?,Course Logistics & Environment Setup,Course communication platform question.
+EDU-141,Education,"I can't clone the starter code repo, it's asking for a password. Do I need to set up an SSH key for GitHub Classroom?",Course Logistics & Environment Setup,Version control setup for course assignment.
+EDU-142,Education,Are lectures recorded and if so where can I find them after class?,Course Logistics & Environment Setup,Course resource access question.
+EDU-143,Education,My Gradescope account doesn't show this course. How do I get added?,Course Logistics & Environment Setup,Course platform enrollment issue.
+EDU-144,Education,The Docker image for Assignment 4 is over 5GB. is there a lighter version for students with limited disk space?,Course Logistics & Environment Setup,Technical setup constraint question about course-provided tooling.
+EDU-145,Education,The course website says office hours are in room 204 but someone told me they moved. Where are they actually held?,Course Logistics & Environment Setup,Schedule/location clarification question — straightforward Course Logistics.
+EDU-146,Education,The course syllabus says we need a specific version of Python but the lab computers have a different version installed. What should we do?,Course Logistics & Environment Setup,"Software version conflict on course-provided equipment — environment setup question, not student code."
+EDU-147,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
+EDU-148,Education,"I'm having trouble installing Jupyter Notebook on my Mac, what should I do?",Course Logistics & Environment Setup,
+EDU-149,Education,Where can I find the syllabus for this semester?,Course Logistics & Environment Setup,
+EDU-150,Education,Which version of Java are we required to use for this course?,Course Logistics & Environment Setup,
+EDU-151,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
+EDU-152,Education,my student id is 912337. I believe the TA unfairly deducted 20 points from my project for a misunderstanding of the prompt. I want to appeal this.,Instructor/TA Escalation,Formal grade dispute requiring faculty review.
+EDU-153,Education,my student id is 791611. I need to discuss my disability accommodations for the final exam with the instructor.,Instructor/TA Escalation,"Sensitive, legally-protected PII/accommodations. "
+EDU-154,Education,Another student in my group has completely stopped responding and hasn't contributed code. How do we handle this for grading?,Instructor/TA Escalation,Interpersonal conflict with grading impact — requires faculty judgment.
+EDU-155,Education,"my student id is 777930. I received an email about an academic integrity violation on Homework 4, but I didn't cheat. Who do I talk to?",Instructor/TA Escalation,Disciplinary action; agent must not engage in discussion.
+EDU-156,Education,my student id is 322276. I am dealing with a severe family emergency and need an incomplete grade for the semester. What is the process?,Instructor/TA Escalation,Severe personal emergency affecting academic standing.
+EDU-157,Education,my student id is 879055. I think someone might have copied my code repository from GitHub without my permission.,Instructor/TA Escalation,Suspected academic misconduct by another student.
+EDU-158,Education,my student id is 499748. I want to contest my final grade in the course; it doesn't align with my calculations.,Instructor/TA Escalation,Major administrative grade dispute.
+EDU-159,Education,Can I schedule a private meeting with the professor to discuss a personal issue affecting my coursework?,Instructor/TA Escalation,"Request for sensitive, private faculty interaction. "
+EDU-160,Education,"my student id is 353882. The autograder flagged my submission for plagiarism, but I only used the starter code provided in the lecture.",Instructor/TA Escalation,Plagiarism dispute; requires immediate escalation.
+EDU-161,Education,my student id is 800067. I need the professor to sign a form for my scholarship confirming my current standing in the class.,Instructor/TA Escalation,Administrative signature request requiring faculty authority.
+EDU-162,Education,Can you explain the exact step-by-step algorithm I need to use to solve Homework 2 Question 4?,Concept Explanation,Direct academic dishonesty — student is requesting a solution to a specific homework problem. System must refuse and escalate regardless of conceptual framing.
+EDU-163,Education," I am in the middle of the online midterm right now. Quick, explain how Dijkstra's algorithm handles negative edge weights!",Instructor/TA Escalation,Active academic dishonesty during exam — system must refuse and escalate.
+EDU-164,Education,my student id is 785952. I have severe test anxiety and need to request extended time for the final exam. How do I set this up officially?,Instructor/TA Escalation,Disability accommodation request requiring faculty or disability services intervention.
+EDU-165,Education, I feel like the TA has been grading my work more harshly than other students and I want to raise this formally.,Instructor/TA Escalation,"Grading bias concern — requires faculty judgment, not just policy information."
+EDU-166,Education,my student id is 488065. I was hospitalized during the week of the midterm and missed it entirely. I have documentation. What are my options?,Instructor/TA Escalation,Medical emergency makeup request requiring instructor decision.
+EDU-167,Education,A student in my lab section has been making uncomfortable comments toward me and I don't feel safe. Who handles this?,Instructor/TA Escalation,Harassment or safety concern — requires faculty or student affairs escalation.
+EDU-168,Education,my student id is 514486. I received a failing grade for academic dishonesty but was never notified or given a chance to respond. Is there an appeal process?,Instructor/TA Escalation,Formal academic integrity appeal — requires institutional process.
+EDU-169,Education,My final grade is one point below a B and I'm at risk of losing my financial aid. Can the professor review it?,Instructor/TA Escalation,Grade review request with significant personal consequence.
+EDU-170,Education, I reported a classmate for sharing exam questions in a group chat and now I'm being pressured by other students. What should I do?,Instructor/TA Escalation,Retaliation concern after reporting misconduct — requires faculty or admin intervention.
+EDU-171,Education,My professor gave me a verbal warning about my code looking 'too clean' for my level. I didn't do anything wrong but I'm scared. What do I do?,Instructor/TA Escalation,"Informal academic integrity concern with emotional distress — requires faculty intervention, not policy information."
+EDU-172,Education,"my student id is 922442. I feel that my last assignment was graded unfairly, can a TA take a look?",Instructor/TA Escalation,
+EDU-173,Education,"my student id is 977087. I need an extension on my project due to personal reasons, who do I talk to?",Instructor/TA Escalation,
+EDU-174,Education,"my student id is 109652. I haven't received a grade for my essay yet, can the instructor check?",Instructor/TA Escalation,
+EDU-175,Education,"my student id is 643221. I disagree with the feedback on my paper, can I discuss this with the professor?",Instructor/TA Escalation,
 HC-001,Healthcare, I'd like to book an annual physical with Dr. Smith for sometime next month.,Scheduling & Appointments,Clean booking request. All key intent signals present.
 HC-002,Healthcare,my account number is 76872. I need to cancel my appointment for tomorrow morning.,Scheduling & Appointments,Clean cancellation. patient_name and department_specialty absent but intent is unambiguous.
 HC-003,Healthcare,my account number is 66774. Can I change my 10 AM appointment to a telehealth visit instead of coming in?,Scheduling & Appointments,Format modification request.
