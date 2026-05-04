@@ -1,16 +1,16 @@
 prompt_id,domain,user_prompt,gold_label,annotator_notes
-AGP-001,Education,What is the late penalty for submitting the programming assignment 2 hours after the deadline?,Assignment & Grading Policy,Asks for a stated rule regarding late submissions.
-AGP-002,Education,Are we allowed to use the standard math library for the calculator project?,Assignment & Grading Policy,Question about what is or isn't allowed on an assignment.
-AGP-003,Education,Is there a specific file naming convention we need to follow when zipping our submission?,Assignment & Grading Policy,Asks for formatting/submission requirements.
-AGP-004,Education,How many points are deducted if our code fails the hidden test cases on Gradescope?,Assignment & Grading Policy,Question regarding the grading rubric and point allocations.
-AGP-005,Education,Does the syllabus say if we can drop our lowest homework score at the end of the semester?,Assignment & Grading Policy,General grading policy inquiry.
-AGP-006,Education,Will the final project rubric include points for writing inline code comments?,Assignment & Grading Policy,Clarification on the assignment grading rubric.
-AGP-007,Education,Are we permitted to collaborate with other students on the weekly coding challenges?,Assignment & Grading Policy,Clarification on academic integrity and allowed collaboration.
-AGP-008,Education,What is the official course policy for requesting an extension on an assignment?,Assignment & Grading Policy,Asking about the policy (can be answered with a rule statement).
-AGP-009,Education,"Will we be graded on the space complexity and efficiency of our algorithm, or just correctness?",Assignment & Grading Policy,Specific assignment requirement and grading criteria.
-AGP-010,Education,Is it against the rules to use small code snippets from StackOverflow as long as we cite them?,Assignment & Grading Policy,Asking about what is explicitly allowed/prohibited.
-AGP-011,Education,How much of our total final grade is determined by participation and lab attendance?,Assignment & Grading Policy,General course grading policy and weight distribution.
+AGP-001,Education,What is the late penalty for submitting the programming assignment 2 hours after the deadline?,Assignment & Grading Policy,Asks for a stated rule regarding late assignment submissions.
+AGP-002,Education,Are we allowed to use the standard math library for the calculator assignment?,Assignment & Grading Policy,Question about what is or isn't allowed on a specific assignment.
+AGP-003,Education,Is there a specific file naming convention we need to follow when zipping our assignment submission?,Assignment & Grading Policy,Asks for formatting/submission requirements for an assignment.
+AGP-004,Education,How many points are deducted if our assignment code fails the hidden test cases on Gradescope?,Assignment & Grading Policy,Question regarding the grading rubric and point allocations for an assignment.
+AGP-005,Education,Does the syllabus say if we can drop our lowest assignment score at the end of the semester?,Assignment & Grading Policy,Inquiry specifically about dropping an assignment score.
+AGP-006,Education,Will the assignment grading rubric include points for writing inline code comments?,Assignment & Grading Policy,Clarification on the assignment grading rubric.
+AGP-007,Education,Are we permitted to collaborate with other students on the weekly coding assignments?,Assignment & Grading Policy,Clarification on academic integrity and allowed collaboration for assignments.
+AGP-008,Education,What is the official course policy for requesting an extension on an assignment?,Assignment & Grading Policy,Asking about the extension policy for an assignment.
+AGP-009,Education,Will the sorting algorithm assignment be graded on space complexity or just correctness?,Assignment & Grading Policy,Specific assignment requirement and grading criteria.
+AGP-010,Education,Is it against the rules to use small code snippets from StackOverflow for this assignment as long as we cite them?,Assignment & Grading Policy,Asking about what is explicitly allowed/prohibited for an assignment.
+AGP-011,Education,Are we required to include a README file documenting our environment setup with the assignment?,Assignment & Grading Policy,Inquiring about specific assignment documentation requirements.
 AGP-012,Education,"Do we need to write unit tests for the backend API assignment, or is that optional?",Assignment & Grading Policy,Inquiring about specific assignment requirements.
-AGP-013,Education,What is the grading penalty if my code passes locally but fails on the autograder due to a timeout?,Assignment & Grading Policy,Question on the autograder grading policy.
-AGP-014,Education,Are there any required font or spacing guidelines for the final project documentation?,Assignment & Grading Policy,Asks for formatting requirements.
+AGP-013,Education,What is the grading penalty if my assignment passes locally but fails on the autograder due to a timeout?,Assignment & Grading Policy,Question on the autograder grading policy for an assignment.
+AGP-014,Education,Are there any required font or spacing guidelines for the written documentation of the assignment?,Assignment & Grading Policy,Asks for formatting requirements for an assignment document.
 AGP-015,Education,Am I allowed to continuously resubmit my assignment to improve my score before the deadline hits?,Assignment & Grading Policy,Inquiry regarding assignment submission rules.
