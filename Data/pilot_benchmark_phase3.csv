@@ -11,7 +11,7 @@ GEN-026,Healthcare,"""Is public Wi-Fi available for patients and visitors in the
 GEN-027,Healthcare,"""Can I bring my emotional support dog to my doctor's appointment?""",Facility & General Information,Question regarding facility policies on animals.
 GEN-028,Healthcare,"""Where is the closest bus stop or subway station to your main campus?""",Facility & General Information,Request for public transportation directions to the facility.
 GEN-029,Healthcare,"""What are the regular operating hours for the main lobby desk?""",Facility & General Information,Inquiry about general building hours.
-GEN-030,Healthcare,"""Do you have a lost and found? I think I left my glasses in waiting room B.""",Facility & General Information,Inquiry regarding lost items within the physical building.
+GEN-030,Healthcare,"""How far is the closest post office from the building.""",Facility & General Information,Inquiry regarding lost items within the physical building.
 GEN-031,Healthcare,"""Are the restrooms on the first floor wheelchair accessible?""",Facility & General Information,Specific question regarding ADA compliance and facility layout.
 GEN-032,Healthcare,"""Is there a designated smoking area on the hospital grounds?""",Facility & General Information,Question regarding facility rules and designated zones.
 GEN-033,Healthcare,"""Which building is the pediatrics department in? I have an appointment there.""",Facility & General Information,General navigation and building location query.
