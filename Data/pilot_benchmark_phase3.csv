@@ -1,16 +1,16 @@
-prompt_id,domain,user_prompt,gold_label
-EAP-001,Education,"Is the final exam cumulative, or does it only cover material we learned after the midterm?",Exam & Assessment Prep
-EAP-002,Education,"Are we allowed to bring a handwritten, double-sided cheat sheet to the exam next Tuesday?",Exam & Assessment Prep
-EAP-003,Education,Will questions about red-black tree insertion be included on the upcoming quiz?,Exam & Assessment Prep
-EAP-004,Education,What is the format of the midterm? Is it mostly multiple-choice or free-response coding questions?,Exam & Assessment Prep
-EAP-005,Education,Where can I find past exams or official practice tests to study for the final?,Exam & Assessment Prep
-EAP-006,Education,Do we need to explicitly memorize all the sorting algorithm space complexities for the test?,Exam & Assessment Prep
-EAP-007,Education,Will we have access to the Python standard library documentation during the assessment?,Exam & Assessment Prep
-EAP-008,Education,Are graphing calculators permitted for the quantitative section of the exam?,Exam & Assessment Prep
-EAP-009,Education,"Will the mid-term cover topics from Week 5, even though we didn't have a programming assignment on them?",Exam & Assessment Prep
-EAP-010,Education,Should we write high-level pseudo-code or syntactically perfect Java for the written questions on the test?,Exam & Assessment Prep
-EAP-011,Education,How much of our overall class grade is determined by the final exam versus the bi-weekly quizzes?,Exam & Assessment Prep
-EAP-012,Education,"Will the assessment be strictly proctored using Respondus, or is it an open-book take-home test?",Exam & Assessment Prep
-EAP-013,Education,Are the practice problems at the end of Chapter 4 representative of the difficulty of the actual exam questions?,Exam & Assessment Prep
-EAP-014,Education,"Do we need to bring our own blank scratch paper to the exam room, or will it be provided by the TAs?",Exam & Assessment Prep
-EAP-015,Education,Will there be any optional extra credit questions on the final assessment?,Exam & Assessment Prep
+ID,Domain,User Prompt,Gold Label
+LOG-001,Education,"""I'm trying to install the required JDK 17 for this class, but the installer is giving me a PATH error on Windows. How do I fix this?""",Course Logistics & Environment Setup
+LOG-002,Education,"""What are the TA office hours for this week? I need help understanding the grading rubric.""",Course Logistics & Environment Setup
+LOG-003,Education,"""Gradescope isn't letting me upload my ZIP file for Assignment 2. It says 'submission disabled'.""",Course Logistics & Environment Setup
+LOG-004,Education,"""When I try to clone the starter code from GitHub Classroom, it says I don't have repository access permissions.""",Course Logistics & Environment Setup
+LOG-005,Education,"""I'm getting a 'Docker daemon is not running' error when trying to start the course-provided virtual environment.""",Course Logistics & Environment Setup
+LOG-006,Education,"""Will Monday's lecture be recorded and posted on Canvas, or do we have to attend in person?""",Course Logistics & Environment Setup
+LOG-007,Education,"""Is there a specific file naming convention we need to follow when submitting our final project scripts?""",Course Logistics & Environment Setup
+LOG-008,Education,"""The autograder keeps timing out on my submission, even though my code runs instantly on my local machine. Is the server down?""",Course Logistics & Environment Setup
+LOG-009,Education,"""How do I configure VS Code or PyCharm to use the specific conda environment listed in the syllabus?""",Course Logistics & Environment Setup
+LOG-010,Education,"""Where can I find the Zoom link for the Thursday discussion sections?""",Course Logistics & Environment Setup
+LOG-011,Education,"""I accidentally submitted the wrong file to the portal. Can someone reset my submission attempts so I can re-upload?""",Course Logistics & Environment Setup
+LOG-012,Education,"""The course-provided testing library CS101-TestUtil is throwing a deprecation warning on my Mac when I import it. Should I ignore it?""",Course Logistics & Environment Setup
+LOG-013,Education,"""Are we supposed to install Node.js version 18 or 20 for the upcoming web development project?""",Course Logistics & Environment Setup
+LOG-014,Education,"""I can't access the Week 3 reading materials on Canvas; they are completely grayed out for me.""",Course Logistics & Environment Setup
+LOG-015,Education,"""What is the procedure for requesting a late extension for Homework 4 due to a medical emergency?""",Course Logistics & Environment Setup
