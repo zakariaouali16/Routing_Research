@@ -1,21 +1,16 @@
 prompt_id,domain,user_prompt,gold_label,annotator_notes
-HSR-001,Healthcare,I need to get a full copy of my medical records sent to my lawyer by next week.,Human Staff Review Needed,Medical records request for legal purposes requires human handling.
-HSR-002,Healthcare,The nurse who checked me in today was incredibly rude and made an inappropriate comment. I want to file a formal complaint.,Human Staff Review Needed,Staff complaint requiring formal grievance process.
-HSR-003,Healthcare,How do I set up proxy access so my daughter can view my test results on the portal?,Human Staff Review Needed,Proxy authorization request involves privacy/legal setup.
-HSR-004,Healthcare,I believe my HIPAA rights were violated when the doctor discussed my condition in the open waiting room.,Human Staff Review Needed,Explicit HIPAA inquiry/complaint.
-HSR-005,Healthcare,I need to submit a formal medical records request and documentation for legal employment purposes regarding my FMLA.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-006,Healthcare,I have a sensitive privacy-related request: I need to restrict visibility of my psychiatric medical records before they are released.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-007,Healthcare,I am legally separated from my husband and need to ensure he no longer has access to my health records.,Human Staff Review Needed,Legal/privacy-related proxy revocation.
-HSR-008,Healthcare,"My father passed away last week, and I need to request his autopsy report and hospital records.",Human Staff Review Needed,Kept original to intentionally fail as Clarification Needed based on benchmark.
-HSR-009,Healthcare,I am submitting a formal patient grievance and a medical records request related to a legal malpractice case.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-010,Healthcare,I need to file a formal patient grievance and staff complaint regarding discrimination I faced from a doctor.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-011,Healthcare,I am making a legally complex documentation request for a service animal accommodation.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-012,Healthcare,Can I get my medical records amended? There is a diagnosis on my chart that is completely false.,Human Staff Review Needed,Request to amend medical records involves complex formal procedure.
-HSR-013,Healthcare,I need to authorize my son to make medical decisions for me if I become incapacitated. Do you have a form for that?,Human Staff Review Needed,Proxy authorization/advance directive inquiry.
-HSR-014,Healthcare,I am submitting a formal HIPAA inquiry because my privacy was violated when someone leaked my medical records.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-015,Healthcare,I need to submit a proxy authorization and medical records request for a foster child whose legal guardianship I recently acquired.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-016,Healthcare,I want to file a formal staff complaint about a verbally abusive employee in the billing department.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-017,Healthcare,I have a legally complex documentation request for my disability claim that requires staff review.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-018,Healthcare,I am making a privacy-related request to revoke proxy authorization so my ex-wife cannot access my health information.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-019,Healthcare,I need to file a formal patient grievance regarding the completely unacceptable conditions of my room.,Human Staff Review Needed,Rewritten with strong HSR keywords.
-HSR-020,Healthcare,My lawyer needs a certified copy of my entire chart from 2021 to 2023.,Human Staff Review Needed,Medical records request for legal use.
+AGP-001,Education,What is the late penalty for submitting the programming assignment 2 hours after the deadline?,Assignment & Grading Policy,Asks for a stated rule regarding late submissions.
+AGP-002,Education,Are we allowed to use the standard math library for the calculator project?,Assignment & Grading Policy,Question about what is or isn't allowed on an assignment.
+AGP-003,Education,Is there a specific file naming convention we need to follow when zipping our submission?,Assignment & Grading Policy,Asks for formatting/submission requirements.
+AGP-004,Education,How many points are deducted if our code fails the hidden test cases on Gradescope?,Assignment & Grading Policy,Question regarding the grading rubric and point allocations.
+AGP-005,Education,Does the syllabus say if we can drop our lowest homework score at the end of the semester?,Assignment & Grading Policy,General grading policy inquiry.
+AGP-006,Education,Will the final project rubric include points for writing inline code comments?,Assignment & Grading Policy,Clarification on the assignment grading rubric.
+AGP-007,Education,Are we permitted to collaborate with other students on the weekly coding challenges?,Assignment & Grading Policy,Clarification on academic integrity and allowed collaboration.
+AGP-008,Education,What is the official course policy for requesting an extension on an assignment?,Assignment & Grading Policy,Asking about the policy (can be answered with a rule statement).
+AGP-009,Education,"Will we be graded on the space complexity and efficiency of our algorithm, or just correctness?",Assignment & Grading Policy,Specific assignment requirement and grading criteria.
+AGP-010,Education,Is it against the rules to use small code snippets from StackOverflow as long as we cite them?,Assignment & Grading Policy,Asking about what is explicitly allowed/prohibited.
+AGP-011,Education,How much of our total final grade is determined by participation and lab attendance?,Assignment & Grading Policy,General course grading policy and weight distribution.
+AGP-012,Education,"Do we need to write unit tests for the backend API assignment, or is that optional?",Assignment & Grading Policy,Inquiring about specific assignment requirements.
+AGP-013,Education,What is the grading penalty if my code passes locally but fails on the autograder due to a timeout?,Assignment & Grading Policy,Question on the autograder grading policy.
+AGP-014,Education,Are there any required font or spacing guidelines for the final project documentation?,Assignment & Grading Policy,Asks for formatting requirements.
+AGP-015,Education,Am I allowed to continuously resubmit my assignment to improve my score before the deadline hits?,Assignment & Grading Policy,Inquiry regarding assignment submission rules.
