@@ -1,18 +1,17 @@
 prompt_id,domain,user_prompt,gold_label,annotator_notes
-GEN-001,Healthcare,"""Do you currently accept Blue Cross Blue Shield PPO plans?""",Insurance & Billing,Standard insurance network verification question.
-GEN-002,Healthcare,"""I received a bill for my last visit, but I thought my copay covered it. Can someone explain this charge?""",Insurance & Billing,Inquiry regarding a specific unexpected charge.
-GEN-003,Healthcare,"""How much will an MRI cost out of pocket if I haven't met my deductible yet?""",Insurance & Billing,Request for a cost estimate before a procedure.
-GEN-004,Healthcare,"""I can't pay this entire balance right now. Can I set up a payment plan for my surgery bill?""",Insurance & Billing,Financial assistance and payment plan inquiry.
-GEN-005,Healthcare,"""My recent insurance claim was denied stating it was 'out of network'. What do I do next?""",Insurance & Billing,Needs guidance on handling a denied insurance claim.
-GEN-006,Healthcare,"""Is Dr. Smith in-network for Aetna HMO, or will I have to pay out-of-network rates?""",Insurance & Billing,Provider-specific insurance network verification.
-GEN-007,Healthcare,"""I just got a new insurance plan through my employer. Where do I upload or send my new insurance card information?""",Insurance & Billing,Administrative request to update billing records.
-GEN-008,Healthcare,"""I need an itemized receipt so I can submit it for my FSA reimbursement.""",Insurance & Billing,Request for specific billing documentation.
-GEN-009,Healthcare,"""Why did I get two separate bills for the same ER visit? One is from the hospital and one is from a doctor.""",Insurance & Billing,Clarification needed on split billing practices (facility vs. provider).
-GEN-010,Healthcare,"""What is your billing department's phone number? I have a question about statement #12345.""",Insurance & Billing,Requesting contact info specifically for the billing department.
-GEN-011,Healthcare,"""Does Medicare Part B cover the annual wellness exam at your clinic?""",Insurance & Billing,Medicare-specific coverage question.
-GEN-012,Healthcare,"""I think I was double-charged for my bloodwork on Tuesday. My credit card shows two pending transactions.""",Insurance & Billing,Reporting a potential billing error or duplicate charge.
-GEN-013,Healthcare,"""Can you verify my coverage and tell me what my copay will be before my appointment next week?""",Insurance & Billing,Pre-appointment benefit verification.
-GEN-014,Healthcare,"""How do I dispute a late bill on my account? """,Insurance & Billing,Dispute of administrative/billing fees.
-GEN-015,Healthcare,"""If I provide my secondary insurance, will it be billed automatically after my primary insurance processes the claim?""",Insurance & Billing,Question regarding the coordination of benefits.
-GEN-016,Healthcare,"""I lost my job and cannot afford this $2,000 medical bill. Do you have a charity care or financial assistance program?""",Insurance & Billing,Inquiry about financial hardship programs.
-GEN-017,Healthcare,"""Are your telemedicine visits billed at the same rate as in-person visits, or is there a different fee schedule?""",Insurance & Billing,Question comparing costs of different visit modalities.
+GEN-018,Healthcare,"""I need to schedule my annual physical with Dr. Miller for sometime next month.""",Scheduling & Appointments,Standard request to book a new routine appointment.
+GEN-019,Healthcare,"""Can I change my appointment on Tuesday at 3 PM to Thursday morning instead?""",Scheduling & Appointments,Request to reschedule an existing appointment.
+GEN-020,Healthcare,"""I woke up sick and need to cancel my dental cleaning scheduled for tomorrow at 9 AM.""",Scheduling & Appointments,Standard appointment cancellation request.
+GEN-021,Healthcare,"""Do you have any available slots for a same-day sick visit today? I have a terrible sore throat.""",Scheduling & Appointments,"Urgent scheduling request, but no signs of severe medical emergency."
+GEN-022,Healthcare,"""I'm trying to book a follow-up appointment, but the online portal isn't showing any availability for Dr. Chen.""",Scheduling & Appointments,Troubleshooting scheduling via the patient portal.
+GEN-023,Healthcare,"""Can you confirm what time my eye exam is next Friday? I lost my appointment card.""",Scheduling & Appointments,Request for appointment confirmation/details.
+GEN-024,Healthcare,"""I need to set up a new patient consultation with a cardiologist as soon as possible. I have a referral.""",Scheduling & Appointments,Booking a specialist appointment with a referral.
+GEN-025,Healthcare,"""How do I go about scheduling a telehealth video appointment instead of coming in person?""",Scheduling & Appointments,Inquiry about booking a specific modality (virtual vs. in-person).
+GEN-026,Healthcare,"""The earliest appointment I could get was in October. Can I be put on a waitlist in case someone cancels?""",Scheduling & Appointments,Waitlist request for an earlier appointment slot.
+GEN-027,Healthcare,"""I'm stuck in traffic and running about 15 minutes late for my 10:00 AM appointment, will the doctor still see me?""",Scheduling & Appointments,Logistics regarding a same-day scheduled appointment.
+GEN-028,Healthcare,"""Are there any weekend or evening appointments available for getting an MRI?""",Scheduling & Appointments,Inquiry about specific scheduling availability/hours.
+GEN-029,Healthcare,"""I need to push my physical therapy session back by one week, same time if possible.""",Scheduling & Appointments,Rescheduling request with specific timing constraints.
+GEN-030,Healthcare,"""Do I need to make an appointment for a flu shot, or do you take walk-ins?""",Scheduling & Appointments,Clarification on scheduling requirements for preventative care.
+GEN-031,Healthcare,"""I booked an appointment over the phone yesterday but haven't received a confirmation text or email yet.""",Scheduling & Appointments,Following up on an unconfirmed scheduling action.
+GEN-032,Healthcare,"""Can I schedule well-child exams for all three of my kids back-to-back on the same afternoon?""",Scheduling & Appointments,Complex booking request involving multiple patients.
+GEN-033,Healthcare,"""I missed my appointment yesterday because I wrote down the wrong date. Can I get rescheduled?""",Scheduling & Appointments,Rescheduling following a no-show.
