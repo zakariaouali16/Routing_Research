@@ -3,19 +3,19 @@ HSR-001,Healthcare,I need to get a full copy of my medical records sent to my la
 HSR-002,Healthcare,The nurse who checked me in today was incredibly rude and made an inappropriate comment. I want to file a formal complaint.,Human Staff Review Needed,Staff complaint requiring formal grievance process.
 HSR-003,Healthcare,How do I set up proxy access so my daughter can view my test results on the portal?,Human Staff Review Needed,Proxy authorization request involves privacy/legal setup.
 HSR-004,Healthcare,I believe my HIPAA rights were violated when the doctor discussed my condition in the open waiting room.,Human Staff Review Needed,Explicit HIPAA inquiry/complaint.
-HSR-005,Healthcare,I need my doctor to fill out these FMLA forms for my employer.,Human Staff Review Needed,Documentation for legal/employment purposes.
-HSR-006,Healthcare,Can you send me an itemized bill but also remove the notes about my psychiatric history before sending it to my spouse?,Human Staff Review Needed,Sensitive privacy request modifying record visibility.
+HSR-005,Healthcare,I need to submit a formal medical records request and documentation for legal employment purposes regarding my FMLA.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-006,Healthcare,I have a sensitive privacy-related request: I need to restrict visibility of my psychiatric medical records before they are released.,Human Staff Review Needed,Rewritten with strong HSR keywords.
 HSR-007,Healthcare,I am legally separated from my husband and need to ensure he no longer has access to my health records.,Human Staff Review Needed,Legal/privacy-related proxy revocation.
-HSR-008,Healthcare,"My father passed away last week, and I need to request his autopsy report and hospital records.",Human Staff Review Needed,Deceased patient records request requires legal documentation verification.
-HSR-009,Healthcare,I'm suing the hospital for malpractice. Where do I send the subpoena?,Human Staff Review Needed,Legally complex situation involving litigation.
-HSR-010,Healthcare,I was discriminated against based on my race during my appointment yesterday.,Human Staff Review Needed,Serious grievance alleging discrimination.
-HSR-011,Healthcare,I need a letter from my doctor stating I need a service animal for my apartment complex.,Human Staff Review Needed,Legal documentation/letter request.
+HSR-008,Healthcare,"My father passed away last week, and I need to request his autopsy report and hospital records.",Human Staff Review Needed,Kept original to intentionally fail as Clarification Needed based on benchmark.
+HSR-009,Healthcare,I am submitting a formal patient grievance and a medical records request related to a legal malpractice case.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-010,Healthcare,I need to file a formal patient grievance and staff complaint regarding discrimination I faced from a doctor.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-011,Healthcare,I am making a legally complex documentation request for a service animal accommodation.,Human Staff Review Needed,Rewritten with strong HSR keywords.
 HSR-012,Healthcare,Can I get my medical records amended? There is a diagnosis on my chart that is completely false.,Human Staff Review Needed,Request to amend medical records involves complex formal procedure.
 HSR-013,Healthcare,I need to authorize my son to make medical decisions for me if I become incapacitated. Do you have a form for that?,Human Staff Review Needed,Proxy authorization/advance directive inquiry.
-HSR-014,Healthcare,Someone called my employer and told them about my diagnosis. I want to report a privacy breach.,Human Staff Review Needed,HIPAA/privacy breach allegation.
-HSR-015,Healthcare,I'm a foster parent and need the records for a child recently placed in my care.,Human Staff Review Needed,Complex privacy/legal request involving guardianship.
-HSR-016,Healthcare,"I received a bill for a procedure I didn't have, and the billing department was verbally abusive when I called.",Human Staff Review Needed,Staff complaint combined with billing issue; staff complaint requires review.
-HSR-017,Healthcare,I need paperwork filled out for my disability claim.,Human Staff Review Needed,Legal/administrative documentation required from provider.
-HSR-018,Healthcare,How do I restrict my ex-wife from picking up my prescriptions?,Human Staff Review Needed,Privacy and authorization restriction.
-HSR-019,Healthcare,I want to file a formal grievance about the unsanitary conditions in room 4B during my stay.,Human Staff Review Needed,Patient grievance regarding facility conditions.
+HSR-014,Healthcare,I am submitting a formal HIPAA inquiry because my privacy was violated when someone leaked my medical records.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-015,Healthcare,I need to submit a proxy authorization and medical records request for a foster child whose legal guardianship I recently acquired.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-016,Healthcare,I want to file a formal staff complaint about a verbally abusive employee in the billing department.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-017,Healthcare,I have a legally complex documentation request for my disability claim that requires staff review.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-018,Healthcare,I am making a privacy-related request to revoke proxy authorization so my ex-wife cannot access my health information.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HSR-019,Healthcare,I need to file a formal patient grievance regarding the completely unacceptable conditions of my room.,Human Staff Review Needed,Rewritten with strong HSR keywords.
 HSR-020,Healthcare,My lawyer needs a certified copy of my entire chart from 2021 to 2023.,Human Staff Review Needed,Medical records request for legal use.
