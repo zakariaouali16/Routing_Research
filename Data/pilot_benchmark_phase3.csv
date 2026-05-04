@@ -1,17 +1,17 @@
 prompt_id,domain,user_prompt,gold_label,annotator_notes
-GEN-018,Healthcare,"""I need to schedule my annual physical with Dr. Miller for sometime next month.""",Scheduling & Appointments,Standard request to book a new routine appointment.
-GEN-019,Healthcare,"""Can I change my appointment on Tuesday at 3 PM to Thursday morning instead?""",Scheduling & Appointments,Request to reschedule an existing appointment.
-GEN-020,Healthcare,"""I woke up sick and need to cancel my dental cleaning scheduled for tomorrow at 9 AM.""",Scheduling & Appointments,Standard appointment cancellation request.
-GEN-021,Healthcare,"""Do you have any available slots for a same-day sick visit today? I have a terrible sore throat.""",Scheduling & Appointments,"Urgent scheduling request, but no signs of severe medical emergency."
-GEN-022,Healthcare,"""I'm trying to book a follow-up appointment, but the online portal isn't showing any availability for Dr. Chen.""",Scheduling & Appointments,Troubleshooting scheduling via the patient portal.
-GEN-023,Healthcare,"""Can you confirm what time my eye exam is next Friday? I lost my appointment card.""",Scheduling & Appointments,Request for appointment confirmation/details.
-GEN-024,Healthcare,"""I need to set up a new patient consultation with a cardiologist as soon as possible. I have a referral.""",Scheduling & Appointments,Booking a specialist appointment with a referral.
-GEN-025,Healthcare,"""How do I go about scheduling a telehealth video appointment instead of coming in person?""",Scheduling & Appointments,Inquiry about booking a specific modality (virtual vs. in-person).
-GEN-026,Healthcare,"""The earliest appointment I could get was in October. Can I be put on a waitlist in case someone cancels?""",Scheduling & Appointments,Waitlist request for an earlier appointment slot.
-GEN-027,Healthcare,"""I'm stuck in traffic and running about 15 minutes late for my 10:00 AM appointment, will the doctor still see me?""",Scheduling & Appointments,Logistics regarding a same-day scheduled appointment.
-GEN-028,Healthcare,"""Are there any weekend or evening appointments available for getting an MRI?""",Scheduling & Appointments,Inquiry about specific scheduling availability/hours.
-GEN-029,Healthcare,"""I need to push my physical therapy session back by one week, same time if possible.""",Scheduling & Appointments,Rescheduling request with specific timing constraints.
-GEN-030,Healthcare,"""Do I need to make an appointment for a flu shot, or do you take walk-ins?""",Scheduling & Appointments,Clarification on scheduling requirements for preventative care.
-GEN-031,Healthcare,"""I booked an appointment over the phone yesterday but haven't received a confirmation text or email yet.""",Scheduling & Appointments,Following up on an unconfirmed scheduling action.
-GEN-032,Healthcare,"""Can I schedule well-child exams for all three of my kids back-to-back on the same afternoon?""",Scheduling & Appointments,Complex booking request involving multiple patients.
-GEN-033,Healthcare,"""I missed my appointment yesterday because I wrote down the wrong date. Can I get rescheduled?""",Scheduling & Appointments,Rescheduling following a no-show.
+GEN-018,Healthcare,"""What are the visiting hours for the intensive care unit?""",Facility & General Information,Standard inquiry about visiting hours.
+GEN-019,Healthcare,"""Is there a parking garage at the downtown hospital location, and do you validate parking?""",Facility & General Information,Questions regarding parking availability and validation policies.
+GEN-020,Healthcare,"""Where is the cafeteria located, and what are its hours of operation?""",Facility & General Information,Inquiry about on-site food and amenities.
+GEN-021,Healthcare,"""Can you give me directions to the outpatient surgery center from the main entrance?""",Facility & General Information,Wayfinding and internal facility directions.
+GEN-022,Healthcare,"""Do you have wheelchairs available for use at the front entrance?""",Facility & General Information,Question regarding physical accessibility and available equipment.
+GEN-023,Healthcare,"""What is the fax number for the medical records department?""",Facility & General Information,Request for general contact information.
+GEN-024,Healthcare,"""Are there ATM machines available inside the clinic building?""",Facility & General Information,Inquiry about general facility amenities.
+GEN-025,Healthcare,"""Is there a gift shop at the children's hospital? I want to buy flowers.""",Facility & General Information,Question about hospital services/shops for visitors.
+GEN-026,Healthcare,"""Is public Wi-Fi available for patients and visitors in the waiting rooms?""",Facility & General Information,Inquiry regarding digital amenities in the facility.
+GEN-027,Healthcare,"""Can I bring my emotional support dog to my doctor's appointment?""",Facility & General Information,Question regarding facility policies on animals.
+GEN-028,Healthcare,"""Where is the closest bus stop or subway station to your main campus?""",Facility & General Information,Request for public transportation directions to the facility.
+GEN-029,Healthcare,"""What are the regular operating hours for the main lobby desk?""",Facility & General Information,Inquiry about general building hours.
+GEN-030,Healthcare,"""Do you have a lost and found? I think I left my glasses in waiting room B.""",Facility & General Information,Inquiry regarding lost items within the physical building.
+GEN-031,Healthcare,"""Are the restrooms on the first floor wheelchair accessible?""",Facility & General Information,Specific question regarding ADA compliance and facility layout.
+GEN-032,Healthcare,"""Is there a designated smoking area on the hospital grounds?""",Facility & General Information,Question regarding facility rules and designated zones.
+GEN-033,Healthcare,"""Which building is the pediatrics department in? I have an appointment there.""",Facility & General Information,General navigation and building location query.
