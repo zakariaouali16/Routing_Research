@@ -5,6 +5,7 @@ import requests
 from tqdm import tqdm
 
 class LLMRouterV1:
+
     def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase3_1.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
@@ -14,31 +15,25 @@ class LLMRouterV1:
             self.taxonomy = json.load(f)
 
     def build_system_prompt(self):
-        """Constructs the routing prompt using all domains and labels from the taxonomy."""
+        """
+        Constructs the routing prompt using all domain labels.
+        Clarification Needed is intentionally excluded — it is handled
+        by the gate before this method is ever called.
+        """
         all_labels_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
             all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
             for l in domain_data['labels']:
-                # Extract the required slots and add them to the category description
-                slots = ", ".join(l.get('required_slots', [])) if l.get('required_slots') else "None"
-                all_labels_text += f"- {l['name']}: {l['definition']} (Required slots: {slots})\n"
+                all_labels_text += f"- {l['name']}: {l['definition']}\n"
 
         system_prompt = f"""You are an expert, autonomous routing agent.
 Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
 {all_labels_text}
 
-CRITICAL INSTRUCTION FOR MISSING INFORMATION:
-1. First, determine the best-fit category for the user's request.
-2. Check the "Required slots" listed for that category.
-3. If the user's request DOES NOT contain the information for ALL required slots, you MUST set the predicted_label to "Clarification Needed".
-4. Output your response ONLY as a valid JSON object with these exact keys:
+Output your response ONLY as a valid JSON object with this exact key:
 {{
-    "predicted_label": "The EXACT name of the category (must be 'Clarification Needed' if any slots are missing)",
-    "confidence_level": "High, Medium, or Low",
-    "missing_slots": ["List the specific required slots that were missing. Leave empty [] if all are present"],
-    "short_reason": "Brief explanation of why you chose this label, mentioning missing info if applicable."
+    "predicted_label": "The EXACT name of the category. DO NOT include the domain name or any prefixes."
 }}"""
-
         return system_prompt
 
     def check_gate(self, user_prompt):
@@ -102,16 +97,16 @@ USER REQUEST: "{user_prompt}"
             return result.get("has_enough_info", True)
         except Exception as e:
             tqdm.write(f"Gate error for prompt '{user_prompt[:40]}...' -> {e}")
-            return True  # fail open — let it through to the router
+            return True
 
     def route_request(self, user_prompt):
         """
         Two-step routing:
           Step A — Gate: check if enough information is present
-          Step B — Route: only if gate passes, pick a label, check slots.
+          Step B — Route: only if gate passes, pick a label
         """
 
-        # ── STEP A: Gate ──────────────────────────────────────────────────
+        # ── STEP A: Gate ──────────────────────────────────────────────────────
         has_enough_info = self.check_gate(user_prompt)
 
         if not has_enough_info:
@@ -119,13 +114,13 @@ USER REQUEST: "{user_prompt}"
                 "initial_label": "Clarification Needed",
                 "predicted_label": "Clarification Needed",
                 "confidence_level": "High",
-                "missing_slots": [],
-                "short_reason": "Request lacks sufficient information to pass the initial Gate.",
+                "needs_clarification": True,
+                "short_reason": "Request lacks sufficient information to route confidently.",
                 "was_corrected": False,
                 "qa_reason": "Blocked by gate."
             }
 
-        # ── STEP B: Route ─────────────────────────────────────────────────
+        # ── STEP B: Route ─────────────────────────────────────────────────────
         system_prompt = self.build_system_prompt()
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
 
@@ -150,20 +145,19 @@ USER REQUEST: "{user_prompt}"
                 "initial_label": "Error",
                 "predicted_label": "Error",
                 "confidence_level": "Low",
-                "missing_slots": [],
                 "short_reason": f"API Error: {str(e)}",
+                "needs_clarification": True,
                 "was_corrected": False,
                 "qa_reason": "N/A"
             }
 
         initial_label = initial_output.get("predicted_label", "")
-        missing_slots = initial_output.get("missing_slots", [])
 
         return {
             "initial_label": initial_label,
             "predicted_label": initial_label,
             "confidence_level": initial_output.get("confidence_level", "Unknown"),
-            "missing_slots": missing_slots,
+            "needs_clarification": initial_output.get("needs_clarification", False),
             "short_reason": initial_output.get("short_reason", ""),
             "was_corrected": False,
             "qa_reason": ""
@@ -189,8 +183,8 @@ USER REQUEST: "{user_prompt}"
                 "user_prompt": prompt_text,
                 "gold_label": row.get('gold_label', ''),
                 "final_predicted_label": llm_output.get("predicted_label", ""),
-                "missing_slots": ", ".join(llm_output.get("missing_slots", [])),
                 "confidence_level": llm_output.get("confidence_level", ""),
+                "needs_clarification_pred": llm_output.get("needs_clarification", False),
                 "short_reason": llm_output.get("short_reason", ""),
                 "qa_reason": llm_output.get("qa_reason", "")
             })
@@ -220,34 +214,20 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_phase3_1.json"))
 
-    # Optional: fallback path for local testing depending on your dir structure
-    if not os.path.exists(taxonomy_path):
-        taxonomy_path = "taxonomy_phase3_1.json" 
-
     router = LLMRouterV1(taxonomy_path=taxonomy_path)
 
     print("\n" + "="*50)
-    print("LLM Router V1 — Gate + Route (With Slot Checking)")
+    print("LLM Router V1 — Gate + Route")
     print("Type 'quit' to exit.")
     print("="*50 + "\n")
 
     while True:
         user_input = input("Enter your request: ")
         if user_input.strip().lower() in ['quit', 'exit']:
-            break
+        	break
         if not user_input.strip():
             continue
-            
         result = router.route_request(user_input)
-        
         print("\n--- Prediction ---")
-        print(f"Predicted Label: {result['predicted_label']}")
-        print(f"Confidence:      {result['confidence_level']}")
-        print(f"Reasoning:       {result['short_reason']}")
-        
-        # New Warning Logic Block
-        if result.get('missing_slots'):
-            print(f"\n⚠️ ACTION REQUIRED: Missing Information ⚠️")
-            print(f"Please provide the following to proceed: {', '.join(result['missing_slots'])}")
-            
+        print(json.dumps(result, indent=4))
         print("-" * 25 + "\n")
