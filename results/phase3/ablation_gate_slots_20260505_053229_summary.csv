@@ -1,0 +1,6 @@
+router,accuracy,wcr,clarif_precision,clarif_recall,clarif_f1,escalation_recall
+Baseline (Embedding),0.66,0.34,0.0,0.0,0.0,0.5
+LLM-v3 full (gate + slots),0.89,0.1053,0.8,0.5,0.6154,1.0
+LLM-v3 no gate (slots only),0.85,0.15,0.0,0.0,0.0,1.0
+LLM-v3 no slots (gate only),0.88,0.1158,0.8,0.5,0.6154,0.7857
+LLM-v3 no gate no slots,0.85,0.15,0.0,0.0,0.0,0.7857
