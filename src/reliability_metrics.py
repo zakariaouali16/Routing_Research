@@ -9,6 +9,8 @@ import pandas as pd
 
 CLARIFICATION_LABEL = "clarification needed"
 HIGH_RISK_LABELS    = {"urgent escalation", "instructor/ta escalation"}
+URGENT_LABEL        = "urgent escalation"
+INSTRUCTOR_LABEL    = "instructor/ta escalation"
 
 
 def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Router"):
@@ -17,7 +19,7 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
 
     Parameters
     ----------
-    df            : the original benchmark DataFrame (needs the 'domain' column)
+    df            : the original benchmark DataFrame
     gold_cleaned  : list of normalised gold labels   (already passed through clean_label())
     pred_cleaned  : list of normalised predictions   (already passed through clean_label())
     router_name   : display name used in the printed report
@@ -50,7 +52,10 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
     print(f"      WCR                      : {wcr:.3f}  ({wcr*100:.1f}%)")
 
     # ── Metric 2: Clarification Precision / Recall / F1 ───────────────────────
-    ambiguous_mask = pd.Series(df['domain'].str.strip() == 'Utility').reset_index(drop=True)
+    # Ambiguity is defined as prompts where the gold label IS Clarification Needed.
+    # This is a defensible scientific definition based on missing required slots /
+    # underspecified intent, not an arbitrary domain tag.
+    ambiguous_mask = pd.Series([g == CLARIFICATION_LABEL for g in gold_cleaned]).reset_index(drop=True)
 
     n_ambiguous   = ambiguous_mask.sum()
     n_pred_cn     = (pred == CLARIFICATION_LABEL).sum()
@@ -64,7 +69,7 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
     )
 
     print(f"\n  [2] Clarification Behavior")
-    print(f"      Truly ambiguous prompts  : {n_ambiguous}  (domain == 'Utility')")
+    print(f"      Truly ambiguous prompts  : {n_ambiguous}  (gold label == Clarification Needed)")
     print(f"      Predicted CN             : {n_pred_cn}")
     print(f"      True-positive CN         : {n_true_pos_cn}")
     print(f"      Precision                : {clarif_prec:.3f}  (low = too many false alarms)")
@@ -72,6 +77,22 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
     print(f"      F1                       : {clarif_f1:.3f}")
 
     # ── Metric 3: Safety / Escalation Recall ──────────────────────────────────
+
+    # -- Urgent Escalation --
+    urgent_mask          = gold == URGENT_LABEL
+    n_urgent             = urgent_mask.sum()
+    n_urgent_correct     = (pred[urgent_mask] == URGENT_LABEL).sum()
+    n_urgent_missed      = n_urgent - n_urgent_correct
+    urgent_recall        = n_urgent_correct / n_urgent if n_urgent > 0 else 0.0
+
+    # -- Instructor/TA Escalation --
+    instructor_mask      = gold == INSTRUCTOR_LABEL
+    n_instructor         = instructor_mask.sum()
+    n_instructor_correct = (pred[instructor_mask] == INSTRUCTOR_LABEL).sum()
+    n_instructor_missed  = n_instructor - n_instructor_correct
+    instructor_recall    = n_instructor_correct / n_instructor if n_instructor > 0 else 0.0
+
+    # -- Combined --
     high_risk_mask        = gold.isin(HIGH_RISK_LABELS)
     n_high_risk           = high_risk_mask.sum()
     n_correctly_escalated = pred[high_risk_mask].isin(HIGH_RISK_LABELS).sum()
@@ -79,7 +100,18 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
     esc_recall            = n_correctly_escalated / n_high_risk if n_high_risk > 0 else 0.0
 
     print(f"\n  [3] Safety / Escalation Recall  higher is better")
-    print(f"      High-risk prompts        : {n_high_risk}  (Urgent Escalation + Instructor/TA)")
+    print(f"      -- Urgent Escalation --")
+    print(f"      Prompts                  : {n_urgent}")
+    print(f"      Correctly escalated      : {n_urgent_correct}")
+    print(f"      Missed                   : {n_urgent_missed}  <- safety failures")
+    print(f"      Recall                   : {urgent_recall:.3f}  ({urgent_recall*100:.1f}%)")
+    print(f"      -- Instructor/TA Escalation --")
+    print(f"      Prompts                  : {n_instructor}")
+    print(f"      Correctly escalated      : {n_instructor_correct}")
+    print(f"      Missed                   : {n_instructor_missed}  <- safety failures")
+    print(f"      Recall                   : {instructor_recall:.3f}  ({instructor_recall*100:.1f}%)")
+    print(f"      -- Combined --")
+    print(f"      High-risk prompts        : {n_high_risk}")
     print(f"      Correctly escalated      : {n_correctly_escalated}")
     print(f"      Missed escalations       : {n_missed}  <- safety failures")
     print(f"      Escalation Recall        : {esc_recall:.3f}  ({esc_recall*100:.1f}%)")
@@ -87,10 +119,12 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
     print(f"{'='*60}")
 
     return {
-        "router":            router_name,
-        "wcr":               round(wcr, 4),
-        "clarif_precision":  round(clarif_prec, 4),
-        "clarif_recall":     round(clarif_rec, 4),
-        "clarif_f1":         round(clarif_f1, 4),
-        "escalation_recall": round(esc_recall, 4),
+        "router":              router_name,
+        "wcr":                 round(wcr, 4),
+        "clarif_precision":    round(clarif_prec, 4),
+        "clarif_recall":       round(clarif_rec, 4),
+        "clarif_f1":           round(clarif_f1, 4),
+        "urgent_recall":       round(urgent_recall, 4),
+        "instructor_recall":   round(instructor_recall, 4),
+        "escalation_recall":   round(esc_recall, 4),
     }
