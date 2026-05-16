@@ -13,7 +13,7 @@ class EmbeddingRouter:
         
         # Dynamically resolve the path to taxonomy_v2.json
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        taxonomy_path = os.path.abspath(os.path.join(script_dir, "../../Data/taxonomy_v2.json"))
+        taxonomy_path = os.path.abspath(os.path.join(script_dir, "../../Data/taxonomy_phase5.json"))
         
         self._load_taxonomy(taxonomy_path)
 

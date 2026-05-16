@@ -8,6 +8,10 @@ from tqdm import tqdm
 class LLMRouterV2:
 
     # ── Safety keywords for pre-gate override ─────────────────────────────────
+    # ONLY physical emergencies and psychiatric crises belong here.
+    # Interpersonal safety / harassment / feeling socially unsafe are NOT
+    # physical emergencies — the LLM router handles those via the
+    # Instructor/TA Escalation definition.
     SAFETY_KEYWORDS = [
         # suicidal ideation
         "suicide", "kill myself", "end my life", "want to die",
@@ -35,7 +39,7 @@ class LLMRouterV2:
         "won't wake up", "not waking up", "collapsed on the floor",
         "not responding", "isn't waking up",
         # bleeding
-        "bleed", "won't stop bleeding", "severe bleeding"
+        "bleed", "won't stop bleeding", "severe bleeding",
         "coughing up blood", "bleeding won't stop",
         "soaking through the towels",
         # medication / poisoning
@@ -43,8 +47,8 @@ class LLMRouterV2:
         "took more than", "took more medication", "accidentally took",
         "swallowed a whole", "swallowed something",
         "drank a cleaning chemical", "drank half a bottle",
-        "feel strange", "feel weird",
-        "feel sick", "took the wrong",
+        "feel strange after taking", "feel weird after taking",
+        "feel sick after taking", "took the wrong",
         "double my dose",
         # vision / neurological
         "lost all vision", "lost vision", "vision is going dark",
@@ -61,7 +65,7 @@ class LLMRouterV2:
         "voices telling me to hurt", "can't fight them off",
         # injury / trauma
         "cannot feel my legs", "can't feel my legs",
-        "fell off the roof", "fell down",
+        "fell off the roof",
     ]
 
     def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase5.json'):
@@ -76,10 +80,9 @@ class LLMRouterV2:
     def _check_safety_override(self, user_prompt):
         """
         Deterministic keyword scan run BEFORE the gate or router.
-        Returns True if the prompt contains an obvious crisis/emergency signal.
-
-        Catches clear cases so they can never be mis-routed to Clarification Needed.
-        Subtle crisis language is handled downstream by the Urgent Escalation taxonomy label.
+        Only fires on unambiguous physical emergencies and psychiatric crises.
+        Interpersonal safety / harassment language is intentionally excluded
+        so the LLM router can route those to Instructor/TA Escalation.
         """
         prompt_lower = user_prompt.lower()
         for keyword in self.SAFETY_KEYWORDS:
@@ -88,28 +91,51 @@ class LLMRouterV2:
         return False
 
     def build_system_prompt(self):
-        """Constructs the routing prompt using all domains and labels from the taxonomy."""
-        all_labels_text = ""
+        """
+        Constructs the routing prompt with gating outcomes first,
+        then education and healthcare domain labels.
+        """
+        gating_text = ""
+        domain_text = ""
+
         for domain_name, domain_data in self.taxonomy['domains'].items():
-            all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
+            section = f"\n### {domain_name.upper().replace('_', ' ')} ###\n"
             for l in domain_data['labels']:
                 slots = ", ".join(l.get('required_slots', [])) if l.get('required_slots') else "None"
-                all_labels_text += f"- {l['name']}: {l['definition']} (Required slots: {slots})\n"
+                section += f"- {l['name']}: {l['definition']} (Required slots: {slots})\n"
+
+            if domain_name == 'gating_outcomes':
+                gating_text += section
+            else:
+                domain_text += section
+
+        # Build the exhaustive allowed-label list dynamically from taxonomy
+        allowed_labels = []
+        for domain_data in self.taxonomy['domains'].values():
+            for l in domain_data['labels']:
+                allowed_labels.append(f'"{l["name"]}\"')
+        allowed_labels_text = ", ".join(allowed_labels)
 
         system_prompt = f"""You are an expert, autonomous routing agent.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
-{all_labels_text}
+
+STEP 1 — Check gating outcomes FIRST. If any apply, route there immediately and do not consider domain labels:
+{gating_text}
+
+STEP 2 — Only if no gating outcome applies, route to exactly one domain label:
+{domain_text}
 
 CRITICAL INSTRUCTION FOR MISSING INFORMATION:
-1. First, determine the best-fit category for the user's request.
-2. Check the "Required slots" listed for that category.
-3. If the user's request DOES NOT contain the information for ALL required slots, you MUST set the predicted_label to "Clarification Needed".
-4. Output your response ONLY as a valid JSON object with these exact keys:
+- If the best-fit domain label has required slots and the request is missing any of them, you MUST return "Clarification Needed" instead.
+
+ALLOWED LABEL NAMES — your predicted_label MUST be exactly one of these, character-for-character:
+{allowed_labels_text}
+
+Output your response ONLY as a valid JSON object with these exact keys:
 {{
-    "predicted_label": "The EXACT name of the category (must be 'Clarification Needed' if any slots are missing)",
+    "predicted_label": "MUST be one of the allowed label names above — do not invent new names",
     "confidence_level": "High, Medium, or Low",
-    "missing_slots": ["List the specific required slots that were missing. Leave empty [] if all are present"],
-    "short_reason": "Brief explanation of why you chose this label, mentioning missing info if applicable."
+    "missing_slots": ["List missing required slots, or empty [] if none"],
+    "short_reason": "Brief explanation of why you chose this label."
 }}"""
 
         return system_prompt
@@ -123,7 +149,7 @@ CRITICAL INSTRUCTION FOR MISSING INFORMATION:
         """
         definitions_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
-            definitions_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
+            definitions_text += f"\n### {domain_name.upper().replace('_', ' ')} ###\n"
             for label in domain_data['labels']:
                 definitions_text += f"- {label['name']}: {label['definition']}\n"
 
@@ -180,23 +206,19 @@ USER REQUEST: "{user_prompt}"
     def route_request(self, user_prompt):
         """
         Three-step routing:
-          Safety Override — pre-gate keyword check for obvious crisis signals
+          Safety Override — pre-gate keyword check for unambiguous physical emergencies only
           Step A — Gate: check if enough information is present
-          Step B — Route: only if gate passes, pick a label, check slots.
+          Step B — Route: only if gate passes, pick a label using gating-aware prompt
         """
 
         # ── SAFETY OVERRIDE (pre-gate) ─────────────────────────────────────────
-        # Runs before anything else. If an obvious crisis/emergency keyword is
-        # detected, hard-route to Urgent Escalation immediately, bypassing
-        # both the gate and the LLM router. This prevents self-harm or emergency
-        # prompts from ever being returned as Clarification Needed.
         if self._check_safety_override(user_prompt):
             return {
                 "initial_label": "Urgent Escalation",
                 "predicted_label": "Urgent Escalation",
                 "confidence_level": "High",
                 "missing_slots": [],
-                "short_reason": "Safety override: message contains an obvious crisis or emergency signal.",
+                "short_reason": "Safety override: message contains an unambiguous physical emergency or psychiatric crisis signal.",
                 "was_corrected": True,
                 "qa_reason": "Pre-gate safety keyword match — bypassed gate and router."
             }
@@ -277,7 +299,7 @@ USER REQUEST: "{user_prompt}"
                 "prompt_id": row.get('prompt_id', f"ID-{index}"),
                 "domain": domain,
                 "user_prompt": prompt_text,
-                "gold_label": row.get('gold_label', ''),
+                "gold_outcome": row.get('gold_outcome', ''),
                 "final_predicted_label": llm_output.get("predicted_label", ""),
                 "missing_slots": ", ".join(llm_output.get("missing_slots", [])),
                 "confidence_level": llm_output.get("confidence_level", ""),
@@ -289,14 +311,14 @@ USER REQUEST: "{user_prompt}"
         results_df.to_csv(output_csv, index=False)
         print(f"\nResults saved to {output_csv}")
 
-        correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
+        correct = (results_df['gold_outcome'] == results_df['final_predicted_label']).sum()
         total = len(results_df)
         print(f"Accuracy: {correct}/{total} ({(correct/total)*100:.2f}%)")
 
         try:
             from sklearn.metrics import classification_report
             print(classification_report(
-                results_df['gold_label'],
+                results_df['gold_outcome'],
                 results_df['final_predicted_label'],
                 zero_division=0
             ))
@@ -308,10 +330,10 @@ USER REQUEST: "{user_prompt}"
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_phase3_1.json"))
+    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_phase5.json"))
 
     if not os.path.exists(taxonomy_path):
-        taxonomy_path = "taxonomy_phase3_1.json"
+        taxonomy_path = "taxonomy_phase5.json"
 
     router = LLMRouterV2(taxonomy_path=taxonomy_path)
 

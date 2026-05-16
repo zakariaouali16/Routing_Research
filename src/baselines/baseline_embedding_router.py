@@ -12,10 +12,10 @@ class EmbeddingRouter:
         self.labels = []
         self.label_embeddings = None
         
-        # Dynamically resolve the path to taxonomy_v2.json
+        # Dynamically resolve the path to taxonomy_phase5.json
         # Assuming this script is in src/baselines/ and taxonomy is in Data/
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        taxonomy_path = os.path.abspath(os.path.join(script_dir, "../../Data/taxonomy_phase3_1.json"))
+        taxonomy_path = os.path.abspath(os.path.join(script_dir, "../../Data/taxonomy_phase5.json"))
         
         self._load_and_embed_taxonomy(taxonomy_path)
 
