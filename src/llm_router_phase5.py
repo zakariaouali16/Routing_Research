@@ -35,7 +35,7 @@ class LLMRouterV2:
         "won't wake up", "not waking up", "collapsed on the floor",
         "not responding", "isn't waking up",
         # bleeding
-        "bleed", "won't stop bleeding", "severe bleeding"
+        "bleed", "won't stop bleeding", "severe bleeding",
         "coughing up blood", "bleeding won't stop",
         "soaking through the towels",
         # medication / poisoning
@@ -64,7 +64,7 @@ class LLMRouterV2:
         "fell off the roof", "fell down",
     ]
 
-    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase5.json'):
+    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase3_1.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
 
@@ -72,20 +72,57 @@ class LLMRouterV2:
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
 
+        # Build valid label set at init time — used by the hallucination guard.
+        # "Clarification Needed" is always valid as a gating outcome.
+        self.valid_labels = {
+            label['name']
+            for domain_data in self.taxonomy['domains'].values()
+            for label in domain_data['labels']
+        } | {"Clarification Needed"}
+
     # ── Pre-gate safety check ──────────────────────────────────────────────────
     def _check_safety_override(self, user_prompt):
         """
         Deterministic keyword scan run BEFORE the gate or router.
         Returns True if the prompt contains an obvious crisis/emergency signal.
-
-        Catches clear cases so they can never be mis-routed to Clarification Needed.
-        Subtle crisis language is handled downstream by the Urgent Escalation taxonomy label.
         """
         prompt_lower = user_prompt.lower()
         for keyword in self.SAFETY_KEYWORDS:
             if keyword in prompt_lower:
                 return True
         return False
+
+    # ── Hallucination guard ────────────────────────────────────────────────────
+    def _validate_label(self, predicted):
+        """
+        Ensures the LLM's predicted label exists in the taxonomy.
+
+        Resolution order:
+          1. Exact match             → return as-is
+          2. Case-insensitive match  → return canonical casing
+          3. Substring match         → return canonical label
+          4. No match                → fall back to "Clarification Needed"
+
+        Returns (validated_label, was_corrected).
+        """
+        if predicted in self.valid_labels:
+            return predicted, False
+
+        predicted_lower = predicted.strip().lower()
+
+        # Case-insensitive exact match
+        for valid in self.valid_labels:
+            if valid.lower() == predicted_lower:
+                return valid, True
+
+        # Substring match (handles truncated / paraphrased label names)
+        for valid in self.valid_labels:
+            if valid.lower() in predicted_lower or predicted_lower in valid.lower():
+                return valid, True
+
+        # No match — fall back to Clarification Needed
+        tqdm.write(f"  [hallucination guard] '{predicted}' not in taxonomy → Clarification Needed")
+        return "Clarification Needed", True
 
     def build_system_prompt(self):
         """Constructs the routing prompt using all domains and labels from the taxonomy."""
@@ -96,9 +133,15 @@ class LLMRouterV2:
                 slots = ", ".join(l.get('required_slots', [])) if l.get('required_slots') else "None"
                 all_labels_text += f"- {l['name']}: {l['definition']} (Required slots: {slots})\n"
 
+        # Enumerate valid label names explicitly so the LLM cannot invent new ones.
+        valid_label_list = "\n".join(f"  - {name}" for name in sorted(self.valid_labels))
+
         system_prompt = f"""You are an expert, autonomous routing agent.
 Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
 {all_labels_text}
+
+ALLOWED OUTPUT LABELS (you must use one of these exact strings, nothing else):
+{valid_label_list}
 
 CRITICAL INSTRUCTION FOR MISSING INFORMATION:
 1. First, determine the best-fit category for the user's request.
@@ -106,7 +149,7 @@ CRITICAL INSTRUCTION FOR MISSING INFORMATION:
 3. If the user's request DOES NOT contain the information for ALL required slots, you MUST set the predicted_label to "Clarification Needed".
 4. Output your response ONLY as a valid JSON object with these exact keys:
 {{
-    "predicted_label": "The EXACT name of the category (must be 'Clarification Needed' if any slots are missing)",
+    "predicted_label": "The EXACT label name from the ALLOWED OUTPUT LABELS list above",
     "confidence_level": "High, Medium, or Low",
     "missing_slots": ["List the specific required slots that were missing. Leave empty [] if all are present"],
     "short_reason": "Brief explanation of why you chose this label, mentioning missing info if applicable."
@@ -118,8 +161,8 @@ CRITICAL INSTRUCTION FOR MISSING INFORMATION:
         """
         Step A — Gate.
         Decides whether the prompt has enough information to route confidently.
-        Returns True (enough info, proceed to routing) or False (not enough, return Clarification Needed).
-        Defaults to True if the gate itself fails, so no prompt is silently dropped.
+        Returns True (enough info) or False (not enough → Clarification Needed).
+        Defaults to True on failure so no prompt is silently dropped.
         """
         definitions_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
@@ -181,15 +224,13 @@ USER REQUEST: "{user_prompt}"
         """
         Three-step routing:
           Safety Override — pre-gate keyword check for obvious crisis signals
-          Step A — Gate: check if enough information is present
-          Step B — Route: only if gate passes, pick a label, check slots.
+          Step A          — Gate: check if enough information is present
+          Step B          — Route: pick a label, validate against taxonomy
         """
 
         # ── SAFETY OVERRIDE (pre-gate) ─────────────────────────────────────────
-        # Runs before anything else. If an obvious crisis/emergency keyword is
-        # detected, hard-route to Urgent Escalation immediately, bypassing
-        # both the gate and the LLM router. This prevents self-harm or emergency
-        # prompts from ever being returned as Clarification Needed.
+        # was_corrected=False because the label was always going to be
+        # Urgent Escalation — nothing was corrected, it was a deliberate override.
         if self._check_safety_override(user_prompt):
             return {
                 "initial_label": "Urgent Escalation",
@@ -197,7 +238,7 @@ USER REQUEST: "{user_prompt}"
                 "confidence_level": "High",
                 "missing_slots": [],
                 "short_reason": "Safety override: message contains an obvious crisis or emergency signal.",
-                "was_corrected": True,
+                "was_corrected": False,
                 "qa_reason": "Pre-gate safety keyword match — bypassed gate and router."
             }
 
@@ -246,17 +287,24 @@ USER REQUEST: "{user_prompt}"
                 "qa_reason": "N/A"
             }
 
-        initial_label = initial_output.get("predicted_label", "")
+        raw_label = initial_output.get("predicted_label", "")
         missing_slots = initial_output.get("missing_slots", [])
 
+        # ── Hallucination guard ────────────────────────────────────────────────
+        validated_label, was_corrected = self._validate_label(raw_label)
+        qa_reason = (
+            f"Label '{raw_label}' not in taxonomy — corrected to '{validated_label}'."
+            if was_corrected else ""
+        )
+
         return {
-            "initial_label": initial_label,
-            "predicted_label": initial_label,
+            "initial_label": raw_label,
+            "predicted_label": validated_label,
             "confidence_level": initial_output.get("confidence_level", "Unknown"),
             "missing_slots": missing_slots,
             "short_reason": initial_output.get("short_reason", ""),
-            "was_corrected": False,
-            "qa_reason": ""
+            "was_corrected": was_corrected,
+            "qa_reason": qa_reason
         }
 
     def evaluate_benchmark(self, input_csv, output_csv):
@@ -279,6 +327,8 @@ USER REQUEST: "{user_prompt}"
                 "user_prompt": prompt_text,
                 "gold_label": row.get('gold_label', ''),
                 "final_predicted_label": llm_output.get("predicted_label", ""),
+                "initial_label": llm_output.get("initial_label", ""),
+                "was_corrected": llm_output.get("was_corrected", False),
                 "missing_slots": ", ".join(llm_output.get("missing_slots", [])),
                 "confidence_level": llm_output.get("confidence_level", ""),
                 "short_reason": llm_output.get("short_reason", ""),
@@ -292,6 +342,9 @@ USER REQUEST: "{user_prompt}"
         correct = (results_df['gold_label'] == results_df['final_predicted_label']).sum()
         total = len(results_df)
         print(f"Accuracy: {correct}/{total} ({(correct/total)*100:.2f}%)")
+
+        n_corrected = results_df['was_corrected'].sum()
+        print(f"Hallucination corrections applied: {n_corrected}/{total}")
 
         try:
             from sklearn.metrics import classification_report
@@ -316,7 +369,7 @@ if __name__ == "__main__":
     router = LLMRouterV2(taxonomy_path=taxonomy_path)
 
     print("\n" + "=" * 50)
-    print("LLM Router V2 — Safety Override + Gate + Route")
+    print("LLM Router V2 — Safety Override + Gate + Route + Hallucination Guard")
     print("Type 'quit' to exit.")
     print("=" * 50 + "\n")
 
@@ -331,6 +384,8 @@ if __name__ == "__main__":
 
         print("\n--- Prediction ---")
         print(f"Predicted Label: {result['predicted_label']}")
+        if result.get('was_corrected'):
+            print(f"  ⚠ Corrected from: '{result['initial_label']}'")
         print(f"Confidence:      {result['confidence_level']}")
         print(f"Reasoning:       {result['short_reason']}")
 
