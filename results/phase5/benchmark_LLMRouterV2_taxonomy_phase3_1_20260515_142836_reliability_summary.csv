@@ -1,0 +1,3 @@
+router,wcr,clarif_precision,clarif_recall,clarif_f1,urgent_recall,instructor_recall,escalation_recall
+Baseline (Embedding),0.3438,0.0,0.0,0.0,0.825,0.4062,0.6389
+LLM (Llama3),0.1004,0.9512,0.8125,0.8764,1.0,0.9688,0.9861
