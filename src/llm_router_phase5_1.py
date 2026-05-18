@@ -68,6 +68,38 @@ class LLMRouterV2:
         "fell off the roof",
     ]
 
+    # ── Academic safety keywords for Instructor/TA escalation override ─────────
+    # Covers: active exam cheating attempts and academic integrity violations.
+    # These are deterministic rules — the LLM should not decide on these.
+    ACADEMIC_EXAM_PHRASES = [
+        "in the middle of the exam", "in the middle of my exam",
+        "in the middle of the midterm", "in the middle of my midterm",
+        "in the middle of the test", "in the middle of my test",
+        "in the middle of the final", "in the middle of my final",
+        "in the middle of the quiz", "in the middle of my quiz",
+        "currently taking the exam", "currently taking my exam",
+        "currently taking the midterm", "currently taking the test",
+        "currently taking the quiz", "currently taking the final",
+        "taking the exam right now", "taking my exam right now",
+        "taking the midterm right now", "taking the test right now",
+        "taking the quiz right now", "taking the final right now",
+        "doing the exam right now", "doing my exam right now",
+        "doing the midterm right now", "doing the test right now",
+        "right now. quick", "right now, quick",
+        "online midterm right now", "online exam right now",
+        "online final right now", "online quiz right now",
+        "online test right now",
+    ]
+
+    ACADEMIC_INTEGRITY_KEYWORDS = [
+        "plagiarism", "plagiarized", "plagiarizing",
+        "academic dishonesty", "academic integrity violation",
+        "cheating accusation", "accused of cheating",
+        "accused of plagiarism", "flagged for plagiarism",
+        "flagged for cheating", "academic misconduct",
+        "integrity violation",
+    ]
+
     def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase5.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
@@ -76,24 +108,81 @@ class LLMRouterV2:
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
 
+        # Build valid label set at init time — includes gating outcomes + all domain labels.
+        # Used by the hallucination guard to catch any invented label names.
+        self.valid_labels = {
+            label['name']
+            for domain_data in self.taxonomy['domains'].values()
+            for label in domain_data['labels']
+        }
+
     # ── Pre-gate safety check ──────────────────────────────────────────────────
     def _check_safety_override(self, user_prompt):
         """
         Deterministic keyword scan run BEFORE the gate or router.
         Only fires on unambiguous physical emergencies and psychiatric crises.
-        Interpersonal safety / harassment language is intentionally excluded
-        so the LLM router can route those to Instructor/TA Escalation.
+        Returns "Urgent Escalation" if matched, None otherwise.
         """
         prompt_lower = user_prompt.lower()
         for keyword in self.SAFETY_KEYWORDS:
             if keyword in prompt_lower:
-                return True
-        return False
+                return "Urgent Escalation"
+        return None
+
+    # ── Pre-gate academic safety check ────────────────────────────────────────
+    def _check_academic_override(self, user_prompt):
+        """
+        Deterministic keyword scan for academic integrity violations and
+        active exam cheating attempts. Both must route to Instructor/TA Escalation
+        regardless of how the request is framed.
+        Returns "Instructor/TA Escalation" if matched, None otherwise.
+        """
+        prompt_lower = user_prompt.lower()
+        for phrase in self.ACADEMIC_EXAM_PHRASES:
+            if phrase in prompt_lower:
+                return "Instructor/TA Escalation"
+        for keyword in self.ACADEMIC_INTEGRITY_KEYWORDS:
+            if keyword in prompt_lower:
+                return "Instructor/TA Escalation"
+        return None
+
+    # ── Hallucination guard ────────────────────────────────────────────────────
+    def _validate_label(self, predicted):
+        """
+        Ensures the LLM's predicted label exists in the taxonomy.
+
+        Resolution order:
+          1. Exact match             → return as-is
+          2. Case-insensitive match  → return canonical casing
+          3. Substring match         → return canonical label
+          4. No match                → fall back to "Clarification Needed"
+
+        Returns (validated_label, was_corrected).
+        """
+        if predicted in self.valid_labels:
+            return predicted, False
+
+        predicted_lower = predicted.strip().lower()
+
+        # Case-insensitive exact match
+        for valid in self.valid_labels:
+            if valid.lower() == predicted_lower:
+                return valid, True
+
+        # Substring match (handles truncated / paraphrased label names)
+        for valid in self.valid_labels:
+            if valid.lower() in predicted_lower or predicted_lower in valid.lower():
+                return valid, True
+
+        # No match — fall back to Clarification Needed
+        tqdm.write(f"  [hallucination guard] '{predicted}' not in taxonomy → Clarification Needed")
+        return "Clarification Needed", True
 
     def build_system_prompt(self):
         """
         Constructs the routing prompt with gating outcomes first,
-        then education and healthcare domain labels.
+        then education and healthcare domain labels, with an explicit
+        domain separation rule to prevent cross-domain confusion.
         """
         gating_text = ""
         domain_text = ""
@@ -109,12 +198,9 @@ class LLMRouterV2:
             else:
                 domain_text += section
 
-        # Build the exhaustive allowed-label list dynamically from taxonomy
-        allowed_labels = []
-        for domain_data in self.taxonomy['domains'].values():
-            for l in domain_data['labels']:
-                allowed_labels.append(f'"{l["name"]}\"')
-        allowed_labels_text = ", ".join(allowed_labels)
+        # Build exhaustive allowed-label list dynamically from taxonomy
+        allowed_labels = sorted(self.valid_labels)
+        allowed_labels_text = "\n".join(f'  - "{name}"' for name in allowed_labels)
 
         system_prompt = f"""You are an expert, autonomous routing agent.
 
@@ -122,6 +208,8 @@ STEP 1 — Check gating outcomes FIRST. If any apply, route there immediately an
 {gating_text}
 
 STEP 2 — Only if no gating outcome applies, route to exactly one domain label:
+
+CRITICAL DOMAIN SEPARATION RULE: Education labels (Concept Explanation, Debugging & Code Troubleshooting, Assignment & Grading Policy, Exam & Assessment Prep, Course Logistics & Environment Setup, Instructor/TA Escalation) apply ONLY to computing/programming student support. Healthcare labels (Scheduling & Appointments, Insurance & Billing, Facility & General Information, Pharmacy & Prescription Logistics, Human Staff Review Needed) apply ONLY to non-clinical patient/administrative support. NEVER route a healthcare question to an education label or vice versa. "Course Logistics & Environment Setup" is an EDUCATION-ONLY label — do NOT use it for hospital, clinic, or medical facility questions about parking, building navigation, accessibility, cafeterias, or physical amenities.
 {domain_text}
 
 CRITICAL INSTRUCTION FOR MISSING INFORMATION:
@@ -144,8 +232,8 @@ Output your response ONLY as a valid JSON object with these exact keys:
         """
         Step A — Gate.
         Decides whether the prompt has enough information to route confidently.
-        Returns True (enough info, proceed to routing) or False (not enough, return Clarification Needed).
-        Defaults to True if the gate itself fails, so no prompt is silently dropped.
+        Returns True (enough info) or False (not enough → Clarification Needed).
+        Defaults to True on failure so no prompt is silently dropped.
         """
         definitions_text = ""
         for domain_name, domain_data in self.taxonomy['domains'].items():
@@ -169,10 +257,18 @@ Answer "false" (not enough information) when ANY of these conditions are met:
   which patient, which pharmacy is unknown;
   "What's on the test?" — intent is clear but which exam, which course is unknown;
   "Where are you located?" — intent is clear but which clinic or location is unknown)
+- The request matches two or more labels equally well and no signal in the
+  message clearly distinguishes which one applies
+  (e.g. a message that could be either a policy question or an escalation,
+  or either a concept question or a debugging question, with no disambiguating detail)
 
 Answer "true" (enough information) when:
 - The request clearly matches one label based on its definition, even if minor details are missing
 - The subject and intent are both clear enough to commit to exactly one label without guessing
+- The request is asking for medical diagnosis, clinical interpretation, or treatment advice —
+  even if brief, these are clearly identifiable as clinical questions and must pass through
+  to be refused appropriately (e.g. "Do I have diabetes?", "Is my rash serious?",
+  "What does my MRI result mean?", "Should I take this medication?")
 
 Respond ONLY as a valid JSON object:
 {{
@@ -205,22 +301,37 @@ USER REQUEST: "{user_prompt}"
 
     def route_request(self, user_prompt):
         """
-        Three-step routing:
-          Safety Override — pre-gate keyword check for unambiguous physical emergencies only
-          Step A — Gate: check if enough information is present
-          Step B — Route: only if gate passes, pick a label using gating-aware prompt
+        Four-step routing:
+          Safety Override  — pre-gate keyword check for physical emergencies / psychiatric crises
+          Academic Override — pre-gate keyword check for exam cheating / academic integrity
+          Step A           — Gate: check if enough information is present
+          Step B           — Route: pick a label, validate against taxonomy
         """
 
-        # ── SAFETY OVERRIDE (pre-gate) ─────────────────────────────────────────
-        if self._check_safety_override(user_prompt):
+        # ── PHYSICAL SAFETY OVERRIDE (pre-gate) ───────────────────────────────
+        safety_label = self._check_safety_override(user_prompt)
+        if safety_label:
             return {
-                "initial_label": "Urgent Escalation",
-                "predicted_label": "Urgent Escalation",
+                "initial_label": safety_label,
+                "predicted_label": safety_label,
                 "confidence_level": "High",
                 "missing_slots": [],
                 "short_reason": "Safety override: message contains an unambiguous physical emergency or psychiatric crisis signal.",
-                "was_corrected": True,
+                "was_corrected": False,
                 "qa_reason": "Pre-gate safety keyword match — bypassed gate and router."
+            }
+
+        # ── ACADEMIC SAFETY OVERRIDE (pre-gate) ───────────────────────────────
+        academic_label = self._check_academic_override(user_prompt)
+        if academic_label:
+            return {
+                "initial_label": academic_label,
+                "predicted_label": academic_label,
+                "confidence_level": "High",
+                "missing_slots": [],
+                "short_reason": "Academic override: message contains an active exam cheating attempt or academic integrity violation signal.",
+                "was_corrected": False,
+                "qa_reason": "Pre-gate academic keyword match — bypassed gate and router."
             }
 
         # ── STEP A: Gate ───────────────────────────────────────────────────────
@@ -268,17 +379,24 @@ USER REQUEST: "{user_prompt}"
                 "qa_reason": "N/A"
             }
 
-        initial_label = initial_output.get("predicted_label", "")
+        raw_label = initial_output.get("predicted_label", "")
         missing_slots = initial_output.get("missing_slots", [])
 
+        # ── Hallucination guard ────────────────────────────────────────────────
+        validated_label, was_corrected = self._validate_label(raw_label)
+        qa_reason = (
+            f"Label '{raw_label}' not in taxonomy — corrected to '{validated_label}'."
+            if was_corrected else ""
+        )
+
         return {
-            "initial_label": initial_label,
-            "predicted_label": initial_label,
+            "initial_label": raw_label,
+            "predicted_label": validated_label,
             "confidence_level": initial_output.get("confidence_level", "Unknown"),
             "missing_slots": missing_slots,
             "short_reason": initial_output.get("short_reason", ""),
-            "was_corrected": False,
-            "qa_reason": ""
+            "was_corrected": was_corrected,
+            "qa_reason": qa_reason
         }
 
     def evaluate_benchmark(self, input_csv, output_csv):
@@ -301,6 +419,8 @@ USER REQUEST: "{user_prompt}"
                 "user_prompt": prompt_text,
                 "gold_outcome": row.get('gold_outcome', ''),
                 "final_predicted_label": llm_output.get("predicted_label", ""),
+                "initial_label": llm_output.get("initial_label", ""),
+                "was_corrected": llm_output.get("was_corrected", False),
                 "missing_slots": ", ".join(llm_output.get("missing_slots", [])),
                 "confidence_level": llm_output.get("confidence_level", ""),
                 "short_reason": llm_output.get("short_reason", ""),
@@ -314,6 +434,9 @@ USER REQUEST: "{user_prompt}"
         correct = (results_df['gold_outcome'] == results_df['final_predicted_label']).sum()
         total = len(results_df)
         print(f"Accuracy: {correct}/{total} ({(correct/total)*100:.2f}%)")
+
+        n_corrected = results_df['was_corrected'].sum()
+        print(f"Hallucination corrections applied: {n_corrected}/{total}")
 
         try:
             from sklearn.metrics import classification_report
@@ -338,7 +461,7 @@ if __name__ == "__main__":
     router = LLMRouterV2(taxonomy_path=taxonomy_path)
 
     print("\n" + "=" * 50)
-    print("LLM Router V2 — Safety Override + Gate + Route")
+    print("LLM Router V2 — Safety Override + Academic Override + Gate + Route + Hallucination Guard")
     print("Type 'quit' to exit.")
     print("=" * 50 + "\n")
 
@@ -353,6 +476,8 @@ if __name__ == "__main__":
 
         print("\n--- Prediction ---")
         print(f"Predicted Label: {result['predicted_label']}")
+        if result.get('was_corrected'):
+            print(f"  ⚠ Corrected from: '{result['initial_label']}'")
         print(f"Confidence:      {result['confidence_level']}")
         print(f"Reasoning:       {result['short_reason']}")
 

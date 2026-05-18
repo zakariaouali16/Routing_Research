@@ -1,6 +1,6 @@
 {
   "project": "Reliable LLM Agents for Routing and Triage",
-  "version": "5.2",
+  "version": "5.3",
   "domains": {
     "gating_outcomes": {
       "domain_description": "Non-routing outcomes that are evaluated before domain routing. These take priority over all domain labels.",
@@ -59,9 +59,7 @@
         {
           "name": "Instructor/TA Escalation",
           "definition": "Use this label when the student's situation cannot be resolved by stating a policy \u2014 it requires a human to review their specific case and make a decision. This includes: grade disputes where the student is contesting a specific grade on their own submission, disability accommodations, academic dishonesty (reporting or being accused of plagiarism or cheating), any attempt to obtain answers to an active or ongoing exam or homework regardless of how the request is framed, harassment or interpersonal safety concerns (feeling unsafe due to another student's behavior, uncomfortable group dynamics, retaliation), scholarship or form sign-offs, and missing or contested grades. The key test: if answering requires someone to look at the student's record and act, it belongs here. Do not route harassment or interpersonal safety concerns to Urgent Escalation \u2014 those are human-review situations, not physical emergencies.",
-          "required_slots": [
-            "student_id"
-          ]
+          "required_slots": []
         }
       ]
     },

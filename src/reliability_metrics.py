@@ -27,9 +27,8 @@ def compute_reliability_metrics(df, gold_cleaned, pred_cleaned, router_name="Rou
     print(f"{'='*60}")
 
     # ── Metric 1: Wrong-Confident Rate (WCR) ──────────────────────────────────
-    # Both CN and Clinical Advice Refusal are deliberate non-routing decisions
-    # — exclude both from the confident pool.
-    non_confident     = {CLARIFICATION_OUTCOME, CLINICAL_REFUSAL_OUTCOME}
+    # Excluding Clarification needed from Confident pool.
+    non_confident     = {CLARIFICATION_OUTCOME}
     confident_mask    = ~pred.isin(non_confident)
     n_confident       = confident_mask.sum()
     n_wrong_confident = ((gold != pred) & confident_mask).sum()
