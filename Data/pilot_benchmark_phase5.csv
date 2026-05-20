@@ -180,7 +180,7 @@ EDU-178,Education,How do I set up the virtual machine for the networking lab?,Co
 EDU-179,Education,"I'm having trouble installing Jupyter Notebook on my Mac, what should I do?",Course Logistics & Environment Setup,
 EDU-180,Education,Where can I find the syllabus for this semester?,Course Logistics & Environment Setup,
 EDU-181,Education,Which version of Java are we required to use for this course?,Course Logistics & Environment Setup,
-EDU-182,Education,How do I set up the virtual machine for the networking lab?,Course Logistics & Environment Setup,
+EDU-182,Education,I installed Python but when I run python in my terminal it says 'command not found.' How do I fix this?,Course Logistics & Environment Setup,
 EDU-183,Education,"""The instructions say to activate the conda environment, but conda activate cs101 says the environment doesn't exist.""",Course Logistics & Environment Setup,
 EDU-184,Education,"""I installed Docker Desktop on Windows, but it says WSL 2 is required and won't start the course container.""",Course Logistics & Environment Setup,
 EDU-185,Education,"""I'm having trouble linking my local Git repository to GitHub Classroom. It keeps asking for a personal access token instead of my password.""",Course Logistics & Environment Setup,
