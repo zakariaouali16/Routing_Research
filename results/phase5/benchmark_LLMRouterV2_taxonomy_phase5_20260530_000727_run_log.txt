@@ -1,0 +1,187 @@
+Run log: /home/jupyter-skandagatla1/Routing_Research/results/phase5/benchmark_LLMRouterV2_taxonomy_phase5_20260530_000727_run_log.txt
+Started: 2026-05-30 00:07:27
+
+
+--- Initializing Routers ---
+Loading embedding model: all-MiniLM-L6-v2...
+Loading taxonomy from /home/jupyter-skandagatla1/Routing_Research/Data/taxonomy_phase5.json...
+Embedding 14 taxonomy definitions...
+Done! The Zero-Shot Taxonomy Router is ready.
+Note: Ignoring sparse training data at /home/jupyter-skandagatla1/Routing_Research/Data/training_data.csv. Using Zero-Shot Taxonomy instead!
+Loading taxonomy from /home/jupyter-skandagatla1/Routing_Research/Data/taxonomy_phase5.json...
+
+--- Running benchmark on 549 rows ---
+
+==================================================
+RESULTS SAVED TO: /home/jupyter-skandagatla1/Routing_Research/results/phase5/benchmark_LLMRouterV2_taxonomy_phase5_20260530_000727.csv
+==================================================
+
+Baseline (Embedding) Accuracy : 61.75%
+LLM (Llama3) Accuracy         : 86.16%
+
+--- DETAILED ACCURACY RATING (Baseline Router) ---
+                                      precision    recall  f1-score   support
+
+         assignment & grading policy       0.56      0.49      0.52        39
+                clarification needed       0.44      0.17      0.24        48
+             clinical advice refusal       0.29      0.30      0.30        40
+                 concept explanation       0.75      0.68      0.71        40
+course logistics & environment setup       0.64      0.68      0.66        31
+    debugging & code troubleshooting       0.38      0.51      0.44        39
+              exam & assessment prep       0.65      0.79      0.71        39
+      facility & general information       0.77      0.85      0.80        39
+           human staff review needed       0.76      0.57      0.65        44
+            instructor/ta escalation       0.75      0.38      0.50        32
+                 insurance & billing       0.78      0.76      0.77        41
+   pharmacy & prescription logistics       0.85      0.92      0.88        36
+           scheduling & appointments       0.73      0.80      0.77        41
+                   urgent escalation       0.48      0.85      0.61        40
+
+                            accuracy                           0.62       549
+                           macro avg       0.63      0.62      0.61       549
+                        weighted avg       0.63      0.62      0.61       549
+
+
+--- DETAILED ACCURACY RATING (LLM Router) ---
+                                      precision    recall  f1-score   support
+
+         assignment & grading policy       0.89      0.85      0.87        39
+                clarification needed       0.68      0.85      0.76        48
+             clinical advice refusal       0.83      0.72      0.77        40
+                 concept explanation       0.83      0.88      0.85        40
+course logistics & environment setup       0.73      0.77      0.75        31
+    debugging & code troubleshooting       0.79      0.97      0.87        39
+              exam & assessment prep       0.95      0.92      0.94        39
+      facility & general information       0.96      0.69      0.81        39
+           human staff review needed       1.00      0.68      0.81        44
+            instructor/ta escalation       0.79      0.97      0.87        32
+                 insurance & billing       0.97      0.93      0.95        41
+   pharmacy & prescription logistics       0.94      0.89      0.91        36
+           scheduling & appointments       0.91      0.95      0.93        41
+                   urgent escalation       0.93      1.00      0.96        40
+
+                            accuracy                           0.86       549
+                           macro avg       0.87      0.86      0.86       549
+                        weighted avg       0.87      0.86      0.86       549
+
+
+--- PER-DOMAIN ACCURACY (Baseline Router) ---
+  Education                                    130/220 = 59.1%
+  Healthcare                                   155/201 = 77.1%
+  Gating (all)                                 54/128 = 42.2%
+    Clarification Needed                       8/48 = 16.7%
+    Clinical Advice Refusal                    12/40 = 30.0%
+    Urgent Escalation                          34/40 = 85.0%
+
+--- PER-DOMAIN ACCURACY (LLM Router) ---
+  Education                                    197/220 = 89.5%
+  Healthcare                                   166/201 = 82.6%
+  Gating (all)                                 110/128 = 85.9%
+    Clarification Needed                       41/48 = 85.4%
+    Clinical Advice Refusal                    29/40 = 72.5%
+    Urgent Escalation                          40/40 = 100.0%
+
+--- DOMAIN ACCURACY SUMMARY (for charts) ---
+Domain                                           Baseline        LLM
+--------------------------------------------------------------------
+Overall                                             61.7%      86.2%
+Education                                           59.1%      89.5%
+Healthcare                                          77.1%      82.6%
+Gating (all)                                        42.2%      85.9%
+  Clarification Needed                              16.7%      85.4%
+  Clinical Advice Refusal                           30.0%      72.5%
+  Urgent Escalation                                 85.0%     100.0%
+
+============================================================
+  RELIABILITY METRICS — Baseline (Embedding)
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 531
+      Wrong among those        : 200
+      WCR                      : 0.377  (37.7%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 18
+      True-positive CN         : 8
+      Precision                : 0.444  (low = too many false alarms)
+      Recall                   : 0.167  (low = missing ambiguous cases)
+      F1                       : 0.242
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 12
+      Missed (routed instead)  : 28  <- safety failures
+      Recall                   : 0.300  (30.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 34
+      Missed                   : 6  <- safety failures
+      Recall                   : 0.850  (85.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 12
+      Missed                   : 20  <- safety failures
+      Recall                   : 0.375  (37.5%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 46
+      Missed escalations       : 26  <- safety failures
+      Escalation Recall        : 0.639  (63.9%)
+============================================================
+
+============================================================
+  RELIABILITY METRICS — LLM (Llama3)
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 489
+      Wrong among those        : 57
+      WCR                      : 0.117  (11.7%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 60
+      True-positive CN         : 41
+      Precision                : 0.683  (low = too many false alarms)
+      Recall                   : 0.854  (low = missing ambiguous cases)
+      F1                       : 0.759
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 29
+      Missed (routed instead)  : 11  <- safety failures
+      Recall                   : 0.725  (72.5%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 40
+      Missed                   : 0  <- safety failures
+      Recall                   : 1.000  (100.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 31
+      Missed                   : 1  <- safety failures
+      Recall                   : 0.969  (96.9%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 71
+      Missed escalations       : 1  <- safety failures
+      Escalation Recall        : 0.986  (98.6%)
+============================================================
+
+--- RELIABILITY SUMMARY TABLE ---
+              router    wcr  clarif_precision  clarif_recall  clarif_f1  clinical_recall  urgent_recall  instructor_recall  escalation_recall
+Baseline (Embedding) 0.3766            0.4444         0.1667     0.2424            0.300           0.85             0.3750             0.6389
+        LLM (Llama3) 0.1166            0.6833         0.8542     0.7593            0.725           1.00             0.9688             0.9861
+
+Reliability summary saved to: /home/jupyter-skandagatla1/Routing_Research/results/phase5/benchmark_LLMRouterV2_taxonomy_phase5_20260530_000727_reliability_summary.csv
+
+Finished: 2026-05-30 00:32:59
+Run log saved to: /home/jupyter-skandagatla1/Routing_Research/results/phase5/benchmark_LLMRouterV2_taxonomy_phase5_20260530_000727_run_log.txt

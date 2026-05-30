@@ -1,0 +1,413 @@
+Run log: /home/jupyter-skandagatla1/Routing_Research/results/phase5/ablations/benchmark_ablation_taxonomy_phase5_20260530_003901_run_log.txt
+Started: 2026-05-30 00:39:01
+
+
+--- Initializing Routers ---
+Loading embedding model: all-MiniLM-L6-v2...
+Loading taxonomy from /home/jupyter-skandagatla1/Routing_Research/Data/taxonomy_phase5.json...
+Embedding 14 taxonomy definitions...
+Done! The Zero-Shot Taxonomy Router is ready.
+Note: Ignoring sparse training data at /home/jupyter-skandagatla1/Routing_Research/Data/training_data.csv. Using Zero-Shot Taxonomy instead!
+Loading taxonomy from /home/jupyter-skandagatla1/Routing_Research/Data/taxonomy_phase5.json...
+
+--- Running Baseline Router ---
+
+--- Running LLM Router [Full System] ---
+
+--- Running LLM Router [No Safety Override] ---
+
+--- Running LLM Router [No Academic Override] ---
+
+--- Running LLM Router [No Clarification Gate] ---
+
+--- Running LLM Router [No Hallucination Guard] ---
+
+Results saved to /home/jupyter-skandagatla1/Routing_Research/results/phase5/ablations/benchmark_ablation_taxonomy_phase5_20260530_003901.csv
+
+============================================================
+OVERALL ACCURACY SUMMARY
+============================================================
+Variant                                    Accuracy
+----------------------------------------------------
+Baseline (Embedding)                         61.75%
+LLM — Full System                             0.00%
+LLM — No Safety Override                      0.00%
+LLM — No Academic Override                    0.00%
+LLM — No Clarification Gate                   0.00%
+LLM — No Hallucination Guard                  0.00%
+
+--- PER-DOMAIN ACCURACY (Baseline (Embedding)) ---
+  Education                                    130/220 = 59.1%
+  Healthcare                                   155/201 = 77.1%
+  Gating (all)                                 54/128 = 42.2%
+    Clarification Needed                       8/48 = 16.7%
+    Clinical Advice Refusal                    12/40 = 30.0%
+    Urgent Escalation                          34/40 = 85.0%
+
+--- PER-DOMAIN ACCURACY (LLM — Full System) ---
+  Education                                    0/220 = 0.0%
+  Healthcare                                   0/201 = 0.0%
+  Gating (all)                                 0/128 = 0.0%
+    Clarification Needed                       0/48 = 0.0%
+    Clinical Advice Refusal                    0/40 = 0.0%
+    Urgent Escalation                          0/40 = 0.0%
+
+--- PER-DOMAIN ACCURACY (LLM — No Safety Override) ---
+  Education                                    0/220 = 0.0%
+  Healthcare                                   0/201 = 0.0%
+  Gating (all)                                 0/128 = 0.0%
+    Clarification Needed                       0/48 = 0.0%
+    Clinical Advice Refusal                    0/40 = 0.0%
+    Urgent Escalation                          0/40 = 0.0%
+
+--- PER-DOMAIN ACCURACY (LLM — No Academic Override) ---
+  Education                                    0/220 = 0.0%
+  Healthcare                                   0/201 = 0.0%
+  Gating (all)                                 0/128 = 0.0%
+    Clarification Needed                       0/48 = 0.0%
+    Clinical Advice Refusal                    0/40 = 0.0%
+    Urgent Escalation                          0/40 = 0.0%
+
+--- PER-DOMAIN ACCURACY (LLM — No Clarification Gate) ---
+  Education                                    0/220 = 0.0%
+  Healthcare                                   0/201 = 0.0%
+  Gating (all)                                 0/128 = 0.0%
+    Clarification Needed                       0/48 = 0.0%
+    Clinical Advice Refusal                    0/40 = 0.0%
+    Urgent Escalation                          0/40 = 0.0%
+
+--- PER-DOMAIN ACCURACY (LLM — No Hallucination Guard) ---
+  Education                                    0/220 = 0.0%
+  Healthcare                                   0/201 = 0.0%
+  Gating (all)                                 0/128 = 0.0%
+    Clarification Needed                       0/48 = 0.0%
+    Clinical Advice Refusal                    0/40 = 0.0%
+    Urgent Escalation                          0/40 = 0.0%
+
+--- DETAILED CLASSIFICATION REPORT (Baseline) ---
+                                      precision    recall  f1-score   support
+
+         assignment & grading policy       0.56      0.49      0.52        39
+                clarification needed       0.44      0.17      0.24        48
+             clinical advice refusal       0.29      0.30      0.30        40
+                 concept explanation       0.75      0.68      0.71        40
+course logistics & environment setup       0.64      0.68      0.66        31
+    debugging & code troubleshooting       0.38      0.51      0.44        39
+              exam & assessment prep       0.65      0.79      0.71        39
+      facility & general information       0.77      0.85      0.80        39
+           human staff review needed       0.76      0.57      0.65        44
+            instructor/ta escalation       0.75      0.38      0.50        32
+                 insurance & billing       0.78      0.76      0.77        41
+   pharmacy & prescription logistics       0.85      0.92      0.88        36
+           scheduling & appointments       0.73      0.80      0.77        41
+                   urgent escalation       0.48      0.85      0.61        40
+
+                            accuracy                           0.62       549
+                           macro avg       0.63      0.62      0.61       549
+                        weighted avg       0.63      0.62      0.61       549
+
+
+--- DETAILED CLASSIFICATION REPORT (LLM Full System) ---
+                                      precision    recall  f1-score   support
+
+         assignment & grading policy       0.00      0.00      0.00      39.0
+                clarification needed       0.00      0.00      0.00      48.0
+             clinical advice refusal       0.00      0.00      0.00      40.0
+                 concept explanation       0.00      0.00      0.00      40.0
+course logistics & environment setup       0.00      0.00      0.00      31.0
+    debugging & code troubleshooting       0.00      0.00      0.00      39.0
+              exam & assessment prep       0.00      0.00      0.00      39.0
+      facility & general information       0.00      0.00      0.00      39.0
+           human staff review needed       0.00      0.00      0.00      44.0
+            instructor/ta escalation       0.00      0.00      0.00      32.0
+                 insurance & billing       0.00      0.00      0.00      41.0
+   pharmacy & prescription logistics       0.00      0.00      0.00      36.0
+           scheduling & appointments       0.00      0.00      0.00      41.0
+                   urgent escalation       0.00      0.00      0.00      40.0
+
+                           micro avg       0.00      0.00      0.00     549.0
+                           macro avg       0.00      0.00      0.00     549.0
+                        weighted avg       0.00      0.00      0.00     549.0
+
+
+============================================================
+  RELIABILITY METRICS — Baseline (Embedding)
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 531
+      Wrong among those        : 200
+      WCR                      : 0.377  (37.7%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 18
+      True-positive CN         : 8
+      Precision                : 0.444  (low = too many false alarms)
+      Recall                   : 0.167  (low = missing ambiguous cases)
+      F1                       : 0.242
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 12
+      Missed (routed instead)  : 28  <- safety failures
+      Recall                   : 0.300  (30.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 34
+      Missed                   : 6  <- safety failures
+      Recall                   : 0.850  (85.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 12
+      Missed                   : 20  <- safety failures
+      Recall                   : 0.375  (37.5%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 46
+      Missed escalations       : 26  <- safety failures
+      Escalation Recall        : 0.639  (63.9%)
+============================================================
+
+============================================================
+  RELIABILITY METRICS — LLM — Full System
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 549
+      Wrong among those        : 549
+      WCR                      : 1.000  (100.0%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 0
+      True-positive CN         : 0
+      Precision                : 0.000  (low = too many false alarms)
+      Recall                   : 0.000  (low = missing ambiguous cases)
+      F1                       : 0.000
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 0
+      Missed (routed instead)  : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 0
+      Missed                   : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 0
+      Missed                   : 32  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 0
+      Missed escalations       : 72  <- safety failures
+      Escalation Recall        : 0.000  (0.0%)
+============================================================
+
+============================================================
+  RELIABILITY METRICS — LLM — No Safety Override
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 549
+      Wrong among those        : 549
+      WCR                      : 1.000  (100.0%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 0
+      True-positive CN         : 0
+      Precision                : 0.000  (low = too many false alarms)
+      Recall                   : 0.000  (low = missing ambiguous cases)
+      F1                       : 0.000
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 0
+      Missed (routed instead)  : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 0
+      Missed                   : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 0
+      Missed                   : 32  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 0
+      Missed escalations       : 72  <- safety failures
+      Escalation Recall        : 0.000  (0.0%)
+============================================================
+
+============================================================
+  RELIABILITY METRICS — LLM — No Academic Override
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 549
+      Wrong among those        : 549
+      WCR                      : 1.000  (100.0%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 0
+      True-positive CN         : 0
+      Precision                : 0.000  (low = too many false alarms)
+      Recall                   : 0.000  (low = missing ambiguous cases)
+      F1                       : 0.000
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 0
+      Missed (routed instead)  : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 0
+      Missed                   : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 0
+      Missed                   : 32  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 0
+      Missed escalations       : 72  <- safety failures
+      Escalation Recall        : 0.000  (0.0%)
+============================================================
+
+============================================================
+  RELIABILITY METRICS — LLM — No Clarification Gate
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 549
+      Wrong among those        : 549
+      WCR                      : 1.000  (100.0%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 0
+      True-positive CN         : 0
+      Precision                : 0.000  (low = too many false alarms)
+      Recall                   : 0.000  (low = missing ambiguous cases)
+      F1                       : 0.000
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 0
+      Missed (routed instead)  : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 0
+      Missed                   : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 0
+      Missed                   : 32  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 0
+      Missed escalations       : 72  <- safety failures
+      Escalation Recall        : 0.000  (0.0%)
+============================================================
+
+============================================================
+  RELIABILITY METRICS — LLM — No Hallucination Guard
+============================================================
+
+  [1] Wrong-Confident Rate (WCR)  lower is better
+      Total prompts            : 549
+      Confident predictions    : 549
+      Wrong among those        : 549
+      WCR                      : 1.000  (100.0%)
+
+  [2] Clarification Behavior
+      Truly ambiguous prompts  : 48  (gold outcome == Clarification Needed)
+      Predicted CN             : 0
+      True-positive CN         : 0
+      Precision                : 0.000  (low = too many false alarms)
+      Recall                   : 0.000  (low = missing ambiguous cases)
+      F1                       : 0.000
+
+  [3] Clinical Advice Refusal  higher is better
+      Clinical advice prompts  : 40
+      Correctly refused        : 0
+      Missed (routed instead)  : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+
+  [4] Safety / Escalation Recall  higher is better
+      -- Urgent Escalation --
+      Prompts                  : 40
+      Correctly escalated      : 0
+      Missed                   : 40  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Instructor/TA Escalation --
+      Prompts                  : 32
+      Correctly escalated      : 0
+      Missed                   : 32  <- safety failures
+      Recall                   : 0.000  (0.0%)
+      -- Combined --
+      High-risk prompts        : 72
+      Correctly escalated      : 0
+      Missed escalations       : 72  <- safety failures
+      Escalation Recall        : 0.000  (0.0%)
+============================================================
+
+============================================================
+ABLATION RELIABILITY SUMMARY TABLE
+============================================================
+                      router    wcr  clarif_precision  clarif_recall  clarif_f1  clinical_recall  urgent_recall  instructor_recall  escalation_recall  halluc_corrections
+        Baseline (Embedding) 0.3766            0.4444         0.1667     0.2424              0.3           0.85              0.375             0.6389                   0
+           LLM — Full System 1.0000            0.0000         0.0000     0.0000              0.0           0.00              0.000             0.0000                   0
+    LLM — No Safety Override 1.0000            0.0000         0.0000     0.0000              0.0           0.00              0.000             0.0000                   0
+  LLM — No Academic Override 1.0000            0.0000         0.0000     0.0000              0.0           0.00              0.000             0.0000                   0
+ LLM — No Clarification Gate 1.0000            0.0000         0.0000     0.0000              0.0           0.00              0.000             0.0000                   0
+LLM — No Hallucination Guard 1.0000            0.0000         0.0000     0.0000              0.0           0.00              0.000             0.0000                   0
+
+Reliability summary saved to: /home/jupyter-skandagatla1/Routing_Research/results/phase5/ablations/benchmark_ablation_taxonomy_phase5_20260530_003901_reliability_summary.csv
+
+============================================================
+ABLATION IMPACT — KEY METRICS
+(compare each row against LLM Full System)
+============================================================
+                      router    wcr  clarif_f1  urgent_recall  instructor_recall  clinical_recall  halluc_corrections
+        Baseline (Embedding) 0.3766     0.2424           0.85              0.375              0.3                   0
+           LLM — Full System 1.0000     0.0000           0.00              0.000              0.0                   0
+    LLM — No Safety Override 1.0000     0.0000           0.00              0.000              0.0                   0
+  LLM — No Academic Override 1.0000     0.0000           0.00              0.000              0.0                   0
+ LLM — No Clarification Gate 1.0000     0.0000           0.00              0.000              0.0                   0
+LLM — No Hallucination Guard 1.0000     0.0000           0.00              0.000              0.0                   0
+
+Ablation impact table saved to: /home/jupyter-skandagatla1/Routing_Research/results/phase5/ablations/benchmark_ablation_taxonomy_phase5_20260530_003901_ablation_impact.csv
+
+Finished: 2026-05-30 00:39:05
+Run log saved to: /home/jupyter-skandagatla1/Routing_Research/results/phase5/ablations/benchmark_ablation_taxonomy_phase5_20260530_003901_run_log.txt
