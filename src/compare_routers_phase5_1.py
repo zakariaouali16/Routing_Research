@@ -1,13 +1,14 @@
 import os
+import sys
 import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, classification_report
 
-# Import your classes
 from baselines.baseline_embedding_router import EmbeddingRouter
 from llm_router_phase5_1 import LLMRouterV2
 from reliability_metrics import compute_reliability_metrics
+from tee_logger import Tee
 
 
 def clean_label(label):
@@ -71,6 +72,13 @@ def run_comparison():
         RESULTS_DIR,
         f"benchmark_{router_name}_{taxonomy_name}_{timestamp}.csv"
     )
+
+    # ── Start logging ──────────────────────────────────────────────────────────
+    log_file = output_file.replace('.csv', '_run_log.txt')
+    tee = Tee(log_file)
+    sys.stdout = tee
+    print(f"Run log: {log_file}")
+    print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
     # ── 2. Load benchmark ──────────────────────────────────────────────────────
     df = pd.read_csv(DATA_PATH)
@@ -180,6 +188,11 @@ def run_comparison():
     summary_file = output_file.replace('.csv', '_reliability_summary.csv')
     summary.to_csv(summary_file, index=False)
     print(f"\nReliability summary saved to: {summary_file}")
+
+    # ── Close logger ───────────────────────────────────────────────────────────
+    print(f"\nFinished: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Run log saved to: {log_file}")
+    tee.close()
 
 
 if __name__ == "__main__":
