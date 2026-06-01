@@ -131,6 +131,7 @@ def run_comparison():
     llm_no_acad_cleaned,   no_acad_corrections   = run_single_llm(llm_router, df, ablation="no_academic",            label="No Academic Override")
     llm_no_gate_cleaned,   no_gate_corrections   = run_single_llm(llm_router, df, ablation="no_gate",                label="No Clarification Gate")
     llm_no_halluc_cleaned, no_halluc_corrections = run_single_llm(llm_router, df, ablation="no_hallucination_guard", label="No Hallucination Guard")
+    llm_no_all_cleaned,    no_all_corrections    = run_single_llm(llm_router, df, ablation="no_all",                label="No All")
 
     # ── 6. Save full results CSV ───────────────────────────────────────────────
     df['baseline_prediction']           = baseline_preds
@@ -139,6 +140,7 @@ def run_comparison():
     df['llm_no_academic_prediction']    = llm_no_acad_cleaned
     df['llm_no_gate_prediction']        = llm_no_gate_cleaned
     df['llm_no_hallucguard_prediction'] = llm_no_halluc_cleaned
+    df['llm_no_all_prediction']         = llm_no_all_cleaned
     df['baseline_match']                = [g == b for g, b in zip(gold_cleaned, base_cleaned)]
     df['llm_full_match']                = [g == l for g, l in zip(gold_cleaned, llm_full_cleaned)]
     df.to_csv(output_file, index=False)
@@ -152,6 +154,7 @@ def run_comparison():
         "LLM — No Academic Override":   llm_no_acad_cleaned,
         "LLM — No Clarification Gate":  llm_no_gate_cleaned,
         "LLM — No Hallucination Guard": llm_no_halluc_cleaned,
+        "LLM — No All":                 llm_no_all_cleaned,
     }
 
     print("\n" + "=" * 60)
@@ -186,6 +189,7 @@ def run_comparison():
         "LLM — No Academic Override":   no_acad_corrections,
         "LLM — No Clarification Gate":  no_gate_corrections,
         "LLM — No Hallucination Guard": no_halluc_corrections,
+        "LLM — No All":                 no_all_corrections,
     }
 
     all_reliability = []

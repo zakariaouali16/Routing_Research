@@ -100,7 +100,7 @@ class LLMRouterV2:
         "integrity violation",
     ]
 
-    def __init__(self, model_name='llama3', taxonomy_path='../../Data/taxonomy_phase5.json'):
+    def __init__(self, model_name='Gemma4', taxonomy_path='../../Data/taxonomy_phase5.json'):
         self.model_name = model_name
         self.api_url = "http://localhost:11434/api/generate"
 

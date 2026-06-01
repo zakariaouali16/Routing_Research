@@ -136,7 +136,7 @@ def run_comparison():
     llm_acc      = accuracy_score(gold_cleaned, llm_cleaned)
 
     print(f"\nBaseline (Embedding) Accuracy : {baseline_acc * 100:.2f}%")
-    print(f"LLM (Llama3) Accuracy         : {llm_acc * 100:.2f}%")
+    print(f"LLM (Gemma4) Accuracy         : {llm_acc * 100:.2f}%")
 
     unique_gold_labels = sorted(list(set(gold_cleaned)))
 
@@ -178,7 +178,7 @@ def run_comparison():
 
     # ── 8. Reliability metrics ─────────────────────────────────────────────────
     baseline_rel = compute_reliability_metrics(df, gold_cleaned, base_cleaned, "Baseline (Embedding)")
-    llm_rel      = compute_reliability_metrics(df, gold_cleaned, llm_cleaned,  "LLM (Llama3)")
+    llm_rel      = compute_reliability_metrics(df, gold_cleaned, llm_cleaned,  "LLM (Gemma4)")
 
     # ── 9. Reliability summary table ──────────────────────────────────────────
     summary = pd.DataFrame([baseline_rel, llm_rel])
