@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import requests
 from tqdm import tqdm
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class LLMRouterV1:
@@ -15,74 +16,53 @@ class LLMRouterV1:
         with open(taxonomy_path, 'r') as f:
             self.taxonomy = json.load(f)
 
-    def build_system_prompt(self, domain):
-        """Constructs the prompt using the specific domain labels from the taxonomy."""
-        domain_key = domain.lower() 
-        if domain_key not in self.taxonomy['domains']:
-            raise ValueError(f"Domain '{domain}' not found in taxonomy.")
-            
-        labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+    def build_system_prompt(self):
+        """Constructs the prompt using all domains and labels from the taxonomy."""
         
-        system_prompt = f"""You are an expert routing agent for a {domain_key} support system.
-Your task is to classify the user's request into EXACTLY ONE of the following routing categories:
-
-{labels_text}
+        all_labels_text = ""
+        for domain_name, domain_data in self.taxonomy['domains'].items():
+            all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
+            for l in domain_data['labels']:
+                all_labels_text += f"- {l['name']}: {l['definition']}\n"
+        
+        # --- FIX: Update the prompt to explicitly request the required JSON schema ---
+        system_prompt = f"""You are an expert, autonomous routing agent.
+Your task is to classify the user's request into EXACTLY ONE of the following routing categories across all domains:
+{all_labels_text}
 
 CRITICAL INSTRUCTION FOR AMBIGUITY (CONFIDENCE GATE):
-1. If the user's request is one sentence, lacks a clear verb/noun, or is highly ambiguous (e.g., "I need help", "Is it done?"), you MUST classify it as 'Clarification Needed'. Do not attempt to guess the department.
-2. If you cannot find at least two specific keywords relating to a specific category, default to 'Clarification Needed'.
-3. Do not assume 'help' means 'emergency' unless words like 'pain', 'bleeding', or 'urgent' are mentioned.
-
-FEW-SHOT EXAMPLES:
-User: "Is it done yet?"
+1. If the user's request is too vague, lacks context, or does not clearly fit any of the specific categories above, you MUST route it to 'Clarification Needed'.
+2. Output your response ONLY as a valid JSON object with this exact key:
 {{
-    "needs_clarification": true, 
-    "short_reason": "Prompt is too short and lacks specific keywords regarding what 'it' is.", 
-    "predicted_label": "Clarification Needed", 
-    "confidence_level": "High"
-}}
-
-User: "I need to talk to someone about yesterday."
-{{
-    "needs_clarification": true, 
-    "short_reason": "Vague timeframe reference without specific intent or department mentioned.", 
-    "predicted_label": "Clarification Needed", 
-    "confidence_level": "High"
-}}
-
-Analyze the user's prompt carefully. You must output your response ONLY as a valid JSON object with the following exact keys:
-{{
-    "needs_clarification": true or false,
-    "short_reason": "One short sentence explaining the core issue in the prompt",
-    "predicted_label": "The exact name of the label from the list above",
-    "confidence_level": "High, Medium, or Low"
-}}
-
-Do not include any markdown formatting, conversational text, or explanations outside of the JSON object.
-"""
-        return system_prompt
-
-    def verify_prediction(self, user_prompt, domain, proposed_label):
-        """A secondary lightweight verification step to act as a QA auditor."""
-        domain_key = domain.lower() 
-        labels = self.taxonomy['domains'][domain_key]['labels']
-        labels_text = "\n".join([f"- {l['name']}: {l['definition']}" for l in labels])
+    "predicted_label": "The EXACT name of the category (e.g., 'Concept Explanation'). DO NOT include the domain name or any prefixes."
+}}"""
         
-        verification_prompt = f"""You are a strict QA auditor for a {domain_key} support system.
+        return system_prompt
+    
+    def verify_prediction(self, user_prompt, proposed_label):
+        """A secondary lightweight verification step acting as a QA auditor across ALL domains."""
+        
+        # Build the list of ALL valid categories
+        all_labels_text = ""
+        for domain_name, domain_data in self.taxonomy['domains'].items():
+            all_labels_text += f"\n### {domain_name.upper()} DOMAIN ###\n"
+            for l in domain_data['labels']:
+                all_labels_text += f"- {l['name']}: {l['definition']}\n"
+        
+        verification_prompt = f"""You are a strict QA auditor for a support routing system.
 A previous routing agent classified a user's request, and your job is to verify if it is accurate based on the taxonomy.
 
 VALID CATEGORIES:
-{labels_text}
+{all_labels_text}
 
 USER REQUEST: "{user_prompt}"
 PROPOSED LABEL: "{proposed_label}"
 
-Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST.
+Critically analyze if the PROPOSED LABEL is the absolute best fit for the USER REQUEST across all domains.
 Output your response ONLY as a valid JSON object with these exact keys:
 {{
     "is_correct": true or false,
-    "verified_label": "If is_correct is true, output the PROPOSED LABEL. If false, output the corrected valid category name from the VALID CATEGORIES list.",
+    "verified_label": "If is_correct is true, output the EXACT category name without the domain. If false, output the corrected valid category name from the VALID CATEGORIES list ONLY.",
     "qa_reason": "One short sentence explaining why you confirmed or corrected the label."
 }}
 
@@ -94,7 +74,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             "stream": False,
             "format": "json", 
             "options": {            
-                "temperature": 0.0, # Keep at 0 for strict validation
+                "temperature": 0.0,
                 "seed": 42
             }
         }
@@ -107,10 +87,11 @@ Do not include any markdown formatting, conversational text, or explanations out
             tqdm.write(f"Verification Error -> {e}")
             return {"is_correct": True, "verified_label": proposed_label, "qa_reason": "Verification failed, defaulting to original."}
 
-    def route_request(self, user_prompt, domain):
+    def route_request(self, user_prompt):
         """Sends the prompt to Ollama, gets a prediction, and verifies it."""
         # --- PASS 1: Initial Generation ---
-        system_prompt = self.build_system_prompt(domain)
+        # [Remove the 'domain' parameter from this method's signature]
+        system_prompt = self.build_system_prompt()
         full_prompt = f"{system_prompt}\n\nUSER REQUEST:\n\"{user_prompt}\""
         
         payload = {
@@ -143,7 +124,7 @@ Do not include any markdown formatting, conversational text, or explanations out
         initial_label = initial_output.get("predicted_label", "")
 
         # --- PASS 2: Lightweight Verification ---
-        qa_output = self.verify_prediction(user_prompt, domain, initial_label)
+        qa_output = self.verify_prediction(user_prompt,  initial_label)
         
         # Merge the outputs
         final_label = qa_output.get("verified_label", initial_label)
@@ -172,7 +153,7 @@ Do not include any markdown formatting, conversational text, or explanations out
             domain = row['domain']
             
             # Ask the LLM to route and verify it
-            llm_output = self.route_request(prompt_text, domain)
+            llm_output = self.route_request(prompt_text)
             
             result_row = {
                 "prompt_id": row.get('prompt_id', f"ID-{index}"),
@@ -240,9 +221,35 @@ Do not include any markdown formatting, conversational text, or explanations out
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v1.json"))
-    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_pilot_benchmark.csv"))
+    taxonomy_path = os.path.abspath(os.path.join(script_dir, "../Data/taxonomy_v2.json"))
+    benchmark_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_1_pilot_benchmark.csv"))
     output_path = os.path.abspath(os.path.join(script_dir, "../Data/v1_llm_results.csv"))
     
-    router = LLMRouterV1(model_name='llama3', taxonomy_path=taxonomy_path)
-    router.evaluate_benchmark(benchmark_path, output_path)
+    # Initialize the router once
+    router = LLMRouterV1(taxonomy_path=taxonomy_path)
+    
+    print("\n" + "="*50)
+    print("LLM Router Interactive Mode")
+    print("Type 'quit' or 'exit' to stop.")
+    print("="*50 + "\n")
+    
+    # Loop to continuously ask the user for input
+    while True:
+        user_input = input("Enter your question/request: ")
+        
+        # Check if the user wants to exit
+        if user_input.strip().lower() in ['quit', 'exit']:
+            print("Exiting interactive mode...")
+            break
+            
+        # Ignore empty inputs
+        if not user_input.strip():
+            continue
+            
+        # Route the request and print the results nicely
+        print("\nRouting request...")
+        single_prediction = router.route_request(user_input)
+        
+        print("\n--- Prediction Result ---")
+        print(json.dumps(single_prediction, indent=4))
+        print("-" * 25 + "\n")
