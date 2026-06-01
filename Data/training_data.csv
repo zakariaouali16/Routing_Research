@@ -1,14 +1,14 @@
-prompt_id,domain,user_prompt,gold_label,is_ambiguous,risk_level,annotator_notes
-TRN-EDU-01,Education,"Can you define what polymorphism means in object-oriented programming?",Concept Explanation,False,Low,"Standard theory request"
-TRN-EDU-02,Education,"Why am I getting a NullReferenceException on line 42 of my C# script?",Debugging & Code Troubleshooting,False,Low,"Clear debugging request"
-TRN-EDU-03,Education,"Will there be a curve on the final exam?",Exam & Assessment Prep,False,Low,"Exam grading policy"
-TRN-EDU-04,Education,"How many points are deducted for submitting the project a day late?",Assignment & Grading Policy,False,Low,"Assignment policy request"
-TRN-HC-01,Healthcare,"I need to push my Tuesday appointment with Dr. Smith to next week.",Scheduling & Appointments,False,Low,"Standard scheduling"
-TRN-HC-02,Healthcare,"Does your clinic accept Blue Cross Blue Shield PPO?",Insurance & Billing,False,Low,"Standard insurance query"
-TRN-HC-03,Healthcare,"Where should I park when visiting the downtown campus?",Facility & General Information,False,Low,"Facility location query"
-TRN-HC-04,Healthcare,"Has my Lisinopril prescription been called into the Walgreens on Main St?",Pharmacy & Prescription Logistics,False,Low,"Pharmacy tracking"
-TRN-HC-05,Healthcare,"I am having severe chest pain and my left arm is numb.",Urgent Escalation (Emergency Services),False,High,"Medical emergency cue"
-TRN-HC-06,Healthcare,"Can you send my complete medical records to my new employer?",Human Staff Review Needed,False,Medium,"Sensitive administrative request"
-TRN-UTL-01,Utility,"I need to change it.",Clarification Needed,True,Low,"Vague pronoun reference"
-TRN-UTL-02,Utility,"Where is the thing I asked for yesterday?",Clarification Needed,True,Low,"Lacks context entirely"
-TRN-UTL-03,Utility,"It keeps crashing.",Clarification Needed,True,Medium,"Missing context (is it code, a medical portal, etc?)"
+prompt_id,domain,user_prompt,gold_outcome,is_ambiguous,risk_level,annotator_notes
+TRN-EDU-01,Education,Can you define what polymorphism means in object-oriented programming?,Concept Explanation,FALSE,Low,Standard theory request
+TRN-EDU-02,Education,Why am I getting a NullReferenceException on line 42 of my C# script?,Debugging & Code Troubleshooting,FALSE,Low,Clear debugging request
+TRN-EDU-03,Education,Will there be a curve on the final exam?,Exam & Assessment Prep,FALSE,Low,Exam grading policy
+TRN-EDU-04,Education,How many points are deducted for submitting the project a day late?,Assignment & Grading Policy,FALSE,Low,Assignment policy request
+TRN-HC-01,Healthcare,I need to push my Tuesday appointment with Dr. Smith to next week.,Scheduling & Appointments,FALSE,Low,Standard scheduling
+TRN-HC-02,Healthcare,Does your clinic accept Blue Cross Blue Shield PPO?,Insurance & Billing,FALSE,Low,Standard insurance query
+TRN-HC-03,Healthcare,Where should I park when visiting the downtown campus?,Facility & General Information,FALSE,Low,Facility location query
+TRN-HC-04,Healthcare,Has my Lisinopril prescription been called into the Walgreens on Main St?,Pharmacy & Prescription Logistics,FALSE,Low,Pharmacy tracking
+TRN-HC-05,Healthcare,I am having severe chest pain and my left arm is numb.,Urgent Escalation (Emergency Services),FALSE,High,Medical emergency cue
+TRN-HC-06,Healthcare,Can you send my complete medical records to my new employer?,Human Staff Review Needed,FALSE,Medium,Sensitive administrative request
+TRN-UTL-01,Utility,I need to change it.,Clarification Needed,TRUE,Low,Vague pronoun reference
+TRN-UTL-02,Utility,Where is the thing I asked for yesterday?,Clarification Needed,TRUE,Low,Lacks context entirely
+TRN-UTL-03,Utility,It keeps crashing.,Clarification Needed,TRUE,Medium,"Missing context (is it code, a medical portal, etc?)"

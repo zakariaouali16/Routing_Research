@@ -1,0 +1,13 @@
+Run log: /content/drive/MyDrive/Routing_Research/results/phase5/benchmark_LLMRouterV2_taxonomy_phase5_20260530_082229_run_log.txt
+Started: 2026-05-30 08:22:29
+
+
+--- Initializing Routers ---
+Loading embedding model: all-MiniLM-L6-v2...
+Loading taxonomy from /content/drive/MyDrive/Routing_Research/Data/taxonomy_phase5.json...
+Embedding 14 taxonomy definitions...
+Done! The Zero-Shot Taxonomy Router is ready.
+Note: Ignoring sparse training data at /content/drive/MyDrive/Routing_Research/Data/training_data.csv. Using Zero-Shot Taxonomy instead!
+Loading taxonomy from /content/drive/MyDrive/Routing_Research/Data/taxonomy_phase5.json...
+
+--- Running benchmark on 549 rows ---

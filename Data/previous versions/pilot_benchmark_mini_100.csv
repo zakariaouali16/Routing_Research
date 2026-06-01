@@ -1,0 +1,101 @@
+prompt_id,domain,user_prompt,gold_label,annotator_notes
+EDU-113,Education,Is it against the rules to use small code snippets from StackOverflow for this assignment as long as we cite them?,Assignment & Grading Policy,Asking about what is explicitly allowed/prohibited for an assignment.
+EDU-116,Education,What is the grading penalty if my assignment passes locally but fails on the autograder due to a timeout?,Assignment & Grading Policy,Question on the autograder grading policy for an assignment.
+EDU-084,Education,"my student id is 926345. Are we allowed to work in pairs for Homework 3, or is it strictly individual?",Assignment & Grading Policy,Collaboration policy question for a specific assignment.
+EDU-093,Education,my student id is 969290. How many points is each part of the rubric worth for the midterm project?,Assignment & Grading Policy,Grade breakdown question — asking about policy before submitting.
+EDU-110,Education,Are we permitted to collaborate with other students on the weekly coding assignments?,Assignment & Grading Policy,Clarification on academic integrity and allowed collaboration for assignments.
+EDU-106,Education,Is there a specific file naming convention we need to follow when zipping our assignment submission?,Assignment & Grading Policy,Asks for formatting/submission requirements for an assignment.
+EDU-086,Education,my student id is 197199. How much of the project grade is based on the written report versus the actual code?,Assignment & Grading Policy,Grade breakdown question for a specific deliverable.
+EDU-107,Education,How many points are deducted if our assignment code fails the hidden test cases on Gradescope?,Assignment & Grading Policy,Question regarding the grading rubric and point allocations for an assignment.
+UT-028,Utility,"""My script isn't working.""",Clarification Needed,"Ambiguous: Doesn't specify the language, the error, or provide code. "
+UT-041,Utility,"""I'm getting an error.""",Clarification Needed,"Ambiguous: Missing the actual error message, the code that produced it, or the platform where it occurred."
+UT-027,Utility,"""The output is wrong.""",Clarification Needed,"Ambiguous: Needs ""Expected"" vs ""Actual"" output and the source code. "
+UT-044,Utility,"""Do you take my insurance?""",Clarification Needed,Ambiguous: The user has not stated the name of their insurance provider or their specific plan.
+UT-025,Utility,"""My claim was denied. Why?""",Clarification Needed,"Missing account/claim details, requires clarification. "
+UT-038,Utility,"""The system is down.""",Clarification Needed,"Too broad: Needs clarification on which system (e.g., student portal, patient portal, autograder, telehealth link)."
+UT-013,Utility,"""Are we allowed to use the internet?""",Clarification Needed,Ambiguous scope. Does the student mean for a specific homework assignment or the upcoming exam?
+UT-020,Utility,"""Did my authorization go through yet?""",Clarification Needed,Missing context on what the authorization is for.
+EDU-020,Education,I've heard the terms 'concurrency' and 'parallelism' used interchangeably in lecture but someone told me they're different. Are they?,Concept Explanation,"Concept distinction question — no broken code, genuine learning intent."
+EDU-017,Education,"""okay so I get that stacks are LIFO but like... why would anyone actually use that? what's a real example where that matters?""",Concept Explanation,"Casual tone, genuine concept curiosity — real-world application of a data structure."
+EDU-016,Education,"""What is the CAP theorem and does it actually matter for the kind of databases we use in this class?""",Concept Explanation,"Distributed systems concept question, no code involved."
+EDU-027,Education,"""What is the actual difference between concurrency and parallelism? They seem like the exact same thing.""",Concept Explanation,Syntax/theory clarification request for two easily confused CS concepts.
+EDU-005,Education,"""I don't understand trees at all.""",Concept Explanation,Vague but recoverable — student clearly wants a concept explained. Missing specificity on tree type but domain and intent are clear.
+EDU-013,Education,"""What exactly is a pointer in C and why do people say it's dangerous?""",Concept Explanation,Language concept question with no code artifact.
+EDU-038,Education,"""I'm confused about Git. What is the difference between a merge and a rebase?""",Concept Explanation,"Tooling theory question; focuses on understanding how the commands differ conceptually, not fixing a broken repo."
+EDU-028,Education,"""I don't understand recursion at all. Can you give me a simple explanation of how a function calls itself without breaking?""",Concept Explanation,Student expressing confusion over a core concept; clearly seeking explanation rather than debugging.
+EDU-185,Education,"""I'm having trouble linking my local Git repository to GitHub Classroom. It keeps asking for a personal access token instead of my password.""",Course Logistics & Environment Setup,
+EDU-173,Education,Are lectures recorded and if so where can I find them after class?,Course Logistics & Environment Setup,Course resource access question.
+EDU-181,Education,Which version of Java are we required to use for this course?,Course Logistics & Environment Setup,
+EDU-175,Education,The Docker image for Assignment 4 is over 5GB. is there a lighter version for students with limited disk space?,Course Logistics & Environment Setup,Technical setup constraint question about course-provided tooling.
+EDU-166,Education,Are there office hours over spring break?,Course Logistics & Environment Setup,Schedule exception question.
+EDU-167,Education,"""Which version of Node.js do we need to install for the frontend module?""",Course Logistics & Environment Setup,Software versioning requirement.
+EDU-074,Education,"""""""Why does my C code print random garbage characters like @ instead of the string I passed to it?""""""",Debugging & Code Troubleshooting,Memory/pointer bug in student code resulting in unexpected output behavior.
+EDU-077,Education,"""""""I tried to write a regex to extract email addresses, but it's only matching the first letter of the domain. My regex: [a-z]+@[a-z]\.com""""""",Debugging & Code Troubleshooting,Broken implementation provided in the prompt; student expects it to match the full domain.
+EDU-045,Education,"Why is my React component rendering twice? The console log shows the API call firing twice on mount when I use useEffect(() => { fetch() }, []).",Debugging & Code Troubleshooting,Specific framework behavior with inline code snippet. Clear case.
+EDU-054,Education,My Git repo says 'detached HEAD state' and I have no idea what that means or how I got here.,Debugging & Code Troubleshooting,Specific tool error with exact error message. Clear case.
+EDU-071,Education,"""""""I keep getting a 'SyntaxError: unexpected token' in my JavaScript file. I checked all my curly braces and parentheses and they seem fine.""""""",Debugging & Code Troubleshooting,Troubleshooting request for a syntax error the student cannot visually locate.
+EDU-067,Education,"""""""I am getting a NullPointerException in Java when trying to call my getStudentName() method, but I'm pretty sure I instantiated the object correctly.""""""",Debugging & Code Troubleshooting,Classic student debugging scenario involving a specific language runtime error.
+EDU-047,Education,"My binary search keeps returning -1 even when the target is definitely in the list. Here's my code: def search(arr, t): lo, hi = 0, len(arr); while lo < hi: mid = (lo+hi)//2; if arr[mid]==t: return mid; elif arr[mid]<t: lo=mid; else: hi=mid-1; return -1",Debugging & Code Troubleshooting,Off-by-one error in binary search — full inline code snippet provided. Clear case.
+EDU-068,Education,"""""""Can someone help? My C++ program compiles fine but segfaults immediately when I run it.""""""",Debugging & Code Troubleshooting,Mentions a specific error (segmentation fault) occurring at runtime on the student's code.
+EDU-152,Education,Should we write high-level pseudo-code or syntactically perfect Java for the written questions on the test?,Exam & Assessment Prep,
+EDU-155,Education,Are the practice problems at the end of Chapter 4 representative of the difficulty of the actual exam questions?,Exam & Assessment Prep,
+EDU-123,Education,for class PHY144. Is the upcoming quiz open-book or closed-book?,Exam & Assessment Prep,Assessment rules inquiry.
+EDU-132,Education,for class MATH101. How much time do we get for the final exam?,Exam & Assessment Prep,Exam logistics question — duration.
+EDU-149,Education,Will we have access to the Python standard library documentation during the assessment?,Exam & Assessment Prep,
+EDU-145,Education,Will questions about red-black tree insertion be included on the upcoming quiz?,Exam & Assessment Prep,
+EDU-125,Education,for class PHY354. How many questions are typically on the final exam?,Exam & Assessment Prep,Exam structure inquiry.
+EDU-146,Education,What is the format of the midterm? Is it mostly multiple-choice or free-response coding questions?,Exam & Assessment Prep,
+HC-116,Healthcare,"""What are the regular operating hours for the main lobby desk?""",Facility & General Information,Inquiry about general building hours.
+HC-119,Healthcare,"""Is there a designated smoking area on the hospital grounds?""",Facility & General Information,Question regarding facility rules and designated zones.
+HC-087,Healthcare,"""Are there wheelchairs available at the main entrance?""",Facility & General Information,Accessibility question.
+HC-096,Healthcare,I’m running late and unfamiliar with the area—where should I park quickly?,Facility & General Information,Parking/directions with time pressure.
+HC-113,Healthcare,"""Is there a gift shop at the children's hospital? I want to buy flowers.""",Facility & General Information,Question about hospital services/shops for visitors.
+HC-109,Healthcare,"""Can you give me directions to the outpatient surgery center from the main entrance?""",Facility & General Information,Wayfinding and internal facility directions.
+HC-089,Healthcare,"""Can I bring my service dog to my chemotherapy appointment?""",Facility & General Information,Policy question involving ADA/service animal compliance.
+HC-110,Healthcare,"""Do you have wheelchairs available for use at the front entrance?""",Facility & General Information,Question regarding physical accessibility and available equipment.
+HC-195,Healthcare,I am submitting a formal HIPAA inquiry because my privacy was violated when someone leaked my medical records.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HC-182,Healthcare,I need to get a full copy of my medical records sent to my lawyer by next week.,Human Staff Review Needed,Medical records request for legal purposes requires human handling.
+HC-183,Healthcare,The nurse who checked me in today was incredibly rude and made an inappropriate comment. I want to file a formal complaint.,Human Staff Review Needed,Staff complaint requiring formal grievance process.
+HC-194,Healthcare,I need to authorize my son to make medical decisions for me if I become incapacitated. Do you have a form for that?,Human Staff Review Needed,Proxy authorization/advance directive inquiry.
+HC-192,Healthcare,I am making a legally complex documentation request for a service animal accommodation.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HC-198,Healthcare,I have a legally complex documentation request for my disability claim that requires staff review.,Human Staff Review Needed,Rewritten with strong HSR keywords.
+HC-162,Healthcare,I think one of the night nurses stole cash out of my purse while I was sleeping.,Human Staff Review Needed,Accusation of theft/crime by staff.
+HC-170,Healthcare,my account number is 68785. I was discharged last week but never received my discharge summary — how do I get it?,Human Staff Review Needed,Post-discharge records request. Privacy-sensitive administrative follow-up.
+HC-166,Healthcare,Can I get a doctor's note excusing me from work for the last two weeks?,Human Staff Review Needed,Retroactive medical absence request; requires human/clinical review of the chart.
+EDU-218,Education,"""I need the professor to sign my CPT authorization form for my summer internship. Can someone review my standing and sign it?""",Instructor/TA Escalation,
+EDU-204,Education,my student id is 514486. I received a failing grade for academic dishonesty but was never notified or given a chance to respond. Is there an appeal process?,Instructor/TA Escalation,Formal academic integrity appeal — requires institutional process.
+EDU-213,Education,"""I just received my official DRC accommodation letter for 1.5x time on exams. Can you ensure this is applied to my account before the midterm tomorrow?""",Instructor/TA Escalation,
+EDU-206,Education, I reported a classmate for sharing exam questions in a group chat and now I'm being pressured by other students. What should I do?,Instructor/TA Escalation,Retaliation concern after reporting misconduct — requires faculty or admin intervention.
+EDU-197,Education,"my student id is 353882. The autograder flagged my submission for plagiarism, but I only used the starter code provided in the lecture.",Instructor/TA Escalation,Plagiarism dispute; requires immediate escalation.
+EDU-198,Education,my student id is 800067. I need the professor to sign a form for my scholarship confirming my current standing in the class.,Instructor/TA Escalation,Administrative signature request requiring faculty authority.
+HC-066,Healthcare,"""Do you currently accept Blue Cross Blue Shield PPO plans?""",Insurance & Billing,Standard insurance network verification question.
+HC-055,Healthcare,Is there a payment plan option for large balances?,Insurance & Billing,Financial logistics question.
+HC-050,Healthcare,my account number is 20121. I got a letter saying my network status changed and you are now out-of-network. Will I be billed for yesterday's visit?,Insurance & Billing,Complex billing policy question regarding network status overlap.
+HC-067,Healthcare,"""I received a bill for my last visit, but I thought my copay covered it. Can someone explain this charge?""",Insurance & Billing,Inquiry regarding a specific unexpected charge.
+HC-046,Healthcare,Can I pay my balance online or do I have to mail a check?,Insurance & Billing,Payment method logistics.
+HC-082,Healthcare,"""Are your telemedicine visits billed at the same rate as in-person visits, or is there a different fee schedule?""",Insurance & Billing,Question comparing costs of different visit modalities.
+HC-061,Healthcare,my account number is 64850. I have two insurance plans — which one do you bill first?,Insurance & Billing,Coordination of benefits question. Underspecified but routable — common administrative scenario.
+HC-081,Healthcare,"""I lost my job and cannot afford this $2,000 medical bill. Do you have a charity care or financial assistance program?""",Insurance & Billing,Inquiry about financial hardship programs.
+HC-157,Healthcare,"""Can my husband pick up my prescription for me if I give him my ID?""",Pharmacy & Prescription Logistics,
+HC-135,Healthcare,my account number is 38607. Can I switch to a different pharmacy without contacting my doctor again?,Pharmacy & Prescription Logistics,Transfer process question.
+HC-148,Healthcare,"""Can you change my default pharmacy on file to the CVS on 5th Street?""",Pharmacy & Prescription Logistics,
+HC-152,Healthcare,"""Is my prescription ready for pickup right now, or do I need to wait until tomorrow morning?""",Pharmacy & Prescription Logistics,
+HC-138,Healthcare,my account number is 28088. I was told my prescription needs prior authorization — what does that mean and how long does it take?,Pharmacy & Prescription Logistics,Prior authorization process question. Administrative only.
+HC-153,Healthcare,"""Please route my new antibiotic prescription to the hospital pharmacy instead of my usual one just for today.""",Pharmacy & Prescription Logistics,
+HC-143,Healthcare,"my account number is 18958. My pharmacy says my prescription expired, can you send a new one?",Pharmacy & Prescription Logistics,
+HC-025,Healthcare,my account number is 72315. How do I cancel my physical therapy appointment online?,Scheduling & Appointments,
+HC-014,Healthcare,my account number is 13855. I have two appointments next week — can I combine them into one visit?,Scheduling & Appointments,Consolidation request. Specific logistical ask.
+HC-009,Healthcare,I need to see a cardiologist next week but only after 3pm.,Scheduling & Appointments,Specialty and time constraint both present.
+HC-026,Healthcare,"""I need to schedule my annual physical with Dr. Miller for sometime next month.""",Scheduling & Appointments,Standard request to book a new routine appointment.
+HC-005,Healthcare,"I need to be seen today, I can't wait until next week.",Scheduling & Appointments,Status check. Missing all required slots but routing intent is clear. Underspecified but routable.
+HC-041,Healthcare,"""I missed my appointment yesterday because I wrote down the wrong date. Can I get rescheduled?""",Scheduling & Appointments,Rescheduling following a no-show.
+HC-020,Healthcare,I need to book an appointment but I'm not sure how far in advance I need to call.,Scheduling & Appointments,Process/policy question within scheduling context.
+HC-040,Healthcare,"""Can I schedule well-child exams for all three of my kids back-to-back on the same afternoon?""",Scheduling & Appointments,Complex booking request involving multiple patients.
+HC-221,Healthcare,I haven't been able to stop crying for three days and I don't want to be here anymore.,Urgent Escalation,Suicidal ideation signal. Ambiguous phrasing but safety-first escalation is mandatory. Boundary stress-test against Clarification Needed.
+HC-218,Healthcare,I think my child swallowed something small and is now making a choking sound.,Urgent Escalation,Pediatric choking emergency.
+HC-217,Healthcare,I was just in a car accident and my passenger is not responding.,Urgent Escalation,Trauma emergency involving unresponsive person.
+HC-228,Healthcare,"""I accidentally cut my arm deeply and the bleeding won't stop even with pressure, it's soaking through the towels.""",Urgent Escalation,Uncontrolled hemorrhage.
+HC-206,Healthcare,"""I think I am having a stroke. The right side of my face is drooping and I can't speak right.""",Urgent Escalation,Classic stroke (CVA) cues.
+HC-214,Healthcare,I think I might be having thoughts of hurting myself — is there someone I can talk to?,Urgent Escalation,Clear psychiatric distress signal. Less ambiguous than original while still being a boundary stress-test against Clarification Needed. Safety-first escalation mandatory.
+HC-239,Healthcare,"""I just drank a cleaning chemical by mistake and my mouth and stomach are burning intensely.""",Urgent Escalation,Poisoning and corrosive chemical ingestion.
+HC-229,Healthcare,"""I think I'm having a severe allergic reaction to my new medication, my throat feels like it's swelling shut.""",Urgent Escalation,Anaphylaxis with airway compromise.
