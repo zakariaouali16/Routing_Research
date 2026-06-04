@@ -4,6 +4,8 @@
 **Paper:** *Reliable Large Language Model Routing for Non-Clinical Healthcare and Education Support* — ICAISF 2026  
 **Benchmark:** 549 prompts · 14 routing outcomes · Gemma 4 12B router vs. embedding baseline
 
+**Live Demo:** [https://router-400620277996.us-central1.run.app/](https://router-400620277996.us-central1.run.app/)
+
 ---
 
 ## Overview
