@@ -1,123 +1,292 @@
-Reliable LLM Agents for Routing and Triage
-Domains: Education (Computing Support) & Healthcare (Non-Clinical)
-Timeline: February 23, 2026 – May 17, 2026
-Project Overview 
+# Reliable LLM Routing for Non-Clinical Healthcare and Education Support
 
-This repository contains the code, data benchmarks, and evaluation logs for building and analyzing reliable LLM agents designed for routing and triage.
+**Domains:** Computing/Programming Education Support & Non-Clinical Healthcare Support  
+**Paper:** *Reliable Large Language Model Routing for Non-Clinical Healthcare and Education Support* — ICAISF 2026  
+**Benchmark:** 549 prompts · 14 routing outcomes · Gemma 4 12B router vs. embedding baseline
 
-The core research contribution is not building a conversational chatbot. Rather, it is demonstrating measurable improvements in system reliability when handling incomplete, ambiguous, or high-risk user requests.
+---
 
-Core Behaviors Evaluated:
-Correct Routing: Accurately mapping user queries to a predefined set of categories.
+## Overview
 
-Uncertainty Signaling: Confidently refusing to route when the request is out-of-scope or lacks sufficient context.
+This repository contains the full implementation, benchmark data, and evaluation pipeline for a layered LLM routing framework designed for sensitive support domains. The core contribution is not a chatbot — it is a **reliable routing system** that decides *how to handle* a request before any response is generated.
 
-Clarifying Questions: Actively asking the user for more information instead of guessing the intent.
+In non-clinical healthcare and computing education, a router must do more than pick the closest intent label. Some requests must be **refused** (clinical advice), some require **immediate escalation** (emergencies, active exam cheating), and many are too vague to route confidently and should trigger **clarification** instead. A single classifier cannot enforce these behaviors reliably. A layered architecture can.
 
-Scope & Taxonomy
-To reduce ambiguity and ensure high-quality evaluation, the project strictly limits its scope to the following subdomains:
-1. Education: Computing & Programming SupportFocuses purely on technical and logistical student support.
- *Minimum Labels (6): Concept confusion, Debugging help, Assignment-policy, Exam-prep, Course logistics, Escalate to Instructor/TA.
- 2. Healthcare: Non-Clinical AdministrationStrictly non-diagnostic. The system must not prescribe or provide medical advice.
-  *Minimum Labels (6): Scheduling/Appointments, Insurance/Billing, General Information, Pharmacy/Logistics, Urgent Escalation (red-flag cues), Needs Human Staff Review.
-  *Note: The absolute baseline is 12 total labels. The ideal target is 8–10 per domain, to be finalized in Phase 1.
+### Key Results (549-prompt frozen benchmark)
 
-Benchmark Dataset Definition
-A credible paper requires a rigorous evaluation benchmark. We distinguish strictly between route labels and labeled examples.
+| Metric | Embedding Baseline | LLM Router (Gemma 4) |
+|---|---|---|
+| Overall Accuracy | 61.7% | **93.4%** |
+| Wrong-Confident Rate (WCR) ↓ | 37.7% | **5.6%** |
+| Clarification F1 | 0.24 | **0.82** |
+| Clinical Advice Refusal Recall | 30.0% | **97.5%** |
+| Urgent Escalation Recall | 85.0% | **100%** |
+| Instructor/TA Escalation Recall | 37.5% | **93.8%** |
+| Macro-F1 | 0.61 | **0.94** |
 
-Metric                    Minimum Acceptable               Paper-Quality Target
+---
 
-Route Labels              12 (6 per domain)                16–20 (8-10 per domain)
+## Taxonomy
 
-Examples per Label             30                              40–50+
+The routing taxonomy has two tiers evaluated in strict priority order.
 
-Total Benchmark Size      360 manually labeled prompts     500–800 prompts
+**Tier 1 — Gating Outcomes** (evaluated first; absolute priority):
+- **Urgent Escalation** — active medical/psychiatric emergencies
+- **Clinical Advice Refusal** — diagnosis, treatment, or clinical interpretation requests
+- **Clarification Needed** — prompt lacks sufficient context to route confidently
 
-The final dataset must deliberately include "hard cases": ambiguous wording, missing context, mixed intents, and high-risk language requiring immediate escalation.
+**Tier 2 — Domain Labels** (evaluated only if no gating outcome applies):
 
-System Architecture & Models
-The pipeline is designed to be model-agnostic. We evaluate and compare the following:
-    *Non-LLM Baseline: Rule-based, keyword, or simple embedding retrieval (to prove baseline improvement).
-    *Open-Source Instruct LLM: Small/medium model run locally or via free Colab.
-    *Stronger Open Model (Optional): An accessible, high-performing model evaluated without cost barriers.
-    *Interaction Interface: For the core research phase, interaction is strictly script/notebook-based (input prompt → model output → logged result) to maintain focus on data and metrics.
+| Education (6 labels) | Healthcare (5 labels) |
+|---|---|
+| Concept Explanation | Scheduling & Appointments |
+| Debugging & Code Troubleshooting | Insurance & Billing |
+| Assignment & Grading Policy | Facility & General Information |
+| Exam & Assessment Prep | Pharmacy & Prescription Logistics |
+| Course Logistics & Environment Setup | Human Staff Review Needed |
+| Instructor/TA Escalation | |
 
-12-Week Project Schedule & Milestones
+![Taxonomy Design](figures/fig1_taxonomy.png)
 
-This project utilizes a shared-stage model where all team members participate in every phase, but a designated phase lead manages coordination and integration.
-Buffer Period: May 18 – May 31, 2026 (Reserved strictly for writing polish and targeted fixes, NOT core work).
+Each domain label includes **required slots** (e.g., `account_number`, `student_id`, `class_id`). If a best-fit label is missing its required slots, the system defers to **Clarification Needed** rather than routing with missing context.
 
-Phase 1: Foundation & Baselines (Lead: TBD)
-    *Week 1 (Feb 23 – Mar 1): Lock scope, define exact taxonomies, establish boundary rules, and define output schemas.
-    *Week 2 (Mar 2 – Mar 8): Build data pipeline, draft labeling guidelines, create pilot benchmark (60–100 prompts). Resolve inter-annotator disagreements.
-    *Week 3 (Mar 9 – Mar 15): Scale data collection. Implement non-LLM baseline router.
-    *Week 4 (Mar 16 – Mar 22): Implement LLM v1. Run baseline vs. LLM v1 comparison. Identify failure patterns.
-    🚩 Phase 1 Report Due: Sunday, March 22, 2026 
+The full taxonomy with definitions and required slots is in [Data/taxonomy_phase5.json](Data/taxonomy_phase5.json).
 
-Phase 2: Reliability Mechanisms (Lead: TBD)
-    *Week 5 (Mar 23 – Mar 29): Implement uncertainty handling and clarifying-question conditions. Measure reduction in confident errors.
-    *Week 6 (Mar 30 – Apr 5): Add one targeted reliability mechanism (e.g., retrieval grounding or consistency verification).
-    🚩 Phase 2 Report Due: Sunday, April 5, 2026 
+---
 
-Phase 3: Scaling & Full Evaluation (Lead: TBD)
-    *Week 7 (Apr 6 – Apr 12): Expand benchmark to final size (360+). Inject hard/ambiguous edge cases.
-    *Week 8 (Apr 13 – Apr 19): Run full evaluation. Compute routing accuracy, clarification frequency, and wrong-confident rates.
-    🚩 Phase 3 Report Due: Sunday, April 19, 2026 
+## Baseline: Semantic Embedding Router
 
-Phase 4: Analysis & Ablation (Lead: TBD)
-    *Week 9 (Apr 20 – Apr 26): Conduct ablations (e.g., test system with/without verification/grounding).
-    *Week 10 (Apr 27 – May 3): Deep error analysis. Categorize failures (label confusion, unsafe overconfidence, etc.) with evidence.
-    🚩 Phase 4 Report Due: Sunday, May 3, 2026 
+The baseline is a nearest-neighbor semantic router using [`all-MiniLM-L6-v2`](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2).
 
-Phase 5: Paper Drafting & Verification (Lead: TBD)
-    *Week 11 (May 4 – May 10): Draft full paper in Overleaf (Intro, scope, related work, methods, results, analysis).
-    *Week 12 (May 11 – May 17): Reproducibility checks, clean figures, finalize code package.
-    🚩 Final Package Due: Sunday, May 17, 2026 
-    
-Operations & Accountability
-    *Version Control: Log every major experiment clearly. If a result cannot be traced back to the exact prompt version, model name, and dataset version, it is invalid. Use structured naming (e.g., benchmark_v0-pilot.json, benchmark_v1.json).
-    *Weekly Meetings: Mandatory team meeting to review actual outputs (logs, metrics, data), not abstract concepts.
-    *Phase Reports: Zakaria is responsible for emailing the advisor at the end of each phase. Reports must state: completed work, attached evidence, broken elements, and next steps.
+**How it works:**
+1. **Offline indexing** — each taxonomy label name + definition is encoded into a 384-dimensional dense vector and stored in a reference index.
+2. **Online routing** — each incoming prompt is embedded with the same model, then matched to the closest reference vector by cosine similarity.
+3. **Threshold** — if the top similarity score is below τ = 0.5, or if the nearest neighbor is tagged ambiguous, the baseline predicts **Clarification Needed**.
 
-Literature Review Guidelines
-    The literature review must directly support the system design and evaluation protocol. Deliverables include a structured reading table, a synthesized summary of field gaps, and a clear statement of contribution.
-    Focus Areas:
-        -Intent classification / Triage systems.
-        -LLMs in education/healthcare support.
-        -Reliability methods (uncertainty, refusal, verification).
-        -Evaluation design and error analysis for ambiguous queries.
+![Baseline: Semantic Embedding Router](figures/fig2_baseline_router.png)
 
-1. The "Needs Clarification" Threshold (Handling Ambiguity)
-Rule: The system must never guess the user's intent if the prompt lacks sufficient context to confidently choose a single label.
+The baseline has an uncertainty mechanism (threshold + ambiguity tag) but no ability to enforce safety escalation or required-slot reasoning. It cannot refuse clinical advice or guarantee urgent escalation — it can only get close by similarity.
 
-Trigger: The prompt is too brief (e.g., "I have a question," "Help with my account") or equally matches two non-urgent labels (e.g., "I need help with my portal" could be scheduling or billing).
+**Implementation:** [src/baselines/baseline_embedding_router.py](src/baselines/baseline_embedding_router.py)
 
-Action: Do not force a label. The agent must flag clarification_needed: true and generate a single, specific follow-up question (e.g., "Are you trying to schedule an appointment or pay a bill?").
+---
 
-2. Priority Routing for Multi-Intent Queries
-Rule: If a user’s prompt contains multiple questions that map to different labels, the system must route based on the highest-risk or most restrictive intent.
+## LLM Router: Five-Stage Pipeline
 
-Healthcare Example: "Can I schedule an appointment for next week? Also, my chest is hurting really badly right now." -> Action: Route immediately to Urgent Escalation (Emergency Services), completely ignoring the scheduling request.
+The proposed router uses a deterministic + probabilistic five-stage pipeline:
 
-Education Example: "When is the midterm, and I think my partner copied my code?" -> Action: Route to Instructor/TA Escalation, as academic integrity overrides general exam prep.
+![LLM Routing Agent Design](figures/fig3_llm_pipeline.png)
 
-3. Strict Escalation Triggers (Handling Risk)
-Rule: Any language indicating physical danger, severe mental distress, or high-stakes policy violations must bypass standard routing.
+### Stage 1 — Safety Override (deterministic)
+A keyword scan that fires **before** the gate or LLM. Checks for unambiguous physical emergencies and psychiatric crises: active bleeding, chest pain, overdose in progress, suicidal ideation, seizure, choking, etc. Returns **Urgent Escalation** immediately without any LLM call.
 
-Healthcare Triggers: Keywords or phrases indicating acute distress (e.g., "chest pain," "bleeding heavily," "can't breathe," "suicidal"). -> Action: Route to Urgent Escalation.
+### Stage 2 — Academic Override (deterministic)
+A keyword scan for active exam cheating attempts and academic integrity violations. Phrases like *"in the middle of my exam right now"* or *"flagged for plagiarism"* route deterministically to **Instructor/TA Escalation**, bypassing the gate and router.
 
-Education Triggers: Mentions of grade disputes, cheating/plagiarism, Title IX issues, or requests for extensions due to severe personal/medical emergencies. -> Action: Route to Instructor/TA Escalation.
+### Stage 3 — Information-Sufficiency Gate (LLM)
+Asks Gemma 4: *"Does this prompt contain enough information to confidently match exactly one label?"* Returns `true` (route it) or `false` (→ **Clarification Needed**). Answers `false` when:
+- The request is too vague to identify any intent (e.g., *"I need help"*)
+- The intent is clear but the required referent is missing (e.g., *"Is my prescription ready?"* — no patient or pharmacy context)
+- Two labels match equally well with no disambiguating signal
 
-4. The Clinical/Diagnostic Firewall (Healthcare Specific)
-Rule: The healthcare agent is strictly administrative. It must refuse to engage with clinical questions.
+Clinical questions always pass through to be refused appropriately, even if brief.
 
-Trigger: The user asks for a diagnosis, medication advice, or symptom evaluation (e.g., "Does this rash look infected?", "Should I take Tylenol or Advil?").
+### Stage 4 — LLM Classifier (Gemma 4, JSON)
+Sends the prompt to Gemma 4 12B Unified with the full taxonomy and strict JSON constraints. The prompt enforces:
+- Gating outcomes checked first
+- Hard domain separation rule (education labels never applied to healthcare prompts and vice versa)
+- Required-slot check: if a best-fit label is missing slots → return **Clarification Needed**
 
-Action: The system must not attempt to answer. It should route the request to Human Staff Review Needed (or a dedicated refusal category if you add one later) and explicitly state in its reasoning that it cannot provide medical advice.
+Output schema:
+```json
+{
+    "predicted_label": "exact label name from taxonomy",
+    "confidence_level": "High | Medium | Low",
+    "missing_slots": ["list of missing required slots, or []"],
+    "short_reason": "brief explanation"
+}
+```
 
-5. Out-of-Scope Rejection
-Rule: Queries entirely unrelated to the defined domains must not be forced into a taxonomy label.
+### Stage 5 — Hallucination Guard (deterministic)
+Validates the LLM's predicted label against the allowed taxonomy. Resolution order:
+1. Exact match → accept
+2. Case-insensitive match → normalize to canonical casing
+3. Substring match → resolve to canonical label
+4. No match → fall back to **Clarification Needed**
 
-Trigger: User asks about unrelated topics (e.g., "Write me a poem," "What's the weather in London?").
+This prevents any invented or paraphrased label names from escaping the pipeline.
 
-Action: The system should flag clarification_needed: true with a response stating the system's purpose and asking if the user has a relevant question, or route to Human Staff Review Needed if it suspects malicious prompt injection.
+**Implementation:** [src/llm_router_phase5_1.py](src/llm_router_phase5_1.py)
+
+---
+
+## Results
+
+### Routing Accuracy by Domain
+
+![Routing Accuracy by Domain](figures/fig4_accuracy_by_domain.png)
+
+The strongest improvements are in **gating** (+50 pp) and **education** (+36 pp), where ambiguity and overlapping terminology make cosine similarity unreliable. Healthcare was already the baseline's strongest domain at 77.1%; the LLM router brings it to 92.5%.
+
+| Partition | n | Embedding | LLM Router |
+|---|---|---|---|
+| Overall | 549 | 61.7% | **93.4%** |
+| Education | 220 | 59.1% | **95.0%** |
+| Healthcare | 201 | 77.1% | **92.5%** |
+| Gating | 128 | 42.2% | **92.2%** |
+| Macro-F1 | — | 0.61 | **0.94** |
+
+### Per-Class F1 Score
+
+![Per-Class F1 Score](figures/fig6_f1_per_class.png)
+
+The largest gaps appear in the categories that define the reliability goal: **Clarification Needed** (F1: 0.24 → 0.82), **Clinical Advice Refusal** (0.30 → 0.95), and **Instructor/TA Escalation** (0.50 → 0.92). The LLM router achieves F1 = 1.00 on Debugging & Code Troubleshooting and Concept Explanation.
+
+### Reliability & Safety Metrics
+
+![Reliability and Safety-Critical Metrics](figures/fig5_reliability_metrics.png)
+
+| Metric | Baseline | LLM Router |
+|---|---|---|
+| Wrong-Confident Rate (WCR) ↓ | 0.377 | **0.056** |
+| Clarification Precision | 0.444 | **0.830** |
+| Clarification Recall | 0.167 | **0.812** |
+| Clarification F1 | 0.242 | **0.821** |
+| Clinical Advice Refusal Recall | 0.300 | **0.975** |
+| Urgent Escalation Recall | 0.850 | **1.000** |
+| Instructor/TA Escalation Recall | 0.375 | **0.938** |
+| Combined Escalation Recall | 0.639 | **0.972** |
+
+### Safety Failures: Missed Escalations
+
+![Safety Failures: Missed Escalations](figures/fig7_safety_failures.png)
+
+| Category | N | Baseline Missed | LLM Missed |
+|---|---|---|---|
+| Clinical Advice Refusal | 40 | 28 | **1** |
+| Instructor/TA Escalation | 32 | 20 | **2** |
+| Urgent Escalation | 40 | 6 | **0** |
+| Combined High-Risk | 72 | 26 | **1** |
+
+The LLM router misses only 1 high-risk prompt out of 72 combined. The baseline misses 26 — including 28 clinical advice refusals and 20 instructor/TA escalations.
+
+### Ablation Study
+
+| Configuration | Accuracy |
+|---|---|
+| Full system | **93.44%** |
+| No safety override | 93.26% |
+| No clarification gate | 92.53% |
+| No safety or clarification components | 92.35% |
+
+The safety and clarification components each contribute independently. Removing both drops accuracy by ~1 pp, but the bigger impact is on safety-critical recall (not captured by overall accuracy).
+
+---
+
+## Benchmark
+
+The benchmark contains **549 manually constructed prompts** across 14 routing outcomes, developed through five phases: 60-prompt pilot → boundary/ambiguous case expansion → consistency checks → required-slot cases → frozen benchmark.
+
+| Partition | Prompts | Outcomes |
+|---|---|---|
+| Education | 220 | 6 in-domain labels |
+| Healthcare | 201 | 5 in-domain labels |
+| Gating | 128 | 3 priority outcomes |
+| **Total** | **549** | **14 outcomes** |
+
+Each label has ~30–48 prompts. Hard cases (ambiguous wording, missing context, mixed intents, high-risk language) are deliberately included.
+
+**Data:** [Data/taxonomy_phase5.json](Data/taxonomy_phase5.json) — taxonomy definitions and required slots.
+
+---
+
+## Repository Structure
+
+```
+Routing_Research/
+├── src/
+│   ├── llm_router_phase5_1.py          # LLM router (5-stage pipeline)
+│   ├── compare_routers_phase5_1.py     # Full evaluation: baseline vs LLM router
+│   ├── compare_routers_ablations.py    # Ablation experiments
+│   ├── reliability_metrics.py          # WCR, clarification F1, escalation recall
+│   ├── tee_logger.py                   # Logging utility
+│   └── baselines/
+│       └── baseline_embedding_router.py  # all-MiniLM-L6-v2 nearest-neighbor router
+├── Data/
+│   └── taxonomy_phase5.json            # Full taxonomy v5.3 (14 labels + definitions)
+├── results/
+│   ├── phase5/                         # Full benchmark results + reliability summaries
+│   └── phase5/ablations/              # Ablation run outputs
+├── figures/                            # Paper figures (place chart images here)
+├── Notebooks/                          # Jupyter notebooks for analysis
+├── papers/                             # Related work PDFs
+└── Docs/
+    └── outputSchema.json              # Router output schema reference
+```
+
+---
+
+## Setup & Running
+
+### Requirements
+
+```bash
+pip install sentence-transformers scikit-learn pandas tqdm requests
+```
+
+Requires [Ollama](https://ollama.com/) running locally with Gemma 4 pulled:
+
+```bash
+ollama pull gemma4   # or the specific model tag used
+```
+
+### Run the Full Evaluation
+
+```bash
+cd src
+python compare_routers_phase5_1.py
+```
+
+Results and reliability summaries are saved to `results/phase5/`.
+
+### Run Ablation Experiments
+
+```bash
+cd src
+python compare_routers_ablations.py
+```
+
+### Interactive Mode (single prompt)
+
+```bash
+cd src
+python llm_router_phase5_1.py
+```
+
+### Baseline Only
+
+```bash
+cd src/baselines
+python baseline_embedding_router.py
+```
+
+---
+
+## Limitations
+
+- The benchmark was constructed alongside the taxonomy; results should be interpreted as performance on a development-aligned pilot, not a fully independent test set.
+- Safety and academic overrides use keyword lists and may over-trigger or miss indirect expressions.
+- The system was not evaluated with real students, patients, or staff.
+- Confidence values are not calibrated probabilities.
+- The healthcare scope is strictly non-clinical and non-diagnostic by design — emergencies are escalated, clinical advice is refused, and ordinary routing covers only administrative/informational support.
+
+---
+
+## Citation
+
+If you use this work, please cite:
+
+```
+Reliable Large Language Model Routing for Non-Clinical Healthcare and Education Support.
+ICAISF 2026.
+```
