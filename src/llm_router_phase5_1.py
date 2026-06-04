@@ -313,10 +313,11 @@ USER REQUEST: "{user_prompt}"
           "no_academic"            — skip academic keyword override
           "no_gate"                — skip clarification gate
           "no_hallucination_guard" — skip hallucination guard (use raw LLM label as-is)
+          "no_all"                 — skip all four components (baseline LLM only)
         """
 
         # ── PHYSICAL SAFETY OVERRIDE (pre-gate) ───────────────────────────────
-        if ablation != "no_safety":
+        if ablation not in ("no_safety", "no_all"):
             safety_label = self._check_safety_override(user_prompt)
             if safety_label:
                 return {
@@ -330,7 +331,7 @@ USER REQUEST: "{user_prompt}"
                 }
 
         # ── ACADEMIC SAFETY OVERRIDE (pre-gate) ───────────────────────────────
-        if ablation != "no_academic":
+        if ablation not in ("no_academic", "no_all"):
             academic_label = self._check_academic_override(user_prompt)
             if academic_label:
                 return {
@@ -344,7 +345,7 @@ USER REQUEST: "{user_prompt}"
                 }
 
         # ── STEP A: Gate ───────────────────────────────────────────────────────
-        if ablation != "no_gate":
+        if ablation not in ("no_gate", "no_all"):
             has_enough_info = self.check_gate(user_prompt)
             if not has_enough_info:
                 return {
@@ -392,7 +393,7 @@ USER REQUEST: "{user_prompt}"
         missing_slots = initial_output.get("missing_slots", [])
 
         # ── Hallucination guard ────────────────────────────────────────────────
-        if ablation != "no_hallucination_guard":
+        if ablation not in ("no_hallucination_guard", "no_all"):
             validated_label, was_corrected = self._validate_label(raw_label)
         else:
             validated_label, was_corrected = raw_label, False
