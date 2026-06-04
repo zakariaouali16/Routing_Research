@@ -46,7 +46,7 @@ The routing taxonomy has two tiers evaluated in strict priority order.
 | Course Logistics & Environment Setup | Human Staff Review Needed |
 | Instructor/TA Escalation | |
 
-![Taxonomy Design](figures/fig1_taxonomy.png)
+![Taxonomy Design](figures/figure1_1.jpg)
 
 Each domain label includes **required slots** (e.g., `account_number`, `student_id`, `class_id`). If a best-fit label is missing its required slots, the system defers to **Clarification Needed** rather than routing with missing context.
 
@@ -63,7 +63,7 @@ The baseline is a nearest-neighbor semantic router using [`all-MiniLM-L6-v2`](ht
 2. **Online routing** — each incoming prompt is embedded with the same model, then matched to the closest reference vector by cosine similarity.
 3. **Threshold** — if the top similarity score is below τ = 0.5, or if the nearest neighbor is tagged ambiguous, the baseline predicts **Clarification Needed**.
 
-![Baseline: Semantic Embedding Router](figures/fig2_baseline_router.png)
+![Baseline: Semantic Embedding Router](figures/Baseline.png)
 
 The baseline has an uncertainty mechanism (threshold + ambiguity tag) but no ability to enforce safety escalation or required-slot reasoning. It cannot refuse clinical advice or guarantee urgent escalation — it can only get close by similarity.
 
@@ -124,7 +124,7 @@ This prevents any invented or paraphrased label names from escaping the pipeline
 
 ### Routing Accuracy by Domain
 
-![Routing Accuracy by Domain](figures/fig4_accuracy_by_domain.png)
+![Routing Accuracy by Domain](figures/1_domain_accuracy.jpg)
 
 The strongest improvements are in **gating** (+50 pp) and **education** (+36 pp), where ambiguity and overlapping terminology make cosine similarity unreliable. Healthcare was already the baseline's strongest domain at 77.1%; the LLM router brings it to 92.5%.
 
@@ -138,13 +138,13 @@ The strongest improvements are in **gating** (+50 pp) and **education** (+36 pp)
 
 ### Per-Class F1 Score
 
-![Per-Class F1 Score](figures/fig6_f1_per_class.png)
+![Per-Class F1 Score](figures/fig6_f1_per_class.jpg)
 
 The largest gaps appear in the categories that define the reliability goal: **Clarification Needed** (F1: 0.24 → 0.82), **Clinical Advice Refusal** (0.30 → 0.95), and **Instructor/TA Escalation** (0.50 → 0.92). The LLM router achieves F1 = 1.00 on Debugging & Code Troubleshooting and Concept Explanation.
 
 ### Reliability & Safety Metrics
 
-![Reliability and Safety-Critical Metrics](figures/fig5_reliability_metrics.png)
+![Reliability and Safety-Critical Metrics](figures/3_reliability.jpg)
 
 | Metric | Baseline | LLM Router |
 |---|---|---|
@@ -159,7 +159,7 @@ The largest gaps appear in the categories that define the reliability goal: **Cl
 
 ### Safety Failures: Missed Escalations
 
-![Safety Failures: Missed Escalations](figures/fig7_safety_failures.png)
+![Safety Failures: Missed Escalations](figures/4_safety.jpg)
 
 | Category | N | Baseline Missed | LLM Missed |
 |---|---|---|---|
@@ -217,7 +217,7 @@ Routing_Research/
 ├── results/
 │   ├── phase5/                         # Full benchmark results + reliability summaries
 │   └── phase5/ablations/              # Ablation run outputs
-├── figures/                            # Paper figures (place chart images here)
+├── figures/                            # Paper figures 
 ├── Notebooks/                          # Jupyter notebooks for analysis
 ├── papers/                             # Related work PDFs
 └── Docs/
@@ -237,7 +237,7 @@ pip install sentence-transformers scikit-learn pandas tqdm requests
 Requires [Ollama](https://ollama.com/) running locally with Gemma 4 pulled:
 
 ```bash
-ollama pull gemma4   # or the specific model tag used
+ollama pull gemma4 #we used Gemma 4 12B Unified
 ```
 
 ### Run the Full Evaluation
