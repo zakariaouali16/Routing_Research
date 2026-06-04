@@ -1,0 +1,7 @@
+router,wcr,clarif_precision,clarif_recall,clarif_f1,clinical_recall,urgent_recall,instructor_recall,escalation_recall,halluc_corrections
+Baseline (Embedding),0.3766,0.4444,0.1667,0.2424,0.3,0.85,0.375,0.6389,0
+LLM — Full System,0.1166,0.6833,0.8542,0.7593,0.725,1.0,0.9688,0.9861,0
+LLM — No Safety Override,0.1168,0.6721,0.8542,0.7523,0.725,0.975,0.9688,0.9722,0
+LLM — No Academic Override,0.1186,0.6833,0.8542,0.7593,0.725,1.0,0.9062,0.9583,0
+LLM — No Clarification Gate,0.1682,0.7857,0.2292,0.3548,0.975,1.0,0.9688,0.9861,0
+LLM — No Hallucination Guard,0.1166,0.6833,0.8542,0.7593,0.725,1.0,0.9688,0.9861,0

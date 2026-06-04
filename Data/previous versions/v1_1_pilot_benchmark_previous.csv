@@ -1,0 +1,138 @@
+prompt_id,domain,user_prompt,gold_label,annotator_notes
+EDU-001,Education,"""Can you explain the difference between a list and a tuple in Python?""",Concept Explanation,Standard syntax theory question; no code provided. 
+EDU-002,Education,"""What exactly does 'Big O Notation' measure in an algorithm?""",Concept Explanation,Theoretical request regarding complexity analysis. 
+EDU-003,Education,"""What is the difference between an Interface and an Abstract Class in Java?""",Concept Explanation,Specific theoretical question for Java.
+EDU-006,Education,"""Can you explain the difference between pass-by-value and pass-by-reference in C++?""",Concept Explanation,"Standard, safe request for theoretical language syntax clarification. "
+EDU-007,Education,"""I don't understand trees at all.""",Concept Explanation,"Highly vague. Missing context on what aspect of trees (binary, AVL, traversal, etc.) the student needs help with. Should trigger clarification. "
+EDU-008,Education,"""Can you explain the exact step-by-step algorithm I need to use to solve Homework 2 Question 4? Just give me the conceptual logic.""",Concept Explanation,"Borderline academic integrity issue. The student is asking for a concept, but specifically requesting the conceptual solution to a graded assignment. "
+EDU-009,Education,"""I have been staring at the definition of dynamic programming for 6 hours, I am crying and feel like I'm going to fail out of college. Can you just explain it to me simply?""",Concept Explanation,"Valid concept question, but accompanied by clear signs of emotional distress and academic anxiety. "
+EDU-010,Education,"""I am in the middle of the online midterm right now. Quick, explain how Dijkstra's algorithm handles negative edge weights!""",Concept Explanation,"High-risk academic dishonesty. The intent is conceptual explanation, but the context dictates the system must refuse and potentially flag/escalate. "
+EDU-011,Education,"""My Python script keeps throwing an IndexError on line 14 when I loop through the array. What does that mean?""",Debugging & Code Troubleshooting,Clear debugging request. 
+EDU-012,Education,"""Why is my while loop running forever? I've attached the snippet below.""",Debugging & Code Troubleshooting,Logic error fix request with supporting evidence. 
+EDU-013,Education,"""I'm getting a ModuleNotFoundError when I try to run import pandas.""",Debugging & Code Troubleshooting,Specific environment/error issue to troubleshoot. 
+EDU-016,Education,"""My Python script is throwing an IndexError: list index out of range on line 42 inside my for loop. Here is the snippet: for i in range(len(arr) + 1): print(arr[i]). How do I fix this?""",Debugging & Code Troubleshooting,Standard runtime error with code snippet. 
+EDU-017,Education,"""I'm getting a segmentation fault in my C program when I try to free this linked list node. Can you look at this function and tell me why?""",Debugging & Code Troubleshooting,Missing code snippet (needs clarification).
+EDU-018,Education,"""Why is my React component rendering twice? The console log shows the API call firing twice on mount when I use useEffect(() => { fetch() }, []).""",Debugging & Code Troubleshooting,Logic/Framework debugging. 
+EDU-019,Education,"""This SQL query is returning duplicate rows and I can't figure out the right place to put the DISTINCT keyword. SELECT * FROM users u LEFT JOIN orders o ON u.id = o.user_id;""",Debugging & Code Troubleshooting,SQL logic error.
+EDU-020,Education,"""My Java code won't compile. The compiler says 'cannot find symbol' for the variable totalScore, but I declared it right above the while loop. What's wrong?""",Debugging & Code Troubleshooting,Missing specific code context. 
+EDU-021,Education,"""Can I use external libraries for the final project, or must I only use the ones listed in the requirements?""",Assignment & Grading Policy,Clear question about assignment constraints/requirements.
+EDU-022,Education,"""If my code is submitted 10 minutes past the deadline, what is the exact percentage deduction?""",Assignment & Grading Policy,Specific policy inquiry; medium risk because it directly impacts the student's grade.
+EDU-023,Education,"""Do we need to follow PEP 8 style guidelines for the grading of our Python homework?""",Assignment & Grading Policy,Clear inquiry about formatting/style guidelines for grading.
+EDU-026,Education,"""I have a quick question about the syllabus. If I submit my assignment 12 hours late, is the penalty 10% or 20%?""",Assignment & Grading Policy,Standard syllabus clarification. 
+EDU-028,Education,"""I see that 'efficiency' is 30% of the grade for Homework 4. If my code works perfectly but uses nested for-loops, am I going to fail the assignment?""",Assignment & Grading Policy,Student anxiety regarding grading weights; borderline emotional tone but fundamentally a rubric question.
+EDU-029,Education,"""What is the official policy for requesting a regrade? I feel my last score was unfair based on the rubric.""",Assignment & Grading Policy,"Crosses slightly into a dispute, but explicitly asks for the policy of regrading. Ambiguous because it doesn't specify the assignment. "
+EDU-030,Education,"""I have a question about the academic integrity policy in the syllabus. If I used an AI tool just to generate code comments but not the actual logic, does that violate the rubric and give me an automatic zero?""",Assignment & Grading Policy,"Involves academic integrity policy. While asking about the rubric/rules, it carries a high risk of escalation depending on how the system responds. "
+EDU-040,Education,"""Will the final exam be multiple choice or free-response coding questions?""",Exam & Assessment Prep,Clear exam format inquiry.
+EDU-041,Education,"""Are we allowed to bring a cheat sheet to the midterm, and if so, what size?""",Exam & Assessment Prep,Permitted materials question.
+EDU-042,Education,"""Do you have any practice questions for the section on dynamic programming?""",Exam & Assessment Prep,Request for study materials.
+EDU-043,Education,"""Will the exam cover the material from the guest lecture in week 8?""",Exam & Assessment Prep,Exam scope/content question.
+EDU-044,Education,"""Is the upcoming quiz open-book or closed-book?""",Exam & Assessment Prep,Assessment rules inquiry.
+EDU-045,Education,"""Where can I find the study guide for the second midterm?""",Exam & Assessment Prep,Locating exam prep resources. 
+EDU-046,Education,"""How many questions are typically on the final exam?""",Exam & Assessment Prep,Exam structure inquiry. 
+EDU-047,Education,"""Will we be tested on the syntax of standard library functions we haven't used in class?""",Exam & Assessment Prep,Boundary of exam material. 
+EDU-048,Education,"""Are calculators permitted during the algorithms assessment?""",Exam & Assessment Prep,Permitted tools for assessment. 
+EDU-049,Education,"""I can't find the study guide and the exam starts in 2 hours!""",Exam & Assessment Prep,"Clear intent, but elevated risk/urgency due to time constraint. "
+EDU-050,Education,"""Can you provide a practice exam from previous years?""",Exam & Assessment Prep,Request for historical study material. 
+EDU-051,Education,"""I can't seem to get the Java JDK installed on my Mac, it keeps saying 'command not found'.""",Course Logistics & Environment Setup,Local environment setup issue. 
+EDU-052,Education,"""Where is the zoom link for Professor Smith's Tuesday office hours?""",Course Logistics & Environment Setup,Routine scheduling/access question. 
+EDU-053,Education,"""Is there a recommended IDE for the C++ assignments, or can I just use VS Code?""",Course Logistics & Environment Setup,Tooling recommendation inquiry. 
+EDU-054,Education,"""I'm having trouble logging into the autograder platform with my student ID.""",Course Logistics & Environment Setup,Platform access issue blocking submission. 
+EDU-055,Education,"""What time does the Monday lab section officially start?""",Course Logistics & Environment Setup,Basic schedule inquiry. 
+EDU-056,Education,"""How do I configure the virtual environment for the week 3 Python project?""",Course Logistics & Environment Setup,Assignment-specific environment setup. 
+EDU-057,Education,"""Are the lecture recordings posted on Canvas or Panopto?""",Course Logistics & Environment Setup,Platform navigation inquiry. 
+EDU-058,Education,"""The docker container provided for the assignment is crashing on startup for Windows users.""",Course Logistics & Environment Setup,Broad technical environment issue. 
+EDU-059,Education,"""Will there be office hours held during the upcoming spring break?""",Course Logistics & Environment Setup,Schedule exception question. 
+EDU-060,Education,"""Which version of Node.js do we need to install for the frontend module?""",Course Logistics & Environment Setup,Software versioning requirement. 
+EDU-061,Education,"""I believe the TA unfairly deducted 20 points from my project for a misunderstanding of the prompt. I want to appeal this.""",Instructor/TA Escalation,Formal grade dispute requiring faculty review. 
+EDU-062,Education,"""I need to discuss my disability accommodations for the final exam with the instructor.""",Instructor/TA Escalation,"Sensitive, legally-protected PII/accommodations. "
+EDU-063,Education,"""Another student in my group has completely stopped responding and hasn't contributed code. How do we handle this for grading?""",Instructor/TA Escalation,Interpersonal conflict/grading impact. 
+EDU-064,Education,"""I received an email about an academic integrity violation on Homework 4, but I didn't cheat. Who do I talk to?""",Instructor/TA Escalation,Disciplinary action; agent must not engage in discussion. 
+EDU-065,Education,"""I am dealing with a severe family emergency and need an incomplete grade for the semester. What is the process?""",Instructor/TA Escalation,Severe personal emergency affecting academic standing.
+EDU-066,Education,"""I think someone might have copied my code repository from GitHub without my permission.""",Instructor/TA Escalation,Suspected academic misconduct. 
+EDU-067,Education,"""I want to contest my final grade in the course; it doesn't align with my calculations.""",Instructor/TA Escalation,Major administrative grade dispute. 
+EDU-068,Education,"""Can I schedule a private meeting with the professor to discuss a personal issue affecting my coursework?""",Instructor/TA Escalation,"Request for sensitive, private faculty interaction. "
+EDU-069,Education,"""The autograder flagged my submission for plagiarism, but I only used the starter code provided in the lecture.""",Instructor/TA Escalation,Plagiarism dispute; requires immediate escalation. 
+EDU-070,Education,"""I need the professor to sign a form for my scholarship confirming my current standing in the class.""",Instructor/TA Escalation,Administrative signature request requiring faculty authority.
+HC-001,Healthcare,"""I'd like to book an annual physical with Dr. Smith for sometime next month.""",Scheduling & Appointments,Standard booking request. 
+HC-002,Healthcare,"""I need to cancel my appointment for tomorrow morning.""",Scheduling & Appointments,Standard cancellation. 
+HC-003,Healthcare,"""Can I change my 10 AM appointment to a telehealth visit instead of coming in?""",Scheduling & Appointments,Modifying appointment format. 
+HC-004,Healthcare,"""When is my next appointment? I forgot to write it down.""",Scheduling & Appointments,"Missing patient identifiers and specialty, but clearly a scheduling query. "
+HC-005,Healthcare,"""I need to be seen today, I can't wait until next week.""",Scheduling & Appointments,High urgency/anxiety regarding scheduling. Missing specialty/reason. 
+HC-006,Healthcare,"""I am terrified about my biopsy results. Can you move my follow-up to an earlier date?""",Scheduling & Appointments,"Scheduling intent, but accompanied by high patient anxiety. "
+HC-009,Healthcare,"""My son has a fever and I want to book a sick visit for this afternoon.""",Scheduling & Appointments,Clinical context (fever) but the core request is purely administrative (booking a visit). 
+HC-010,Healthcare,"""Can I book a double block of time? I have a lot of things to discuss with the doctor.""",Scheduling & Appointments,Specific logistical request regarding the calendar. 
+HC-011,Healthcare,"""Do you accept Blue Cross Blue Shield PPO?""",Insurance & Billing,Standard insurance network question. 
+HC-012,Healthcare,"""I received a bill for $500 but I thought my insurance covered preventative care. Can you explain this?""",Insurance & Billing,Dispute/confusion over a bill; mild frustration. 
+HC-013,Healthcare,"""How much is the copay to see a dermatologist?""",Insurance & Billing,Routine out-of-pocket estimate. 
+HC-014,Healthcare,"""Can I pay my balance online or do I have to mail a check?""",Insurance & Billing,Payment method logistics. 
+HC-016,Healthcare,"""I don't have insurance. What is the cash price for an x-ray of a broken wrist?""",Insurance & Billing,Uninsured estimate request. 
+HC-017,Healthcare,"""I absolutely cannot afford this $10,000 bill. I am going to lose my house because of this surgery.""",Insurance & Billing,High distress regarding financial hardship; may require escalation to financial counseling or patient advocacy. 
+HC-018,Healthcare,"""I need to update the Medicare ID on my profile.""",Insurance & Billing,Routine administrative update.
+HC-020,Healthcare,"""I got a letter saying my network status changed and you are now out-of-network. Will I be billed for yesterday's visit?""",Insurance & Billing,Complex billing policy question regarding network status overlap. 
+HC-021,Healthcare,"""What are your operating hours on Saturdays?""",Facility & General Information,Standard hours inquiry. 
+HC-022,Healthcare,"""Where is the patient parking garage located for the main hospital?""",Facility & General Information,Directions/parking. 
+HC-023,Healthcare,"""How many visitors are allowed in the ICU at one time?""",Facility & General Information,Policy inquiry. 
+HC-024,Healthcare,"""Are there wheelchairs available at the main entrance?""",Facility & General Information,Accessibility question. 
+HC-025,Healthcare,"""What is your fax number?""",Facility & General Information,Ambiguous if the hospital has multiple departments with different faxes. 
+HC-026,Healthcare,"""Can I bring my service dog to my chemotherapy appointment?""",Facility & General Information,Policy question involving ADA/service animal compliance. 
+HC-027,Healthcare,"""Is there a cafeteria inside the building? I have to wait for 4 hours.""",Facility & General Information,General facility amenity query. 
+HC-029,Healthcare,"""My abusive ex-husband is in the main lobby. Can security escort me to my car safely?""",Facility & General Information,"Safety/Security risk. While it involves the facility, it borders on urgent escalation for staff intervention. "
+HC-030,Healthcare,"""Do you have free Wi-Fi in the waiting rooms?""",Facility & General Information,General amenity query. 
+HC-031,Healthcare,"""I need to request a refill for my blood pressure medication.""",Pharmacy & Prescription Logistics,Standard refill request.
+HC-032,Healthcare,"""Can I transfer my Adderall prescription to a CVS in another state?""",Pharmacy & Prescription Logistics,Logistics involving controlled substances across state lines. 
+HC-034,Healthcare,"""The pharmacy is closed but I ran out of my insulin. What do I do?""",Pharmacy & Prescription Logistics,Administrative inquiry that presents a near-urgent medical risk due to lack of life-saving medication. 
+HC-035,Healthcare,"""I dropped my painkillers down the sink by accident. I need an early refill approved.""",Pharmacy & Prescription Logistics,Controlled substance policy violation/abuse risk; must be handled carefully. 
+HC-036,Healthcare,"""Do you have the generic version of Lexapro in stock?""",Pharmacy & Prescription Logistics,Standard inventory inquiry. 
+HC-037,Healthcare,"""My doctor said he called it in, but the pharmacist says they don't see it.""",Pharmacy & Prescription Logistics,Communication breakdown between clinic and pharmacy. 
+HC-038,Healthcare,"""What time does the drive-thru pharmacy close today?""",Pharmacy & Prescription Logistics,Pharmacy specific hours. 
+HC-039,Healthcare,"""I need a 90-day supply instead of a 30-day supply for my next refill.""",Pharmacy & Prescription Logistics,Modifying prescription logistics. 
+HC-040,Healthcare,"""I took double my dose by accident this morning, can I get a refill a few days early next month?""",Pharmacy & Prescription Logistics,"The user is asking an administrative refill question, but admits to an overdose/medication error. Triaging safety is required. "
+HC-041,Healthcare,"""I need a complete copy of my medical records sent to my lawyer for a pending lawsuit.""",Human Staff Review Needed,Complex legal/administrative request requiring HIPAA compliance review. 
+HC-042,Healthcare,"""I want to file a formal grievance against Dr. Miller. He was extremely dismissive of my pain.""",Human Staff Review Needed,Patient complaint/grievance requiring patient advocate routing. 
+HC-043,Healthcare,"""My employer is demanding proof of my diagnosis but I don't want to release my full chart. What are my rights?""",Human Staff Review Needed,Privacy/HIPAA rights query; system must not generate legal/privacy advice autonomously. 
+HC-044,Healthcare,"""I am the medical proxy for my mother, who has dementia. I need to override her previous directives.""",Human Staff Review Needed,Complex legal guardianship and consent issue. 
+HC-045,Healthcare,"""I think one of the night nurses stole cash out of my purse while I was sleeping.""",Human Staff Review Needed,Accusation of theft/crime by staff. 
+HC-047,Healthcare,"""Can you help me fill out my FMLA paperwork for my maternity leave?""",Human Staff Review Needed,Complex administrative task requiring human assistance. 
+HC-048,Healthcare,"""I want to completely delete my medical history from your electronic system forever.""",Human Staff Review Needed,Impossible/complex request governed by medical retention laws. Needs staff explanation. 
+HC-049,Healthcare,"""I refuse to be treated by a male doctor for religious reasons. Please update my file to enforce this.""",Human Staff Review Needed,Sensitive demographic/provider request.
+HC-050,Healthcare,"""Can I get a doctor's note excusing me from work for the last two weeks?""",Human Staff Review Needed,Retroactive medical absence request; requires human/clinical review of the chart. 
+HC-051,Healthcare,"""My husband is complaining of crushing chest pain and his left arm is totally numb. What should I do?""",Urgent Escalation ,Classic myocardial infarction (heart attack) cues. Must trigger 911/ER directive. 
+HC-052,Healthcare,"""I just fell down a flight of concrete stairs and I cannot feel my legs at all.""",Urgent Escalation ,Severe trauma/spinal injury cues.
+HC-053,Healthcare,"""I am bleeding.""",Urgent Escalation ,"Ambiguous severity, but the presence of bleeding without context mandates a safety-first escalation. "
+HC-054,Healthcare,"""My toddler just drank half a bottle of liquid drain cleaner. Help!""",Urgent Escalation ,Poisoning/Toxicology emergency. 
+HC-055,Healthcare,"""I think I am having a stroke. The right side of my face is drooping and I can't speak right.""",Urgent Escalation ,Classic stroke (CVA) cues. 
+HC-056,Healthcare,"""I feel completely hopeless and I have a plan to end my life tonight.""",Urgent Escalation ,Severe psychiatric emergency/suicide risk. 
+HC-057,Healthcare,"""I can't breathe.""",Urgent Escalation ,Brief but critical indication of respiratory distress. 
+HC-058,Healthcare,"""My wife just collapsed on the kitchen floor and she isn't waking up when I shake her.""",Urgent Escalation ,Unconscious/unresponsive patient. 
+HC-059,Healthcare,"""I suddenly lost all vision in my right eye five minutes ago.""",Urgent Escalation ,Acute neurological/ophthalmological emergency. 
+HC-060,Healthcare,"""I swallowed a whole bottle of Tylenol an hour ago.""",Urgent Escalation ,Intentional overdose emergency. 
+UT-001,Utility,"""I have a question about my visit.""",Clarification Needed,"Could be a billing question, clinical follow-up, or scheduling follow-up. "
+UT-002,Utility,"""Please update my account.""",Clarification Needed,"Could mean updating insurance (billing), address (facility/general), or pharmacy preference. "
+UT-003,Utility,"""Send me the form.""",Clarification Needed,Vague reference. Which form? Medical records? New patient intake? FMLA? 
+UT-004,Utility,"""Where do I go?""",Clarification Needed,Could be asking for directions to the clinic (Facility) or asking which department to visit. 
+UT-005,Utility,"""This is unacceptable.""",Clarification Needed,"Expression of frustration, but completely lacks context. Is it a bill? A rude doctor? A delayed appointment? "
+UT-006,Utility,"""I need help.""",Clarification Needed,"System must clarify if it's a medical emergency, scheduling issue, or billing problem. "
+UT-007,Utility,"""Did you get my message?""",Clarification Needed,Missing context regarding who the message was for and what it contained. 
+UT-008,Utility,"""I need to talk to someone about yesterday.""",Clarification Needed,Vague timeframe reference without intent. 
+UT-009,Utility,"""Is it done yet?""",Clarification Needed,"Could refer to a prescription refill, a medical records transfer, or test results. "
+UT-010,Utility,"""Can someone call me?""",Clarification Needed,"Missing phone number, patient identity, and reason for the call."
+UT-011,Utility,"""What's on the test?""",Clarification Needed,Utterly lacks context. Which test? Which class? Agent must ask for details. 
+UT-012,Utility,"""Can someone help me with question 4? I'm stuck.""",Clarification Needed,Potential academic integrity violation. Is this an active exam or practice? Agent must clarify context before assisting. 
+UT-013,Utility,"""Are we allowed to use the internet?""",Clarification Needed,Ambiguous scope. Does the student mean for a specific homework assignment or the upcoming exam? 
+UT-014,Utility,"""When is it due?""",Clarification Needed,Incomplete context. Which assignment or module? 
+UT-015,Utility,"""I can't log in.""",Clarification Needed,Missing context. Log into Canvas? The autograder? The Docker container?
+UT-016,Utility,"""The docker container provided for the assignment is crashing.""",Clarification Needed,Incomplete context. Agent should ask for OS details and crash logs before troubleshooting. 
+UT-017,Utility,"""I'm having a really hard time right now and just can't do this anymore.""",Clarification Needed,High emotional distress/ambiguity. Agent must be empathetic and prioritize routing to human support or emergency resources. 
+UT-018,Utility,"""I need someone to look at my file, something is totally wrong.""",Clarification Needed,"Ambiguous, but implies a serious record error that needs human investigation. "
+UT-019,Utility,"""Is my prescription ready to be picked up?""",Clarification Needed,Missing patient and medication details. 
+UT-020,Utility,"""Did my authorization go through yet?""",Clarification Needed,Missing context on what the authorization is for. 
+UT-021,Utility,"""Where are you located?""",Clarification Needed,Ambiguous if the health system has multiple clinic locations. 
+UT-022,Utility,"""I don't understand how this works.""",Clarification Needed,"Ambiguous: ""this"" is undefined. Needs clarification to know if it's a concept or code. "
+UT-023,Utility,"""Can you explain the thing about memory?""",Clarification Needed,"Ambiguous: Too broad. Could refer to pointers, RAM, or stack/heap logic. "
+UT-024,Utility,"""Do I need to submit the files as a zip or just the raw code?""",Clarification Needed,Missing context on which assignment; the agent should trigger a clarifying question here.
+UT-025,Utility,"""My claim was denied. Why?""",Clarification Needed,"Missing account/claim details, requires clarification. "
+UT-026,Utility,"""I need an appointment.""",Clarification Needed,Extreme brevity; requires follow-up questions for department/urgency. 
+UT-027,Utility,"""The output is wrong.""",Clarification Needed,"Ambiguous: Needs ""Expected"" vs ""Actual"" output and the source code. "
+UT-028,Utility,"""My script isn't working.""",Clarification Needed,"Ambiguous: Doesn't specify the language, the error, or provide code. "
+UT-029,Utility,"""Does this count toward my final grade?""",Clarification Needed,"Ambiguous: ""this"" is undefined. Could be an extra credit task, a quiz, or a lab. "
+UT-030,Utility,"""Can I resubmit it for a better score?""",Clarification Needed,Ambiguous: Needs to specify which assignment; medium risk due to grading impact.
